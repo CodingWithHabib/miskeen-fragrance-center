@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Dynamic title filled by JS -->
+  <title>Product — Miskeen Fragrance Center</title>
+  <meta name="description" content="Premium attar & perfume — Miskeen Fragrance Center">
+
+  <!-- Open Graph Tags for Social Media Sharing -->
+  <meta property="og:title" content="Product — Miskeen Fragrance Center">
+  <meta property="og:description" content="Premium attar & perfume — Miskeen Fragrance Center">
+  <meta property="og:image" content="">
+  <meta property="og:url" content="">
+  <meta property="og:type" content="product">
+  <meta property="og:site_name" content="Miskeen Fragrance Center">
+
+  <!-- Structured Data (Product Schema) - Dynamic content filled by JS -->
+  <script type="application/ld+json" id="product-schema">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "Product",
+    "description": "Premium attar & perfume",
+    "image": "",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "PKR",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
+  <!-- Canonical URL - Dynamic content filled by JS -->
+  <link rel="canonical" href="">
+
+  <!-- Fonts (same as main site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS (mirrored from style.css)
+    ═══════════════════════════════════════════════ */
+    :root {
+      --sand:    #f5efe6;
+      --sand2:   #ede4d6;
+      --sand3:   #e0d4c0;
+      --forest:  #1c3a2a;
+      --forest2: #274d39;
+      --forest3: #3a6b52;
+      --gold:    #b08d57;
+      --gold2:   #d4aa72;
+      --ink:     #1a1208;
+      --ink2:    #3d2e1e;
+      --muted:   #7a6e5c;
+      --border:  rgba(28,58,42,0.14);
+      --wa:      #25D366;
+      --radius:  4px;
+      --danger:  #c0392b;
+      --success: #1ebe5d;
+      --warn:    #e2a03f;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; font-size:16px; }
+    body { font-family:'Jost',sans-serif; background:var(--sand); color:var(--ink2); min-height:100vh; overflow-x:hidden; }
+    a { text-decoration:none; color:inherit; }
+    img { max-width:100%; display:block; }
+    button { font-family:'Jost',sans-serif; cursor:pointer; }
+
+    /* ═══ LAYOUT ═══ */
+    .container { max-width:1200px; margin:0 auto; padding:0 2rem; }
+
+    /* ═══ HEADER (slim) ═══ */
+    .pdp-header {
+      position:sticky; top:0; z-index:100;
+      background:rgba(245,239,230,.95); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      padding:.9rem 0;
+    }
+    .pdp-header .container { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .pdp-logo { display:flex; align-items:center; gap:.6rem; }
+    .pdp-logo-name { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:700; color:var(--ink); }
+    .pdp-logo-tag  { font-size:.52rem; letter-spacing:.35em; color:var(--gold); display:none; }
+    .pdp-back-btn {
+      display:inline-flex; align-items:center; gap:.4rem;
+      font-size:.68rem; letter-spacing:.18em; font-weight:600;
+      color:var(--forest); border:1.5px solid var(--forest);
+      padding:.45rem 1.1rem; background:transparent;
+      transition:all .22s;
+    }
+    .pdp-back-btn:hover { background:var(--forest); color:var(--sand); }
+    .pdp-header-actions { display:flex; align-items:center; gap:.7rem; }
+    .icon-btn {
+      width:36px; height:36px; border:1.5px solid var(--border);
+      background:transparent; display:flex; align-items:center; justify-content:center;
+      font-size:1rem; transition:all .2s; position:relative; cursor:pointer;
+    }
+    .icon-btn:hover { border-color:var(--forest); background:var(--forest); color:var(--sand); }
+    .cart-count {
+      position:absolute; top:-6px; right:-6px;
+      width:18px; height:18px; background:var(--gold); color:#fff;
+      border-radius:50%; font-size:.55rem; font-weight:700;
+      display:none; align-items:center; justify-content:center;
+    }
+    .cart-count.visible { display:flex; }
+
+    /* ═══ BREADCRUMB ═══ */
+    .breadcrumb { padding:1rem 0; border-bottom:1px solid var(--border); }
+    .breadcrumb ol { display:flex; align-items:center; gap:.4rem; list-style:none; flex-wrap:wrap; }
+    .breadcrumb li { font-size:.7rem; letter-spacing:.05em; color:var(--muted); }
+    .breadcrumb li a { color:var(--forest); transition:opacity .2s; }
+    .breadcrumb li a:hover { opacity:.7; }
+    .breadcrumb .sep { color:var(--border); margin:0 .1rem; }
+
+    /* ═══ LOADING STATE ═══ */
+    .pdp-loading {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:60vh; gap:1.2rem; color:var(--muted);
+    }
+    .spinner {
+      width:40px; height:40px;
+      border:3px solid var(--border);
+      border-top-color:var(--forest);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .pdp-loading p { font-size:.8rem; letter-spacing:.2em; text-transform:uppercase; }
+
+    /* ═══ ERROR STATE ═══ */
+    .pdp-error {
+      display:none; text-align:center;
+      padding:5rem 2rem; min-height:60vh;
+      flex-direction:column; align-items:center; justify-content:center;
+    }
+    .pdp-error .error-icon { font-size:4rem; margin-bottom:1.2rem; opacity:.4; }
+    .pdp-error h2 { font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--ink); margin-bottom:.6rem; }
+    .pdp-error p  { font-size:.9rem; color:var(--muted); margin-bottom:2rem; }
+
+    /* ═══ MAIN PRODUCT LAYOUT ═══ */
+    #pdp-content { display:none; }
+    .pdp-main { padding:2.5rem 0 4rem; }
+    .pdp-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:3.5rem;
+      align-items:start;
+    }
+
+    /* ═══ IMAGE PANEL ═══ */
+    .pdp-image-panel { position:sticky; top:80px; }
+    .pdp-img-wrap {
+      background:linear-gradient(145deg,var(--sand2),var(--sand3));
+      border:1px solid var(--border);
+      aspect-ratio:3/4;
+      overflow:hidden;
+      position:relative;
+    }
+    .pdp-img-wrap img {
+      width:100%; height:100%; object-fit:contain;
+      transition:transform .6s cubic-bezier(.25,.46,.45,.94);
+      cursor:zoom-in;
+    }
+    .pdp-img-wrap:hover img { transform:scale(1.06); }
+    .pdp-img-placeholder {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      color:var(--muted); opacity:.3; gap:.5rem;
+    }
+    .pdp-img-placeholder span { font-size:5rem; }
+    .pdp-img-placeholder p   { font-size:.65rem; letter-spacing:.3em; }
+    .pdp-badge {
+      position:absolute; top:1rem; left:1rem; z-index:2;
+      font-size:.52rem; letter-spacing:.2em; font-weight:700;
+      padding:.3rem .75rem; background:var(--gold); color:#fff;
+    }
+    .pdp-stock-dot {
+      position:absolute; top:1rem; right:1rem; z-index:2;
+      display:flex; align-items:center; gap:.35rem;
+      font-size:.62rem; font-weight:600; letter-spacing:.1em;
+      padding:.3rem .7rem; background:rgba(245,239,230,.92);
+      border:1px solid var(--border);
+    }
+    .stock-dot { width:7px; height:7px; border-radius:50%; }
+    .stock-dot.in  { background:var(--success); box-shadow:0 0 6px rgba(30,190,93,.5); }
+    .stock-dot.out { background:var(--danger); }
+    .pdp-img-actions {
+      display:flex; gap:.5rem; margin-top:.8rem;
+    }
+    .img-action-btn {
+      flex:1; padding:.55rem; border:1.5px solid var(--border);
+      background:transparent; font-size:.65rem; letter-spacing:.15em;
+      font-weight:600; color:var(--muted); transition:all .2s; display:flex;
+      align-items:center; justify-content:center; gap:.4rem;
+    }
+    .img-action-btn:hover { border-color:var(--forest); color:var(--forest); }
+
+    /* ═══ INFO PANEL ═══ */
+    .pdp-info-panel {}
+    .pdp-cat { font-size:.6rem; letter-spacing:.35em; font-weight:600; color:var(--gold); text-transform:uppercase; margin-bottom:.5rem; }
+    .pdp-name { font-family:'Cormorant Garamond',serif; font-size:clamp(1.8rem,3vw,2.6rem); font-weight:600; color:var(--ink); line-height:1.15; margin-bottom:.8rem; }
+    .pdp-rating-row { display:flex; align-items:center; gap:.7rem; margin-bottom:1.2rem; }
+    .pdp-stars { color:var(--gold); font-size:1rem; letter-spacing:.05em; }
+    .pdp-rating-num { font-size:.78rem; font-weight:600; color:var(--ink2); }
+    .pdp-review-count { font-size:.75rem; color:var(--muted); }
+    .pdp-divider { border:none; border-top:1px solid var(--border); margin:1.2rem 0; }
+    .pdp-price-row { display:flex; align-items:center; gap:1rem; margin-bottom:.3rem; }
+    .pdp-price { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:var(--forest); }
+    .pdp-size-label { font-size:.72rem; color:var(--muted); }
+
+    /* Size pills */
+    .pdp-size-section { margin:1.2rem 0; }
+    .pdp-size-title { font-size:.65rem; letter-spacing:.2em; font-weight:600; color:var(--muted); text-transform:uppercase; margin-bottom:.6rem; }
+    .pdp-sizes { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .pdp-sz-pill {
+      font-size:.65rem; font-weight:600; letter-spacing:.08em;
+      padding:.45rem 1.1rem; border:1.5px solid var(--border);
+      border-radius:100px; cursor:pointer; transition:all .2s;
+      background:transparent; color:var(--ink2);
+    }
+    .pdp-sz-pill:hover, .pdp-sz-pill.active { background:var(--forest); border-color:var(--forest); color:#fff; }
+
+    /* Qty */
+    .pdp-qty-row { display:flex; align-items:center; gap:1rem; margin:1.2rem 0; }
+    .pdp-qty-label { font-size:.65rem; letter-spacing:.2em; font-weight:600; color:var(--muted); text-transform:uppercase; }
+    .pdp-qty-ctrl { display:flex; border:1.5px solid var(--border); overflow:hidden; }
+    .pdp-qty-btn {
+      width:36px; height:36px; background:transparent; border:none;
+      font-size:1.1rem; font-weight:700; color:var(--forest); transition:background .2s;
+    }
+    .pdp-qty-btn:hover { background:var(--sand2); }
+    .pdp-qty-num {
+      width:40px; height:36px; display:flex; align-items:center; justify-content:center;
+      font-weight:600; font-size:.9rem;
+      border-left:1.5px solid var(--border); border-right:1.5px solid var(--border);
+    }
+    .pdp-total-row { font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; }
+    .pdp-total-row strong { color:var(--forest); font-size:1.1rem; font-family:'Cormorant Garamond',serif; }
+
+    /* CTAs */
+    .pdp-actions { display:flex; flex-direction:column; gap:.7rem; margin-bottom:1.5rem; }
+    .btn-pdp-wa {
+      display:flex; align-items:center; justify-content:center; gap:.6rem;
+      padding:1rem 1.5rem; background:var(--wa); color:#fff;
+      font-size:.7rem; letter-spacing:.2em; font-weight:700;
+      border:none; cursor:pointer; transition:all .25s;
+    }
+    .btn-pdp-wa:hover { background:#1ebe5d; box-shadow:0 6px 24px rgba(37,211,102,.3); }
+    .btn-pdp-wa:disabled { opacity:.6; cursor:not-allowed; }
+    .pdp-secondary-actions { display:flex; gap:.7rem; }
+    .btn-cart {
+      flex:1; padding:.8rem 1rem; border:1.5px solid var(--forest);
+      background:transparent; color:var(--forest);
+      font-size:.65rem; letter-spacing:.2em; font-weight:700;
+      transition:all .22s; display:flex; align-items:center; justify-content:center; gap:.5rem;
+    }
+    .btn-cart:hover, .btn-cart.in-cart { background:var(--forest); color:var(--sand); }
+    .btn-wish {
+      width:48px; border:1.5px solid var(--border); background:transparent;
+      font-size:1.1rem; transition:all .22s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .btn-wish:hover, .btn-wish.wishlisted { border-color:var(--danger); color:var(--danger); background:rgba(192,57,43,.05); }
+    .btn-share {
+      flex:1; padding:.8rem 1rem; border:1.5px solid var(--border);
+      background:transparent; color:var(--muted);
+      font-size:.65rem; letter-spacing:.2em; font-weight:700;
+      transition:all .22s; display:flex; align-items:center; justify-content:center; gap:.5rem;
+    }
+    .btn-share:hover { border-color:var(--forest); color:var(--forest); }
+
+    /* Description */
+    .pdp-desc-section { margin-top:1.5rem; }
+    .pdp-desc-title { font-size:.65rem; letter-spacing:.25em; font-weight:600; color:var(--muted); text-transform:uppercase; margin-bottom:.6rem; }
+    .pdp-desc-text { font-size:.9rem; color:var(--ink2); line-height:1.85; }
+
+    /* Meta tags */
+    .pdp-meta { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1.2rem; }
+    .pdp-meta-tag {
+      font-size:.62rem; font-weight:600; letter-spacing:.15em;
+      padding:.3rem .75rem; border:1px solid var(--border);
+      color:var(--muted); text-transform:uppercase;
+    }
+
+    /* Trust badges */
+    .pdp-trust { display:flex; gap:1.5rem; flex-wrap:wrap; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+    .trust-item { display:flex; align-items:center; gap:.5rem; }
+    .trust-ico { font-size:1.1rem; }
+    .trust-txt { font-size:.7rem; color:var(--muted); line-height:1.3; }
+    .trust-txt strong { display:block; color:var(--ink2); font-weight:600; font-size:.72rem; }
+
+    /* ═══ SECTIONS ═══ */
+    .pdp-section { padding:3rem 0; border-top:1px solid var(--border); }
+    .pdp-section-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.6rem; font-weight:600; color:var(--ink);
+      margin-bottom:2rem;
+    }
+
+    /* Reviews */
+    .reviews-summary { display:flex; gap:2.5rem; align-items:center; margin-bottom:2rem; flex-wrap:wrap; }
+    .reviews-big-num { font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:700; color:var(--forest); line-height:1; }
+    .reviews-big-stars { color:var(--gold); font-size:1.3rem; margin:.2rem 0; }
+    .reviews-big-count { font-size:.78rem; color:var(--muted); }
+    .reviews-bars { flex:1; min-width:200px; }
+    .rating-bar-row { display:flex; align-items:center; gap:.7rem; margin-bottom:.4rem; }
+    .rating-bar-label { font-size:.7rem; color:var(--muted); width:28px; text-align:right; flex-shrink:0; }
+    .rating-bar-track { flex:1; height:6px; background:var(--sand3); border-radius:3px; overflow:hidden; }
+    .rating-bar-fill { height:100%; background:var(--gold); border-radius:3px; transition:width .6s; }
+    .rating-bar-pct { font-size:.68rem; color:var(--muted); width:30px; text-align:right; flex-shrink:0; }
+
+    .reviews-list { display:flex; flex-direction:column; gap:1.2rem; margin-bottom:2rem; }
+    .review-card {
+      border:1px solid var(--border); background:#fff;
+      padding:1.3rem; transition:box-shadow .2s;
+    }
+    .review-card:hover { box-shadow:0 4px 20px rgba(28,58,42,.06); }
+    .review-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:.6rem; }
+    .review-author { font-weight:600; font-size:.85rem; color:var(--ink); }
+    .review-city   { font-size:.72rem; color:var(--muted); }
+    .review-stars  { color:var(--gold); font-size:.88rem; flex-shrink:0; }
+    .review-text   { font-size:.85rem; color:var(--ink2); line-height:1.75; }
+    .review-date   { font-size:.7rem; color:var(--muted); margin-top:.5rem; }
+    .no-reviews    { text-align:center; padding:2.5rem; color:var(--muted); font-size:.85rem; }
+
+    /* Review form */
+    .review-form-wrap {
+      border:1px solid var(--border); padding:2rem; background:#fff;
+      margin-top:2rem;
+    }
+    .review-form-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--ink); margin-bottom:1.3rem; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-row  { display:flex; flex-direction:column; gap:.35rem; }
+    .form-label { font-size:.65rem; letter-spacing:.2em; font-weight:600; color:var(--muted); text-transform:uppercase; }
+    .form-input, .form-textarea, .form-select {
+      border:1.5px solid var(--border); background:var(--sand);
+      color:var(--ink); font-family:'Jost',sans-serif; font-size:.88rem;
+      padding:.65rem .9rem; outline:none; transition:border .22s; width:100%;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color:var(--forest); }
+    .form-textarea { resize:vertical; min-height:100px; }
+    .star-rating-input { display:flex; gap:.3rem; margin-top:.3rem; }
+    .star-btn {
+      font-size:1.5rem; background:none; border:none;
+      color:var(--sand3); cursor:pointer; transition:color .15s;
+      line-height:1;
+    }
+    .star-btn.lit { color:var(--gold); }
+    .form-error { font-size:.72rem; color:var(--danger); margin-top:.2rem; }
+    .form-success { font-size:.8rem; color:var(--success); font-weight:600; margin-top:.8rem; }
+    .btn-submit-review {
+      margin-top:1.2rem; padding:.8rem 2rem;
+      background:var(--forest); color:var(--sand);
+      font-size:.68rem; letter-spacing:.2em; font-weight:700;
+      border:none; cursor:pointer; transition:all .22s;
+    }
+    .btn-submit-review:hover { background:var(--forest2); }
+    .btn-submit-review:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* Related products */
+    .related-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+
+    /* ═══ MINI PRODUCT CARD (for related) ═══ */
+    .mini-pcard {
+      border:1px solid var(--border); background:#fff;
+      overflow:hidden; cursor:pointer;
+      transition:all .3s;
+    }
+    .mini-pcard:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(28,58,42,.12); border-color:rgba(28,58,42,.22); }
+    .mini-pcard-img {
+      height:160px; background:linear-gradient(145deg,var(--sand2),var(--sand3));
+      overflow:hidden;
+    }
+    .mini-pcard-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+    .mini-pcard:hover .mini-pcard-img img { transform:scale(1.07); }
+    .mini-pcard-body { padding:1rem; }
+    .mini-pcard-cat { font-size:.55rem; letter-spacing:.25em; color:var(--gold); font-weight:600; margin-bottom:.2rem; }
+    .mini-pcard-name { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--ink); line-height:1.2; margin-bottom:.3rem; }
+    .mini-pcard-price { font-size:.8rem; color:var(--forest); font-weight:600; }
+
+    /* ═══ CART DRAWER ═══ */
+    .cart-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      z-index:200; opacity:0; pointer-events:none; transition:opacity .3s;
+    }
+    .cart-overlay.open { opacity:1; pointer-events:all; }
+    .cart-drawer {
+      position:fixed; right:0; top:0; bottom:0; width:360px; max-width:95vw;
+      background:var(--sand); z-index:201;
+      transform:translateX(100%); transition:transform .3s cubic-bezier(.25,.46,.45,.94);
+      display:flex; flex-direction:column; border-left:1px solid var(--border);
+    }
+    .cart-drawer.open { transform:translateX(0); }
+    .cart-drawer-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.2rem 1.5rem; border-bottom:1px solid var(--border);
+    }
+    .cart-drawer-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--ink); }
+    .cart-close { background:none; border:none; font-size:1.3rem; color:var(--muted); cursor:pointer; padding:.2rem; }
+    .cart-items { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
+    .cart-empty { text-align:center; padding:3rem 1rem; color:var(--muted); }
+    .cart-empty span { font-size:3rem; display:block; margin-bottom:.8rem; opacity:.3; }
+    .cart-item { display:flex; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border); align-items:flex-start; }
+    .cart-item-img { width:60px; height:70px; background:var(--sand2); overflow:hidden; flex-shrink:0; }
+    .cart-item-img img { width:100%; height:100%; object-fit:cover; }
+    .cart-item-info { flex:1; }
+    .cart-item-name { font-size:.85rem; font-weight:600; color:var(--ink); margin-bottom:.2rem; }
+    .cart-item-size { font-size:.72rem; color:var(--muted); margin-bottom:.3rem; }
+    .cart-item-price { font-size:.82rem; font-weight:600; color:var(--forest); }
+    .cart-item-remove { background:none; border:none; color:var(--muted); cursor:pointer; font-size:.85rem; padding:.2rem; transition:color .2s; }
+    .cart-item-remove:hover { color:var(--danger); }
+    .cart-footer { padding:1.2rem 1.5rem; border-top:1px solid var(--border); }
+    .cart-total-row { display:flex; justify-content:space-between; margin-bottom:1rem; }
+    .cart-total-label { font-size:.78rem; color:var(--muted); font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+    .cart-total-val { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:700; color:var(--forest); }
+    .btn-cart-wa {
+      width:100%; padding:.9rem; background:var(--wa); color:#fff;
+      font-size:.7rem; letter-spacing:.2em; font-weight:700;
+      border:none; cursor:pointer; transition:all .22s;
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+    }
+    .btn-cart-wa:hover { background:#1ebe5d; }
+
+    /* ═══ TOAST ═══ */
+    #toast-container {
+      position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%);
+      z-index:9999; display:flex; flex-direction:column; align-items:center; gap:.5rem;
+      pointer-events:none;
+    }
+    .toast {
+      padding:.65rem 1.4rem; font-size:.78rem; font-weight:600;
+      color:#fff; border-radius:var(--radius); opacity:0;
+      animation:toastIn .25s forwards, toastOut .3s 2.3s forwards;
+      white-space:nowrap;
+    }
+    .toast.success { background:var(--success); }
+    .toast.error   { background:var(--danger); }
+    .toast.warn    { background:var(--warn); }
+    .toast.info    { background:var(--forest); }
+    @keyframes toastIn  { to { opacity:1; transform:translateY(-4px); } }
+    @keyframes toastOut { to { opacity:0; transform:translateY(4px); } }
+
+    /* ═══ FOOTER ═══ */
+    .pdp-footer {
+      background:var(--forest); color:var(--sand2);
+      padding:2.5rem 0; text-align:center;
+      font-size:.7rem; letter-spacing:.1em;
+    }
+    .pdp-footer a { color:var(--gold2); }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media(max-width:900px) {
+      .pdp-grid { grid-template-columns:1fr; gap:2rem; }
+      .pdp-image-panel { position:static; }
+      .related-grid { grid-template-columns:repeat(2,1fr); }
+      .form-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:600px) {
+      .container { padding:0 1.2rem; }
+      .pdp-name { font-size:1.7rem; }
+      .related-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
+      .pdp-trust { gap:1rem; }
+      .reviews-summary { flex-direction:column; align-items:flex-start; gap:1rem; }
+    }
+    @media(min-width:600px) {
+      .pdp-logo-tag { display:block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════ HEADER ═══════════════════════ -->
+  <header class="pdp-header">
+    <div class="container">
+      <a href="index.html" class="pdp-logo">
+        <div>
+          <div class="pdp-logo-name">Miskeen Fragrance Center</div>
+          <div class="pdp-logo-tag">WHERE SCENT BECOMES SOUL</div>
+        </div>
+      </a>
+      <div class="pdp-header-actions">
+        <button class="pdp-back-btn" onclick="window.history.back()">← BACK</button>
+        <button class="icon-btn" id="wish-header-btn" title="Wishlist" onclick="PDP.toggleCartDrawer()">
+          🛒
+          <span class="cart-count" id="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════ BREADCRUMB ═══════════════════════ -->
+  <div class="breadcrumb">
+    <div class="container">
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li class="sep">›</li>
+        <li><a href="index.html#products" id="bc-cat-link">Products</a></li>
+        <li class="sep">›</li>
+        <li id="bc-name">Loading…</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ LOADING ═══════════════════════ -->
+  <div class="pdp-loading" id="pdp-loading">
+    <div class="spinner"></div>
+    <p>Loading Fragrance…</p>
+  </div>
+
+  <!-- ═══════════════════════ ERROR ═══════════════════════ -->
+  <div class="pdp-error" id="pdp-error">
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="error-icon">🌿</div>
+      <h2>Product Not Found</h2>
+      <p id="pdp-error-msg">This fragrance doesn't exist or may have been removed.</p>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;background:var(--forest);color:var(--sand);font-size:.7rem;letter-spacing:.2em;font-weight:700;">
+        ← BACK TO STORE
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ PRODUCT CONTENT ═══════════════════════ -->
+  <div id="pdp-content">
+    <main class="pdp-main">
+      <div class="container">
+        <div class="pdp-grid">
+
+          <!-- Left: Image panel -->
+          <div class="pdp-image-panel">
+            <div class="pdp-img-wrap" id="pdp-img-wrap">
+              <div class="pdp-img-placeholder" id="pdp-img-placeholder">
+                <span>🌺</span>
+                <p>LOADING IMAGE</p>
+              </div>
+            </div>
+            <div class="pdp-img-actions">
+              <button class="img-action-btn" id="btn-share" onclick="PDP.shareProduct()">
+                🔗 SHARE LINK
+              </button>
+              <button class="img-action-btn" id="btn-wish-main" onclick="PDP.toggleWishlist()">
+                ♡ WISHLIST
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Info panel -->
+          <div class="pdp-info-panel">
+            <div class="pdp-cat" id="pdp-cat">CATEGORY</div>
+            <h1 class="pdp-name" id="pdp-name">Loading…</h1>
+
+            <div class="pdp-rating-row">
+              <div class="pdp-stars" id="pdp-stars">★★★★★</div>
+              <div class="pdp-rating-num" id="pdp-rating-num">5.0</div>
+              <div class="pdp-review-count" id="pdp-review-count">(0 reviews)</div>
+            </div>
+
+            <hr class="pdp-divider">
+
+            <div class="pdp-price-row">
+              <div class="pdp-price" id="pdp-price">PKR —</div>
+              <div class="pdp-size-label" id="pdp-size-label"></div>
+            </div>
+
+            <!-- Size selector -->
+            <div class="pdp-size-section" id="pdp-size-section" style="display:none;">
+              <div class="pdp-size-title">SELECT SIZE</div>
+              <div class="pdp-sizes" id="pdp-sizes"></div>
+            </div>
+
+            <!-- Qty -->
+            <div class="pdp-qty-row">
+              <span class="pdp-qty-label">QUANTITY</span>
+              <div class="pdp-qty-ctrl">
+                <button class="pdp-qty-btn" onclick="PDP.changeQty(-1)">−</button>
+                <div class="pdp-qty-num" id="pdp-qty">1</div>
+                <button class="pdp-qty-btn" onclick="PDP.changeQty(+1)">+</button>
+              </div>
+            </div>
+            <div class="pdp-total-row">Total: <strong id="pdp-total">PKR —</strong></div>
+
+            <!-- Stock status -->
+            <div class="pdp-stock-dot" id="pdp-stock-inline" style="display:inline-flex;margin-bottom:1.2rem;">
+              <span class="stock-dot in" id="stock-dot-inline"></span>
+              <span id="stock-label-inline">In Stock</span>
+            </div>
+
+            <!-- CTAs -->
+            <div class="pdp-actions">
+              <button class="btn-pdp-wa" id="btn-order-wa" onclick="PDP.orderWhatsApp()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.847L.057 23.882l6.221-1.452A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.82 9.82 0 01-5.012-1.373l-.36-.213-3.694.862.879-3.584-.234-.371A9.816 9.816 0 012.182 12C2.182 6.57 6.569 2.182 12 2.182S21.818 6.57 21.818 12 17.431 21.818 12 21.818z"/></svg>
+                ORDER ON WHATSAPP
+              </button>
+              <div class="pdp-secondary-actions">
+                <button class="btn-cart" id="btn-add-cart" onclick="PDP.addToCart()">
+                  🛒 ADD TO CART
+                </button>
+                <button class="btn-wish" id="btn-wish-icon" onclick="PDP.toggleWishlist()" title="Add to Wishlist">♡</button>
+                <button class="btn-share" onclick="PDP.shareProduct()">🔗 SHARE</button>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="pdp-desc-section">
+              <div class="pdp-desc-title">DESCRIPTION</div>
+              <p class="pdp-desc-text" id="pdp-desc">—</p>
+            </div>
+
+            <!-- Meta tags -->
+            <div class="pdp-meta" id="pdp-meta"></div>
+
+            <!-- Trust badges -->
+            <div class="pdp-trust">
+              <div class="trust-item">
+                <span class="trust-ico">🚚</span>
+                <div class="trust-txt"><strong>Pakistan-Wide Delivery</strong>Via WhatsApp order</div>
+              </div>
+              <div class="trust-item">
+                <span class="trust-ico">🌿</span>
+                <div class="trust-txt"><strong>100% Alcohol-Free</strong>Pure & authentic</div>
+              </div>
+              <div class="trust-item">
+                <span class="trust-ico">✅</span>
+                <div class="trust-txt"><strong>Secure Shopping</strong>Trusted since 2020</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════════════════ REVIEWS ═══════════════════════ -->
+    <section class="pdp-section" id="reviews-section">
+      <div class="container">
+        <h2 class="pdp-section-title">Customer Reviews</h2>
+
+        <div class="reviews-summary" id="reviews-summary" style="display:none;">
+          <div>
+            <div class="reviews-big-num" id="avg-rating">0.0</div>
+            <div class="reviews-big-stars" id="avg-stars">☆☆☆☆☆</div>
+            <div class="reviews-big-count" id="total-reviews-count">0 reviews</div>
+          </div>
+          <div class="reviews-bars" id="rating-bars"></div>
+        </div>
+
+        <div class="reviews-list" id="reviews-list">
+          <p class="no-reviews">Be the first to review this fragrance!</p>
+        </div>
+
+        <!-- Review form -->
+        <div class="review-form-wrap">
+          <div class="review-form-title">Write a Review</div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label">Your Name *</label>
+              <input type="text" class="form-input" id="rv-name" placeholder="e.g. Ahmed Raza" maxlength="50">
+              <span class="form-error" id="rv-name-err"></span>
+            </div>
+            <div class="form-row">
+              <label class="form-label">City</label>
+              <input type="text" class="form-input" id="rv-city" placeholder="e.g. Lahore" maxlength="50">
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:1rem;">
+            <label class="form-label">Rating *</label>
+            <div class="star-rating-input" id="star-input">
+              <button type="button" class="star-btn" data-val="1" onclick="PDP.setReviewStar(1)">★</button>
+              <button type="button" class="star-btn" data-val="2" onclick="PDP.setReviewStar(2)">★</button>
+              <button type="button" class="star-btn" data-val="3" onclick="PDP.setReviewStar(3)">★</button>
+              <button type="button" class="star-btn" data-val="4" onclick="PDP.setReviewStar(4)">★</button>
+              <button type="button" class="star-btn" data-val="5" onclick="PDP.setReviewStar(5)">★</button>
+            </div>
+            <span class="form-error" id="rv-rating-err"></span>
+          </div>
+          <div class="form-row" style="margin-top:1rem;">
+            <label class="form-label">Your Review *</label>
+            <textarea class="form-textarea" id="rv-text" placeholder="Share your experience with this fragrance…" maxlength="500"></textarea>
+            <span class="form-error" id="rv-text-err"></span>
+          </div>
+          <button class="btn-submit-review" id="btn-submit-review" onclick="PDP.submitReview()">SUBMIT REVIEW</button>
+          <div class="form-success" id="rv-success" style="display:none;">✓ Review submitted! It will appear after admin approval.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ RELATED PRODUCTS ═══════════════════════ -->
+    <section class="pdp-section" id="related-section" style="display:none;">
+      <div class="container">
+        <h2 class="pdp-section-title">More from this Category</h2>
+        <div class="related-grid" id="related-grid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══════════════════════ CART DRAWER ═══════════════════════ -->
+  <div class="cart-overlay" id="cart-overlay" onclick="PDP.toggleCartDrawer()"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">Your Cart</div>
+      <button class="cart-close" onclick="PDP.toggleCartDrawer()">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items-list">
+      <div class="cart-empty">
+        <span>🛒</span>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none;">
+      <div class="cart-total-row">
+        <span class="cart-total-label">TOTAL</span>
+        <span class="cart-total-val" id="cart-total">PKR 0</span>
+      </div>
+      <button class="btn-cart-wa" onclick="PDP.checkoutWhatsApp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.847L.057 23.882l6.221-1.452A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.82 9.82 0 01-5.012-1.373l-.36-.213-3.694.862.879-3.584-.234-.371A9.816 9.816 0 012.182 12C2.182 6.57 6.569 2.182 12 2.182S21.818 6.57 21.818 12 17.431 21.818 12 21.818z"/></svg>
+        ORDER VIA WHATSAPP
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ TOAST ═══════════════════════ -->
+  <div id="toast-container"></div>
+
+  <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+  <footer class="pdp-footer">
+    <div class="container">
+      <p>© 2025 <strong>Miskeen Fragrance Center</strong> · 100% Online Store · Pakistan</p>
+      <p style="margin-top:.4rem; opacity:.6;"><a href="index.html">← Back to Store</a></p>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════ SCRIPT ═══════════════════════ -->
+  <script type="module" src="js/product.js"></script>
+</body>
+</html>

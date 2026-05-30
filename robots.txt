@@ -1,0 +1,11 @@
+# Robots.txt for Miskeen Fragrance Center
+# Allow all crawlers to access the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://miskeenfragrance.com/sitemap.xml
+
+# Disallow admin-related paths (if any)
+Disallow: /admin/

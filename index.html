@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miskeen Fragrance Center – Pure Attar & Perfumes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ═══ TOAST CONTAINER ═══ -->
+  <div id="toast-container"></div>
+
+  <!-- ═══ WA STICKY BUTTON ═══ -->
+  <a class="wa-sticky" id="wa-sticky-link" href="#" target="_blank" rel="noopener" title="Order on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.847L.057 23.882l6.221-1.452A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.82 9.82 0 01-5.012-1.373l-.36-.213-3.694.862.879-3.584-.234-.371A9.816 9.816 0 012.182 12C2.182 6.57 6.569 2.182 12 2.182S21.818 6.57 21.818 12 17.431 21.818 12 21.818z"/>
+    </svg>
+  </a>
+
+  <!-- ═══ HEADER ═══ -->
+  <header id="site-header">
+    <div class="container header-inner">
+      <div class="logo" id="logo-trigger">
+        <span class="logo-name" id="hdr-logo-name">Miskeen Fragrance Center</span>
+        <span class="logo-tag" id="hdr-logo-tag">WHERE SCENT BECOMES SOUL</span>
+      </div>
+      <nav class="main-nav">
+        <span class="nav-link active" onclick="app.goPage('home')">HOME</span>
+        <span class="nav-link" onclick="app.goPage('products')">COLLECTION</span>
+        <span class="nav-link" onclick="app.goPage('about')">ABOUT</span>
+        <span class="nav-link" onclick="app.goPage('reviews')">REVIEWS</span>
+        <span class="nav-link" onclick="app.goPage('contact')">CONTACT</span>
+        <a class="btn btn-outline" onclick="app.showLoginModal()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;">🔐 ADMIN PANEL</a>
+        <a class="btn btn-wa" id="hdr-wa-btn" href="#" target="_blank" rel="noopener" style="font-size:.6rem;padding:.6rem 1.2rem;">💬 ORDER NOW</a>
+      </nav>
+      <button class="hamburger" onclick="app.toggleMobile()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav">
+      <span class="nav-link" onclick="app.goPage('home');app.toggleMobile()">HOME</span>
+      <span class="nav-link" onclick="app.goPage('products');app.toggleMobile()">COLLECTION</span>
+      <span class="nav-link" onclick="app.goPage('about');app.toggleMobile()">ABOUT</span>
+      <span class="nav-link" onclick="app.goPage('reviews');app.toggleMobile()">REVIEWS</span>
+      <span class="nav-link" onclick="app.goPage('contact');app.toggleMobile()">CONTACT</span>
+      <a class="btn btn-wa" id="mob-wa-btn" href="#" target="_blank" rel="noopener" style="font-size:.65rem;justify-content:center;">💬 ORDER ON WHATSAPP</a>
+    </nav>
+  </header>
+
+  <!-- ════════════════════════════════════════════
+       PAGE: HOME
+  ═════════════════════════════════════════════ -->
+  <div class="page active" id="page-home">
+    <!-- Hero -->
+    <section style="background:var(--sand);">
+      <div class="container">
+        <div class="hero">
+          <div class="hero-left">
+            <div class="hero-eyebrow">
+              <span class="tag" id="hero-eyebrow-text">Premium Online Attar Store</span>
+            </div>
+            <h1 class="hero-title">
+              The <em>Ancient</em> Art<br>of <strong>Pure Fragrance</strong>
+            </h1>
+            <p class="hero-desc" id="hero-desc">100% natural, alcohol-free attars sourced from the finest botanicals. Browse our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="app.goPage('products')">EXPLORE COLLECTION →</button>
+              <a class="btn btn-wa" id="hero-wa-btn" href="#" target="_blank" rel="noopener">💬 ORDER NOW</a>
+            </div>
+            <div class="hero-trust">
+              <div class="trust-item"><div class="trust-num">100%</div><div class="trust-label">HALAL &amp; ALCOHOL-FREE</div></div>
+              <div class="trust-item"><div class="trust-num">50+</div><div class="trust-label">PREMIUM FRAGRANCES</div></div>
+              <div class="trust-item"><div class="trust-num">★4.9</div><div class="trust-label">CUSTOMER RATING</div></div>
+            </div>
+            <!-- Live Visitor Badge -->
+            <div id="live-visitor-badge" style="display:none;" class="live-visitor-badge">
+              <span class="live-dot"></span>
+              <span id="live-visitor-count">0</span> people browsing now
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-img-wrap" id="hero-img-wrap">
+              <div class="hero-img-placeholder">
+                <span class="big">🌺</span>
+                <p>MISKEEN FRAGRANCE</p>
+              </div>
+              <div class="hero-float-badge">
+                <div class="hfb-label">FEATURED</div>
+                <div class="hfb-val" id="hero-featured-name">Office For Men</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-bar">
+      <div class="marquee-inner">
+        <span class="marquee-item">PURE ATTAR</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">ALCOHOL-FREE</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">NATIONWIDE DELIVERY</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">HALAL CERTIFIED</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">ORDER ON WHATSAPP</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">PREMIUM QUALITY</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">PURE ATTAR</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">ALCOHOL-FREE</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">NATIONWIDE DELIVERY</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">HALAL CERTIFIED</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">ORDER ON WHATSAPP</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">PREMIUM QUALITY</span><span class="marquee-sep">✦</span>
+      </div>
+    </div>
+
+    <!-- Featured Products -->
+    <section class="section" style="background:#fff;">
+      <div class="container">
+        <div class="section-head">
+          <span class="tag">Curated Selection</span>
+          <h2 class="section-title mt-1">Featured <em>Fragrances</em></h2>
+          <p class="section-sub mt-1">Our most-loved attars, handpicked for exceptional quality and lasting impression.</p>
+        </div>
+        <div class="products-grid" id="featured-grid">
+          <!-- Skeleton loaders shown until Firebase loads -->
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+        </div>
+        <div style="text-align:center;margin-top:2.5rem;">
+          <button class="btn btn-outline" onclick="app.goPage('products')">VIEW FULL COLLECTION →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head text-center">
+          <span class="tag">Why Miskeen</span>
+          <h2 class="section-title mt-1">Crafted for the <em>Discerning</em></h2>
+        </div>
+        <div class="why-grid">
+          <div class="why-card"><div class="why-icon">🌿</div><div class="why-title">100% Natural Attars</div><div class="why-text">Pure oil-based fragrances with no alcohol, no synthetics. Safe for skin and perfectly halal.</div></div>
+          <div class="why-card"><div class="why-icon">📦</div><div class="why-title">Nationwide Delivery</div><div class="why-text">We ship across all of Pakistan — from Karachi to Gilgit. Fast, tracked, and reliable.</div></div>
+          <div class="why-card"><div class="why-icon">💬</div><div class="why-title">WhatsApp Ordering</div><div class="why-text">No complicated checkout. Just message us, choose your fragrance, and pay with ease.</div></div>
+          <div class="why-card"><div class="why-icon">✨</div><div class="why-title">Premium Sourcing</div><div class="why-text">Sourced directly from renowned distillers in Kannauj, Taif, and Arabia.</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PAGE: PRODUCTS
+  ═════════════════════════════════════════════ -->
+  <div class="page" id="page-products">
+    <div class="page-banner">
+      <div class="container" style="position:relative;z-index:1;">
+        <span class="tag">Our Collection</span>
+        <h1>Pure <em>Fragrances</em></h1>
+        <p>Authentic attars, oud, musks &amp; perfumes — curated for you</p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container">
+        <!-- Search -->
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-inp" id="search-input" type="text" placeholder="Search fragrances..." oninput="app.handleSearch()">
+        </div>
+        <!-- Category Filter -->
+        <div class="cat-bar">
+          <button class="cat-btn active" data-category="all" onclick="app.filterProds('all',this)">ALL</button>
+          <!-- Categories will be loaded dynamically from Firebase -->
+        </div>
+        <div class="products-grid" id="all-products-grid">
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+          <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PAGE: ABOUT
+  ═════════════════════════════════════════════ -->
+ <div class="page" id="page-about">
+  <div class="page-banner">
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="tag">Who We Are</span>
+      <h1>Our <em>Story</em></h1>
+      <p>Dedicated to authentic, alcohol-free fragrance since day one</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="about-grid">
+
+      <div class="about-img-wrap" onclick="app.openImage(this)">
+  <img 
+    src="https://res.cloudinary.com/dc5ajtraa/image/upload/v1778850697/miskeen_fragrance_400px_o3ifai.png"
+    alt="Miskeen Fragrance Center"
+    style="width:100%;height:100%;object-fit:contain;display:block;"
+  >
+</div>
+
+        <div>
+          <span class="tag">Who We Are</span>
+          <h2 class="section-title mt-1" id="about-title">Pure <em>Fragrance</em>,<br>Delivered Online</h2>
+          <p class="section-sub mt-1" id="about-text1">Miskeen Fragrance Center is a 100% online attar store dedicated to bringing you the finest, most authentic non-alcoholic perfumes straight from trusted sources to your doorstep anywhere in Pakistan.</p>
+          <p class="section-sub mt-1" id="about-text2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection, ensuring purity, longevity, and authenticity in every drop.</p>
+
+          <div class="about-values mt-2">
+            <div class="val-card"><div class="val-title">Halal &amp; Alcohol-Free</div><div class="val-text">All our attars are 100% natural oil-based — safe for all, suitable for prayer.</div></div>
+            <div class="val-card"><div class="val-title">Premium Sourcing</div><div class="val-text">Sourced directly from trusted distillers in Kannauj, Taif, and Arabia.</div></div>
+            <div class="val-card"><div class="val-title">Fast Delivery</div><div class="val-text">We ship nationwide — from Karachi to Lahore, Islamabad to Peshawar.</div></div>
+            <div class="val-card"><div class="val-title">Personal Service</div><div class="val-text">Chat directly with us on WhatsApp for recommendations and custom orders.</div></div>
+          </div>
+
+          <div class="mt-2">
+            <button class="btn btn-primary" onclick="app.goPage('products')">BROWSE COLLECTION →</button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+  <!-- ════════════════════════════════════════════
+       PAGE: CONTACT
+  ═════════════════════════════════════════════ -->
+  <div class="page" id="page-contact">
+    <div class="page-banner">
+      <div class="container" style="position:relative;z-index:1;">
+        <span class="tag">Get in Touch</span>
+        <h1>Contact <em>Us</em></h1>
+        <p>We're here to help — reach us any time on WhatsApp</p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container">
+        <div class="contact-grid">
+          <div>
+            <span class="tag">Reach Out</span>
+            <h2 class="section-title mt-1">Order Online,<br><em>Delivered to You</em></h2>
+            <p class="section-sub mt-1">We're a 100% online store. Message us on WhatsApp to place orders, ask about fragrances, or inquire about bulk pricing.</p>
+            <div class="contact-methods">
+              <a class="cmethod" id="contact-wa-link" href="#" target="_blank" rel="noopener">
+                <div class="cmethod-icon">💬</div>
+                <div><div class="cmethod-label">WhatsApp — Place Your Order</div><div class="cmethod-val" id="contact-wa-num">+92 300 1234567</div></div>
+              </a>
+              <a class="cmethod" id="contact-phone-link" href="#">
+                <div class="cmethod-icon">📞</div>
+                <div><div class="cmethod-label">Call to Order</div><div class="cmethod-val" id="contact-phone-num">+92 300 1234567</div></div>
+              </a>
+              <a class="cmethod" id="contact-email-link" href="#">
+                <div class="cmethod-icon">✉</div>
+                <div><div class="cmethod-label">Email Us</div><div class="cmethod-val" id="contact-email-val">info@miskeenfragrance.com</div></div>
+              </a>
+              <div class="cmethod" style="cursor:default;">
+                <div class="cmethod-icon">🚚</div>
+                <div><div class="cmethod-label">Delivery</div><div class="cmethod-val">Nationwide across Pakistan</div></div>
+              </div>
+              <div class="cmethod" style="cursor:default;">
+                <div class="cmethod-icon">🕐</div>
+                <div><div class="cmethod-label">Order Hours</div><div class="cmethod-val" id="contact-hours">Mon–Sun 12am–12pm </div></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="cform">
+              <div class="cform-title">Send a <em style="font-family:'Cormorant Garamond',serif;">Message</em></div>
+              <div class="cf-row">
+                <div class="cf-group"><label>YOUR NAME</label><input type="text" id="cf-name" placeholder="Ahmad Raza"></div>
+                <div class="cf-group"><label>WHATSAPP NUMBER</label><input type="tel" id="cf-phone" placeholder="+92 300 0000000"></div>
+              </div>
+              <div class="cf-group"><label>DELIVERY CITY / AREA</label><input type="text" id="cf-city" placeholder="e.g. Lahore, DHA Phase 5"></div>
+              <div class="cf-group">
+                <label>PRODUCT INTEREST</label>
+                <select id="cf-product"><option value="">-- Select Fragrance --</option></select>
+              </div>
+              <div class="cf-group"><label>YOUR MESSAGE</label><textarea id="cf-msg" rows="4" placeholder="e.g. I want 2 bottles of Office For Men 6ml, please confirm availability..."></textarea></div>
+              <button class="btn btn-wa" onclick="app.sendContactWA()" style="width:100%;justify-content:center;">💬 SEND VIA WHATSAPP</button>
+              <div class="alert alert-success" id="contact-success" style="display:none;">✓ Opening WhatsApp with your message...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       PAGE: REVIEWS
+  ═════════════════════════════════════════════ -->
+  <div class="page" id="page-reviews">
+    <div class="page-banner">
+      <div class="container" style="position:relative;z-index:1;">
+        <span class="tag">Customer Love</span>
+        <h1>Reviews &amp; <em>Feedback</em></h1>
+        <p>What our customers say about us</p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container">
+        <div class="section-head text-center" style="max-width:480px;margin:0 auto 3rem;">
+          <span class="tag">Verified Reviews</span>
+          <h2 class="section-title mt-1">Happy <em>Customers</em></h2>
+        </div>
+        <div class="reviews-grid" id="reviews-grid">
+          <div class="rcard" style="opacity:.4;"><p class="rcard-text">Loading reviews...</p><div class="rcard-foot"><div class="rcard-avatar">👤</div><div><div class="rcard-name">Please wait</div></div></div></div>
+        </div>
+        <!-- Submit Review Form -->
+        <div class="review-form-wrap">
+          <div style="max-width:700px;margin:0 auto;">
+            <span class="tag" style="color:var(--gold2);">Share Your Experience</span>
+            <h2 class="section-title mt-1" style="color:var(--sand);font-size:1.8rem;">Leave a <em style="color:var(--gold2);">Review</em></h2>
+            <p style="font-size:.9rem;color:rgba(245,239,230,.55);margin-top:.5rem;margin-bottom:2rem;">Ordered from us? We'd love to hear your experience!</p>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="rfrow">
+                <div class="rf-group"><label>YOUR NAME *</label><input type="text" id="rv-name" placeholder="e.g. Fatima Noor"></div>
+                <div class="rf-group"><label>CITY</label><input type="text" id="rv-city" placeholder="e.g. Lahore"></div>
+              </div>
+              <div class="rf-group">
+                <label>PRODUCT PURCHASED</label>
+                <select id="rv-product"><option value="">-- Select Product --</option></select>
+              </div>
+              <div class="rf-group">
+                <label>RATING</label>
+                <select id="rv-rating">
+                  <option value="5">★★★★★ — Excellent</option>
+                  <option value="4">★★★★☆ — Very Good</option>
+                  <option value="3">★★★☆☆ — Good</option>
+                  <option value="2">★★☆☆☆ — Fair</option>
+                  <option value="1">★☆☆☆☆ — Poor</option>
+                </select>
+              </div>
+              <div class="rf-group"><label>YOUR REVIEW *</label><textarea id="rv-text" rows="4" placeholder="Tell us about your experience — fragrance, delivery, packaging..."></textarea></div>
+              <button class="btn btn-gold" id="rv-submit-btn" onclick="app.submitReview()" style="width:fit-content;">SUBMIT REVIEW</button>
+              <div class="alert alert-success" id="review-success" style="display:none;">✓ Thank you! Your review has been submitted.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container">
+      <div class="ft-grid">
+        <div class="ft-brand">
+          <div class="logo">
+            <span class="logo-name" id="ft-logo-name">Miskeen Fragrance Center</span>
+            <span class="logo-tag" id="ft-logo-tag">WHERE SCENT BECOMES SOUL</span>
+          </div>
+          <p id="ft-desc">Pakistan's online attar & perfume store. Pure, natural, alcohol-free fragrances delivered to your doorstep.</p>
+        </div>
+        <div class="ft-col">
+          <h5>SHOP</h5>
+          <a onclick="app.goPage('products')">All Fragrances</a>
+          <a onclick="app.filterProds('attar');app.goPage('products')">Attar</a>
+          <a onclick="app.filterProds('perfume');app.goPage('products')">Perfumes</a>
+          <a onclick="app.filterProds('oud');app.goPage('products')">Oud</a>
+        </div>
+        <div class="ft-col">
+          <h5>QUICK LINKS</h5>
+          <a onclick="app.goPage('home')">Home</a>
+          <a onclick="app.goPage('about')">About Us</a>
+          <a onclick="app.goPage('reviews')">Reviews</a>
+          <a onclick="app.goPage('contact')">How to Order</a>
+        </div>
+        <div class="ft-col">
+          <h5>CONNECT</h5>
+          <a id="ft-wa-link" href="#" target="_blank" rel="noopener">WhatsApp Order</a>
+          <a id="ft-ig" href="#" target="_blank" rel="noopener">Instagram</a>
+          <a id="ft-fb" href="#" target="_blank" rel="noopener">Facebook</a>
+          <p id="ft-hours">Mon–Sat 9am–9pm</p>
+        </div>
+      </div>
+      <div class="ft-bottom">
+        <p id="ft-copy">© 2026 Miskeen Fragrance Center. All Rights Reserved. | 100% Online Store</p>
+        <span>Pure · Natural · Halal · Delivered Nationwide</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ BACK TO TOP ═══ -->
+  <button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
+
+  <!-- ═══ EDIT PRODUCT MODAL ═══ -->
+  <div id="edit-modal-overlay">
+    <div class="edit-modal-box">
+      <div class="edit-modal-title">
+        Edit Product
+        <button class="edit-modal-close" onclick="app.closeEditModal()">✕ CLOSE</button>
+      </div>
+      <div class="adm-msg" id="edit-msg"></div>
+      <div class="adm-form-grid">
+        <input type="hidden" id="edit-pid">
+        <div class="adm-field"><label>PRODUCT NAME *</label><input id="edit-pn" placeholder="e.g. Office For Men"></div>
+        <div class="adm-field">
+          <label>CATEGORY *</label>
+          <select id="edit-pc">
+            <!-- Categories will be loaded dynamically from Firebase -->
+          </select>
+        </div>
+        <div class="adm-field" style="grid-column:span 2">
+          <label>SHORT DESCRIPTION</label>
+          <textarea id="edit-pd" rows="2" placeholder="Brief description..."></textarea>
+        </div>
+        <div class="adm-field"><label>BADGE (optional)</label><input id="edit-pb" placeholder="BESTSELLER · NEW · LIMITED"></div>
+        <div class="adm-field">
+          <label>FEATURED ON HOME PAGE</label>
+          <select id="edit-pf"><option value="no">No</option><option value="yes">Yes</option></select>
+        </div>
+        <div class="adm-field">
+          <label>REPLACE IMAGE (upload)</label>
+          <input type="file" id="edit-pi" accept="image/*" onchange="app.prevEditImg(event)">
+          <div class="upload-progress" id="edit-upload-progress"><div class="upload-progress-bar" id="edit-upload-progress-bar"></div></div>
+          <img id="edit-pi-preview" class="img-preview" alt="Preview">
+        </div>
+        <div class="adm-field"><label>IMAGE URL (alternative)</label><input id="edit-pi-url" placeholder="https://example.com/image.jpg"></div>
+      </div>
+      <div style="margin:1rem 0;">
+        <div class="adm-section-title" style="font-size:.85rem;margin-bottom:.8rem;">Size & Price Options</div>
+        <div id="edit-sizes-wrap"></div>
+        <button class="add-size-btn" onclick="app.addEditSize()">+ ADD SIZE</button>
+      </div>
+      <button class="adm-submit" id="edit-save-btn" onclick="app.doEditProd()">SAVE CHANGES</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ADMIN LOGIN MODAL — Firebase Auth
+  ════════════════════════════════════════════ -->
+  <div id="admin-login-overlay">
+    <div class="login-box">
+      <h2>Admin Access</h2>
+      <p>Sign in with your admin email & password to manage the store</p>
+      <input type="email" class="login-inp" id="admin-email-inp" placeholder="admin@miskeenfragrance.com" autocomplete="email">
+      <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')app.doLogin()">
+      <div class="login-error" id="login-error">✕ Invalid email or password. Please try again.</div>
+      <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;padding:1rem;" onclick="app.doLogin()">SIGN IN</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center;padding:.8rem;margin-top:.6rem;" onclick="app.closeLogin()">CANCEL</button>
+      <p style="text-align:center;font-size:.6rem;color:var(--muted);margin-top:1.5rem;letter-spacing:.1em;">Miskeen Fragrance Center · Admin Portal</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ADMIN PANEL
+  ════════════════════════════════════════════ -->
+  <div id="admin-panel">
+    <div class="adm-header">
+      <div>
+        <div class="adm-title">Admin Panel — <span>Miskeen Fragrance Center</span></div>
+        <div class="adm-user-info" id="adm-user-info">Not signed in</div>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center;">
+        <button class="adm-close-btn" onclick="app.doLogout()" style="border-color:rgba(192,57,43,.3);color:rgba(192,57,43,.6);">⎋ LOGOUT</button>
+        <button class="adm-close-btn" onclick="app.closeAdmin()">✕ CLOSE</button>
+      </div>
+    </div>
+
+    <div class="adm-tabs">
+      <button class="adm-tab on" onclick="app.swAdmTab('adm-add',this)">+ ADD PRODUCT</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-manage',this)">📦 PRODUCTS</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-categories',this)">🏷 CATEGORIES</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-reviews',this)">⭐ REVIEWS</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-stock',this)">📊 STOCK</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-dashboard',this)">🔴 LIVE DASHBOARD</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-content',this)">✏ CONTENT</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-contact',this)">📞 CONTACT</button>
+      <button class="adm-tab" onclick="app.swAdmTab('adm-settings',this)">⚙ SETTINGS</button>
+    </div>
+
+    <!-- ADD PRODUCT -->
+    <div class="adm-sec on" id="adm-add">
+      <div class="adm-msg" id="add-msg"></div>
+      <div class="adm-section-title">Add New Product</div>
+      <div class="adm-form-grid">
+        <div class="adm-field"><label>PRODUCT NAME *</label><input id="pn" placeholder="e.g. Office For Men"></div>
+        <div class="adm-field">
+          <label>CATEGORY *</label>
+          <select id="pc">
+            <!-- Categories will be loaded dynamically from Firebase -->
+          </select>
+        </div>
+        <div class="adm-field" style="grid-column:span 2">
+          <label>SHORT DESCRIPTION</label>
+          <textarea id="pd" rows="2" placeholder="Brief description of fragrance notes, character, occasion..."></textarea>
+        </div>
+        <div class="adm-field"><label>BADGE (optional)</label><input id="pb" placeholder="BESTSELLER · NEW · LIMITED"></div>
+        <div class="adm-field">
+          <label>FEATURED ON HOME PAGE</label>
+          <select id="pf"><option value="no">No</option><option value="yes">Yes</option></select>
+        </div>
+        <div class="adm-field">
+          <label>PRODUCT IMAGE (upload)</label>
+          <input type="file" id="pi" accept="image/*" onchange="app.prevProdImg(event)">
+          <div class="upload-progress" id="upload-progress"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
+          <img id="pi-preview" class="img-preview" alt="Preview">
+        </div>
+        <div class="adm-field"><label>IMAGE URL (alternative)</label><input id="pi-url" placeholder="https://example.com/image.jpg"></div>
+      </div>
+      <!-- Sizes -->
+      <div style="margin:1.2rem 0 1rem;">
+        <div class="adm-section-title" style="font-size:.85rem;margin-bottom:.8rem;">Size & Price Options <span style="font-size:.7rem;color:rgba(245,239,230,.3);font-style:normal;">(add multiple sizes)</span></div>
+        <div id="sizes-wrap">
+          <div class="size-entry">
+            <div class="adm-field"><label>SIZE</label><input class="sz-ml" placeholder="e.g. 3ml"></div>
+            <div class="adm-field"><label>PRICE</label><input class="sz-pr" placeholder="e.g. PKR 650"></div>
+            <button class="rem-size-btn" onclick="app.remSize(this)" title="Remove">✕</button>
+          </div>
+        </div>
+        <button class="add-size-btn" onclick="app.addSize()">+ ADD SIZE</button>
+      </div>
+      <button class="adm-submit" id="add-prod-btn" onclick="app.doAddProd()">+ ADD TO COLLECTION</button>
+    </div>
+
+    <!-- MANAGE PRODUCTS -->
+    <div class="adm-sec" id="adm-manage">
+      <div class="adm-msg" id="manage-msg"></div>
+      <div class="adm-products-list" id="adm-prod-list">
+        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading products...</p>
+      </div>
+    </div>
+
+    <!-- CATEGORIES MANAGEMENT -->
+    <div class="adm-sec" id="adm-categories">
+      <div class="adm-msg" id="categories-msg"></div>
+      <div class="adm-section-title">Manage Categories</div>
+      
+      <!-- Add New Category -->
+      <div style="background:rgba(245,239,230,.05);border:1px solid rgba(245,239,230,.1);padding:1.5rem;border-radius:8px;margin-bottom:2rem;">
+        <div style="font-size:.75rem;letter-spacing:.2em;font-weight:600;color:var(--gold2);margin-bottom:1rem;">ADD NEW CATEGORY</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end;">
+          <div class="adm-field"><label>CATEGORY NAME *</label><input id="cat-name" placeholder="e.g. Attar"></div>
+          <div class="adm-field"><label>CATEGORY SLUG *</label><input id="cat-slug" placeholder="e.g. attar (lowercase, no spaces)"></div>
+          <button class="adm-submit" onclick="app.addCategory()" style="margin-bottom:.2rem;">+ ADD</button>
+        </div>
+      </div>
+
+      <!-- Categories List -->
+      <div class="adm-products-list" id="adm-categories-list">
+        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading categories...</p>
+      </div>
+    </div>
+
+    <!-- REVIEWS MANAGEMENT -->
+    <div class="adm-sec" id="adm-reviews">
+      <div class="adm-section-title">Manage Reviews</div>
+      <div class="adm-products-list" id="adm-review-list">
+        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading reviews...</p>
+      </div>
+    </div>
+
+    <!-- CONTENT EDITOR -->
+    <div class="adm-sec" id="adm-content">
+      <div class="adm-msg" id="content-msg"></div>
+      <div class="adm-section-title">Home Page Content</div>
+      <div class="adm-settings-grid">
+        <div class="adm-field"><label>HERO EYEBROW TEXT</label><input id="c-eyebrow" value="Premium Online Attar Store"></div>
+        <div class="adm-field"><label>HERO FEATURED PRODUCT NAME</label><input id="c-feat-name" value="Office For Men"></div>
+        <div class="adm-field" style="grid-column:span 2">
+          <label>HERO DESCRIPTION</label>
+          <textarea id="c-desc" rows="2">100% natural, alcohol-free attars sourced from the finest botanicals. Browse our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</textarea>
+        </div>
+        <div class="adm-field"><label>HERO IMAGE (upload)</label><input type="file" id="c-hero-img" accept="image/*" onchange="app.applyHeroImg(event)"></div>
+        <div class="adm-field"><label>HERO IMAGE URL (alternative)</label><input id="c-hero-url" placeholder="https://..."></div>
+      </div>
+      <div class="adm-section-title" style="margin-top:2rem;font-size:.85rem;">About Page Content</div>
+      <div class="adm-settings-grid">
+        <div class="adm-field"><label>ABOUT TITLE</label><input id="c-ab-title" value="Pure Fragrance, Delivered Online"></div>
+        <div class="adm-field" style="grid-column:span 2"><label>ABOUT PARAGRAPH 1</label><textarea id="c-ab-p1" rows="2">Miskeen Fragrance Center is a 100% online attar store dedicated to bringing you the finest, most authentic non-alcoholic perfumes.</textarea></div>
+        <div class="adm-field" style="grid-column:span 2"><label>ABOUT PARAGRAPH 2</label><textarea id="c-ab-p2" rows="2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless.</textarea></div>
+      </div>
+      <button class="adm-submit" onclick="app.saveContent()">SAVE CONTENT</button>
+    </div>
+
+    <!-- CONTACT SETTINGS -->
+    <div class="adm-sec" id="adm-contact">
+      <div class="adm-msg" id="contact-msg"></div>
+      <div class="adm-section-title">Contact & Order Settings</div>
+      <div class="adm-settings-grid">
+        <div class="adm-field"><label>WHATSAPP NUMBER (+country code)</label><input id="s-wa" value="+923001234567"></div>
+        <div class="adm-field"><label>DISPLAY PHONE</label><input id="s-ph" value="+92 300 1234567"></div>
+        <div class="adm-field"><label>EMAIL ADDRESS</label><input id="s-em" value="info@miskeenfragrance.com"></div>
+        <div class="adm-field"><label>ORDER HOURS</label><input id="s-hr" value="Mon–Sun 12am–12pm "></div>
+        <div class="adm-field"><label>INSTAGRAM LINK</label><input id="s-ig" placeholder="https://instagram.com/..."></div>
+        <div class="adm-field"><label>FACEBOOK LINK</label><input id="s-fb" placeholder="https://facebook.com/..."></div>
+      </div>
+      <button class="adm-submit" onclick="app.saveContact()">SAVE CONTACT INFO</button>
+    </div>
+
+    <!-- STORE SETTINGS -->
+    <div class="adm-sec" id="adm-settings">
+      <div class="adm-msg" id="settings-msg"></div>
+      <div class="adm-section-title">Store Settings</div>
+      <div class="adm-settings-grid">
+        <div class="adm-field"><label>STORE NAME</label><input id="s-name" value="Miskeen Fragrance Center"></div>
+        <div class="adm-field"><label>TAGLINE</label><input id="s-tag" value="WHERE SCENT BECOMES SOUL"></div>
+        <div class="adm-field"><label>FOOTER DESCRIPTION</label><input id="s-ftdesc" value="Pakistan's online attar & perfume store."></div>
+        <div class="adm-field"><label>FOOTER COPYRIGHT</label><input id="s-copy" value="© 2026 Miskeen Fragrance Center. All Rights Reserved."></div>
+        <div class="adm-field"><label>BROWSER TAB TITLE</label><input id="s-title" value="Miskeen Fragrance Center – Pure Attar & Perfumes"></div>
+      </div>
+      <!-- Cloudinary Config -->
+      <div class="adm-section-title" style="margin-top:2rem;font-size:.85rem;">☁ Cloudinary Image Upload Config</div>
+      <p style="font-size:.72rem;color:rgba(245,239,230,.35);margin-bottom:1rem;line-height:1.7;">
+        Images are uploaded via Cloudinary (free plan supports 25GB storage).<br>
+        1. Sign up free at <strong style="color:var(--gold2);">cloudinary.com</strong><br>
+        2. Copy your <strong style="color:var(--gold2);">Cloud Name</strong> from the dashboard<br>
+        3. Go to Settings → Upload → Add upload preset → set Mode to <strong style="color:var(--gold2);">Unsigned</strong> → copy the preset name
+      </p>
+      <div class="adm-settings-grid">
+        <div class="adm-field"><label>CLOUDINARY CLOUD NAME *</label><input id="s-cloudname" placeholder="e.g. dxyz12abc"></div>
+        <div class="adm-field"><label>CLOUDINARY UPLOAD PRESET *</label><input id="s-uploadpreset" placeholder="e.g. miskeen_unsigned"></div>
+      </div>
+      <p style="font-size:.72rem;color:rgba(245,239,230,.3);margin-bottom:1rem;line-height:1.6;">
+        ⚠ To change the admin password, use Firebase Console → Authentication → Users → Reset Password.
+      </p>
+      <button class="adm-submit" onclick="app.saveSettings()">SAVE SETTINGS</button>
+    </div>
+
+    <!-- STOCK MANAGEMENT (RTDB) -->
+    <div class="adm-sec" id="adm-stock">
+      <div class="adm-section-title">📊 Live Stock & Availability
+        <span style="font-size:.65rem;color:rgba(245,239,230,.3);font-style:italic;font-weight:400;letter-spacing:0;margin-left:.5rem;">Powered by Realtime Database — updates instantly for all visitors</span>
+      </div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem;">
+        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(30,190,93,.15);border:1px solid rgba(30,190,93,.3);color:var(--success);">● In Stock — available to order</span>
+        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(226,160,63,.15);border:1px solid rgba(226,160,63,.3);color:var(--warn);">🔥 Low Stock — shows urgency badge</span>
+        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--danger);">✕ Out of Stock — disables order button</span>
+      </div>
+      <div class="adm-products-list" id="adm-stock-list">
+        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading products...</p>
+      </div>
+    </div>
+
+    <!-- LIVE DASHBOARD (RTDB) -->
+    <div class="adm-sec" id="adm-dashboard">
+      <div class="adm-section-title">🔴 Live Dashboard
+        <span style="font-size:.65rem;color:rgba(245,239,230,.3);font-style:italic;font-weight:400;letter-spacing:0;margin-left:.5rem;">All data streams live from Firebase Realtime Database</span>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-icon">👁</div>
+          <div class="dash-card-val" id="dash-visitors">—</div>
+          <div class="dash-card-label">Live Visitors Now</div>
+          <div class="dash-card-sub">People browsing the store</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🛒</div>
+          <div class="dash-card-val" id="dash-orders-today">—</div>
+          <div class="dash-card-label">Orders Today</div>
+          <div class="dash-card-sub">WhatsApp order taps today</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">📦</div>
+          <div class="dash-card-val" id="dash-orders-total">—</div>
+          <div class="dash-card-label">Total Orders</div>
+          <div class="dash-card-sub">All-time WhatsApp order taps</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🌐</div>
+          <div class="dash-card-val" id="dash-views">—</div>
+          <div class="dash-card-label">Total Page Views</div>
+          <div class="dash-card-sub">Cumulative site visits</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🌺</div>
+          <div class="dash-card-val" id="dash-products">—</div>
+          <div class="dash-card-label">Active Products</div>
+          <div class="dash-card-sub">Products in Firestore</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">⭐</div>
+          <div class="dash-card-val" id="dash-reviews">—</div>
+          <div class="dash-card-label">Customer Reviews</div>
+          <div class="dash-card-sub">Total reviews submitted</div>
+        </div>
+      </div>
+
+      <!-- Recent Order Log -->
+      <div class="adm-section-title" style="margin-top:2rem;font-size:.8rem;">Recent Order Activity
+        <span style="font-size:.62rem;color:rgba(245,239,230,.3);font-weight:400;letter-spacing:0;margin-left:.5rem;">Last 20 WhatsApp order taps — updates in real-time</span>
+      </div>
+      <div class="adm-products-list" id="adm-order-log">
+        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">No orders yet...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Development: Enable audio debugging to track play/pause conflicts -->
+  <!-- Uncomment the line below to enable audio debugging: -->
+  <!-- <script src="js/audio-debug.js"></script> -->
+  
+  <script type="module" src="js/app.js"></script>
+  <div id="imgModal" onclick="app.closeImage()" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+  <img id="modalImg" style="
+    max-width:90%;
+    max-height:90%;
+  ">
+</div>
+</body>
+</html>

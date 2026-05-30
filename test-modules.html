@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module Test - Miskeen Store</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+    .pass { background: #d4edda; color: #155724; }
+    .fail { background: #f8d7da; color: #721c24; }
+    code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>📦 Module Loading Test</h1>
+  <div id="results"></div>
+
+  <script type="module">
+    const results = document.getElementById('results');
+
+    async function runTests() {
+      const tests = [];
+
+      // Test 1: Import config
+      try {
+        const config = await import('./js/config.js');
+        tests.push({ name: 'Import config.js', pass: !!config.STORE });
+      } catch (e) {
+        tests.push({ name: 'Import config.js', pass: false, error: e.message });
+      }
+
+      // Test 2: Import utils
+      try {
+        const utils = await import('./js/modules/utils.js');
+        tests.push({ name: 'Import utils.js', pass: !!utils.VALID });
+      } catch (e) {
+        tests.push({ name: 'Import utils.js', pass: false, error: e.message });
+      }
+
+      // Test 3: Import firebase
+      try {
+        const firebase = await import('./js/modules/firebase.js');
+        tests.push({ name: 'Import firebase.js', pass: !!firebase.initializeFirebase });
+      } catch (e) {
+        tests.push({ name: 'Import firebase.js', pass: false, error: e.message });
+      }
+
+      // Test 4: Import products
+      try {
+        const products = await import('./js/modules/products.js');
+        tests.push({ name: 'Import products.js', pass: !!products.filterProducts });
+      } catch (e) {
+        tests.push({ name: 'Import products.js', pass: false, error: e.message });
+      }
+
+      // Test 5: Import admin
+      try {
+        const admin = await import('./js/modules/admin.js');
+        tests.push({ name: 'Import admin.js', pass: !!admin.showLoginModal });
+      } catch (e) {
+        tests.push({ name: 'Import admin.js', pass: false, error: e.message });
+      }
+
+      // Test 6: Import reviews
+      try {
+        const reviews = await import('./js/modules/reviews.js');
+        tests.push({ name: 'Import reviews.js', pass: !!reviews.handleReviewSubmission });
+      } catch (e) {
+        tests.push({ name: 'Import reviews.js', pass: false, error: e.message });
+      }
+
+      // Test 7: Import app
+      try {
+        const app = await import('./js/app.js');
+        tests.push({ name: 'Import app.js', pass: !!app.initializeApp });
+      } catch (e) {
+        tests.push({ name: 'Import app.js', pass: false, error: e.message });
+      }
+
+      // Render results
+      let passed = 0;
+      let failed = 0;
+      results.innerHTML = tests.map(test => {
+        if (test.pass) {
+          passed++;
+          return `<div class="test-result pass">✅ ${test.name}</div>`;
+        } else {
+          failed++;
+          return `<div class="test-result fail">❌ ${test.name}<br><small>${test.error || 'Unknown error'}</small></div>`;
+        }
+      }).join('');
+
+      results.innerHTML += `<hr><p><strong>Results: ${passed} passed, ${failed} failed</strong></p>`;
+      if (failed === 0) {
+        results.innerHTML += '<p style="color: green; font-weight: bold;">✅ All modules loaded successfully!</p>';
+      }
+    }
+
+    runTests();
+  </script>
+</body>
+</html>

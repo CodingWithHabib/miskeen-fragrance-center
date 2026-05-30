@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Miskeen Fragrance Center</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+
+<!-- AUTH VIEW: Login/Signup Form -->
+<div class="admin-auth-container" id="auth-view">
+  <div class="login-box" id="login-box">
+    <h2>Admin Portal</h2>
+    <p>Authorized administrators only.</p>
+    <form id="auth-form" onsubmit="return false;">
+      <input type="email" class="login-inp" id="admin-email-inp" placeholder="Email" autocomplete="email">
+      <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password" autocomplete="current-password">
+      <div class="login-error" id="login-error"></div>
+      <button type="button" class="btn btn-primary" id="login-btn">Sign In</button>
+      <button type="button" class="btn btn-outline" id="signup-btn">Create Account</button>
+    </form>
+    <p class="admin-note">Signup does not grant admin access automatically.</p>
+  </div>
+</div>
+
+<!-- ACCESS DENIED VIEW -->
+<div id="access-denied" class="hidden-state">
+  <h2>Access Denied</h2>
+  <p>Your account does not have administrator privileges.</p>
+  <a href="index.html" class="btn btn-primary">Return Home</a>
+</div>
+
+<!-- ADMIN DASHBOARD VIEW -->
+<div id="admin-dashboard" class="hidden-state">
+  <div class="adm-header">
+    <div>
+      <div class="adm-title">Admin <span>Dashboard</span></div>
+      <div class="adm-user-info" id="admin-user-email"></div>
+    </div>
+    <button class="adm-close-btn" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="adm-tabs">
+    <button class="adm-tab on" data-tab="adm-dashboard">Dashboard</button>
+    <button class="adm-tab" data-tab="adm-products">Products</button>
+    <button class="adm-tab" data-tab="adm-categories">Categories</button>
+    <button class="adm-tab" data-tab="adm-reviews">Reviews</button>
+    <button class="adm-tab" data-tab="adm-settings">Settings</button>
+  </div>
+
+  <!-- Dashboard Tab -->
+  <div class="adm-sec on" id="adm-dashboard">
+    <div class="adm-section-title">Overview</div>
+    <div id="dashboard-stats"></div>
+  </div>
+
+  <!-- Products Tab -->
+  <div class="adm-sec" id="adm-products">
+    <div class="adm-section-title">Product Management</div>
+    <div class="adm-msg" id="product-msg"></div>
+    <div class="adm-form-grid">
+      <div class="adm-field">
+        <label>PRODUCT NAME *</label>
+        <input type="text" id="add-pn" placeholder="e.g. Office For Men">
+      </div>
+      <div class="adm-field">
+        <label>CATEGORY *</label>
+        <select id="add-pc">
+          <option value="attar">Attar</option>
+          <option value="perfume">Perfume</option>
+          <option value="oud">Oud</option>
+          <option value="rose">Rose & Floral</option>
+          <option value="musk">Musk</option>
+          <option value="woody">Woody</option>
+        </select>
+      </div>
+      <div class="adm-field" style="grid-column: span 2;">
+        <label>DESCRIPTION</label>
+        <textarea id="add-pd" rows="2" placeholder="Brief description..."></textarea>
+      </div>
+      <div class="adm-field">
+        <label>BADGE (optional)</label>
+        <input type="text" id="add-pb" placeholder="BESTSELLER · NEW · LIMITED">
+      </div>
+      <div class="adm-field">
+        <label>FEATURED</label>
+        <select id="add-pf">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin: 1rem 0;">
+      <div class="adm-section-title" style="font-size: .85rem; margin-bottom: .8rem;">Size & Price Options</div>
+      <div id="add-sizes-wrap">
+        <div class="size-entry">
+          <div class="adm-field"><label>SIZE</label><input class="sz-ml" placeholder="e.g. 3ml"></div>
+          <div class="adm-field"><label>PRICE</label><input class="sz-pr" placeholder="e.g. PKR 650"></div>
+          <button class="rem-size-btn" type="button" onclick="removeSizeEntry(this)">✕</button>
+        </div>
+      </div>
+      <button class="add-size-btn" type="button" onclick="addSizeEntry()">+ ADD SIZE</button>
+    </div>
+    <button class="adm-submit" type="button" id="add-product-btn">ADD PRODUCT</button>
+    
+    <div class="adm-section-title" style="margin-top: 2rem;">Product List</div>
+    <div id="product-list"></div>
+  </div>
+
+  <!-- Categories Tab -->
+  <div class="adm-sec" id="adm-categories">
+    <div class="adm-section-title">Category Management</div>
+    <div class="adm-msg" id="category-msg"></div>
+    <div class="adm-form-grid">
+      <div class="adm-field">
+        <label>CATEGORY NAME *</label>
+        <input type="text" id="cat-name" placeholder="e.g. Attar">
+      </div>
+      <div class="adm-field">
+        <label>SLUG *</label>
+        <input type="text" id="cat-slug" placeholder="e.g. attar">
+      </div>
+    </div>
+    <button class="adm-submit" type="button" id="add-category-btn">ADD CATEGORY</button>
+    <div id="category-list" style="margin-top: 2rem;"></div>
+  </div>
+
+  <!-- Reviews Tab -->
+  <div class="adm-sec" id="adm-reviews">
+    <div class="adm-section-title">Review Management</div>
+    <div id="review-list"></div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div class="adm-sec" id="adm-settings">
+    <div class="adm-section-title">Store Settings</div>
+    <div class="adm-msg" id="settings-msg"></div>
+    <div class="adm-settings-grid">
+      <div class="adm-field">
+        <label>STORE NAME</label>
+        <input type="text" id="s-name">
+      </div>
+      <div class="adm-field">
+        <label>TAGLINE</label>
+        <input type="text" id="s-tag">
+      </div>
+      <div class="adm-field">
+        <label>WHATSAPP NUMBER</label>
+        <input type="text" id="s-wa">
+      </div>
+      <div class="adm-field">
+        <label>PHONE NUMBER</label>
+        <input type="text" id="s-ph">
+      </div>
+      <div class="adm-field">
+        <label>EMAIL</label>
+        <input type="text" id="s-em">
+      </div>
+      <div class="adm-field">
+        <label>HOURS</label>
+        <input type="text" id="s-hr">
+      </div>
+    </div>
+    <button class="adm-submit" type="button" id="save-settings-btn">SAVE SETTINGS</button>
+  </div>
+</div>
+
+<script type="module" src="js/admin-app.js"></script>
+</body>
+</html>
