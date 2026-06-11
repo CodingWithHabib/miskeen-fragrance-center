@@ -45,11 +45,15 @@ async function initializeFirebase() {
 
     await setPersistence(auth, browserLocalPersistence);
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      updateAuthUI();
-      if (!authInitialized) { authInitialized = true; authReadyResolve(); }
-    });
+   onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  updateAuthUI();
+
+  if (!authInitialized) {
+    authInitialized = true;
+    authReadyResolve();
+  }
+});
 
     await authReady;
     console.log('✅ Firebase initialized successfully');
@@ -202,6 +206,56 @@ function listenProducts(callback) {
 }
 
 /* ════════════════════════════════════════════════════════════════
+   CUSTOMER PROFILE OPERATIONS
+════════════════════════════════════════════════════════════════ */
+
+async function createCustomerProfile(uid, profileData) {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await setDoc(userRef, {
+      uid,
+      email: profileData.email || '',
+      displayName: profileData.displayName || '',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true };
+  } catch (error) {
+    console.error('Error creating customer profile:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function getCustomerProfile(uid) {
+  try {
+    const userRef = doc(db, 'users', uid);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      return { success: true, data: docSnap.data() };
+    } else {
+      return { success: false, error: 'Profile not found' };
+    }
+  } catch (error) {
+    console.error('Error getting customer profile:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function updateCustomerProfile(uid, profileData) {
+  try {
+    const userRef = doc(db, 'users', uid);
+    await setDoc(userRef, {
+      ...profileData,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating customer profile:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
    REVIEW OPERATIONS
 ════════════════════════════════════════════════════════════════ */
 
@@ -224,14 +278,28 @@ async function getReviews() {
 
 async function addReview(reviewData) {
   try {
-    const docRef = await addDoc(revRef, { ...reviewData, createdAt: serverTimestamp(), approved: false });
+    if (!auth.currentUser) {
+      throw new Error("Login required");
+    }
+
+    const docRef = await addDoc(revRef, {
+      userId: auth.currentUser.uid,
+      name: reviewData.name || '',
+      city: reviewData.city || '',
+      product: reviewData.product || '',
+      comment: reviewData.comment || '',
+      rating: Number(reviewData.rating),
+      createdAt: serverTimestamp(),
+      approved: false
+    });
+
     return { success: true, id: docRef.id };
+
   } catch (error) {
     console.error('Error adding review:', error);
     return { success: false, error: error.message };
   }
 }
-
 async function updateReview(reviewId, reviewData) {
   try {
     await setDoc(doc(db, 'reviews', reviewId), { ...reviewData, updatedAt: serverTimestamp() }, { merge: true });
@@ -511,6 +579,7 @@ export { signUpUser, getCurrentUserClaims, onAuthChanged,
   getProducts, addProduct, updateProduct, deleteProduct, listenProducts,
   getReviews, addReview, updateReview, deleteReview, listenReviews,
   getCategories, addCategory, updateCategory, deleteCategory, listenCategories,
+  createCustomerProfile, getCustomerProfile, updateCustomerProfile,
   initPresence, listenVisitorCount, listenStock, listenRTDBStats,
   updateStock, logOrder, incrementViewCount,
   seedIfEmpty, seedDefaultProducts, seedDefaultReviews, seedDefaultCategories,

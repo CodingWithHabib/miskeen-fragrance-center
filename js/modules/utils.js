@@ -61,6 +61,19 @@ const VALID = {
   rating: (val) => { const r = parseInt(val); return (isNaN(r) || r < 1 || r > 5) ? 'Please select a rating between 1 and 5 stars.' : null; },
   contactName:    (val) => VALID.reviewName(val),
   contactMessage: (val) => VALID.required(val, 'Message') || VALID.minLength(val, 10, 'Message') || VALID.maxLength(val, 1000, 'Message'),
+  // Customer authentication validation
+  customerName: (val) => VALID.required(val, 'Name') || VALID.minLength(val, 2, 'Name') || VALID.maxLength(val, 50, 'Name'),
+  customerEmail: (val) => VALID.required(val, 'Email') || VALID.email(val),
+  customerPassword: (val) => {
+    if (!val || typeof val !== 'string' || val.trim().length === 0) return 'Password is required.';
+    if (val.length < 6) return 'Password must be at least 6 characters.';
+    if (val.length > 128) return 'Password must be no more than 128 characters.';
+    return null;
+  },
+  passwordMatch: (password, confirmPassword) => {
+    if (password !== confirmPassword) return 'Passwords do not match.';
+    return null;
+  },
 };
 
 const SANITIZE = {

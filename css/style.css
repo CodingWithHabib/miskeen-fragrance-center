@@ -286,6 +286,13 @@ input,textarea,select{font-family:'Jost',sans-serif;}
 .login-inp{width:100%;padding:.9rem 1rem;border:1.5px solid var(--border);background:var(--sand2);color:var(--ink);font-size:.95rem;outline:none;margin-bottom:.8rem;transition:border .25s;}
 .login-inp:focus{border-color:var(--forest);}
 .login-error{font-size:.72rem;color:var(--danger);margin-bottom:.8rem;display:none;padding:.5rem .8rem;background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);}
+
+/* ═══ CUSTOMER AUTH MODAL ═══ */
+#customer-auth-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(26,18,8,.95);backdrop-filter:blur(20px);align-items:center;justify-content:center;}
+#customer-auth-overlay.show{display:flex;}
+.auth-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:1.5px solid var(--border);padding-bottom:.5rem;}
+.auth-tab{flex:1;padding:.6rem;font-size:.7rem;letter-spacing:.15em;font-weight:600;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .25s;}
+.auth-tab.active{color:var(--forest);border-bottom:2px solid var(--forest);}
 .login-divider{text-align:center;font-size:.65rem;color:var(--muted);letter-spacing:.2em;margin:.8rem 0;position:relative;}
 .login-divider::before,.login-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border);}
 .login-divider::before{left:0;} .login-divider::after{right:0;}

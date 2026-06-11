@@ -32,6 +32,8 @@
         <span class="nav-link" onclick="app.goPage('about')">ABOUT</span>
         <span class="nav-link" onclick="app.goPage('reviews')">REVIEWS</span>
         <span class="nav-link" onclick="app.goPage('contact')">CONTACT</span>
+        <a class="btn btn-outline" id="customer-auth-btn" onclick="app.showCustomerAuthModal()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;">👤 SIGN IN</a>
+        <a class="btn btn-outline" id="customer-logout-btn" onclick="app.customerSignOut()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;display:none;">🚪 LOGOUT</a>
         <a class="btn btn-outline" onclick="app.showLoginModal()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;">🔐 ADMIN PANEL</a>
         <a class="btn btn-wa" id="hdr-wa-btn" href="#" target="_blank" rel="noopener" style="font-size:.6rem;padding:.6rem 1.2rem;">💬 ORDER NOW</a>
       </nav>
@@ -449,6 +451,41 @@
       <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;padding:1rem;" onclick="app.doLogin()">SIGN IN</button>
       <button class="btn btn-outline" style="width:100%;justify-content:center;padding:.8rem;margin-top:.6rem;" onclick="app.closeLogin()">CANCEL</button>
       <p style="text-align:center;font-size:.6rem;color:var(--muted);margin-top:1.5rem;letter-spacing:.1em;">Miskeen Fragrance Center · Admin Portal</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       CUSTOMER AUTH MODAL — Login/Signup
+  ════════════════════════════════════════════ -->
+  <div id="customer-auth-overlay">
+    <div class="login-box">
+      <h2>Customer Account</h2>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-login-tab" onclick="app.switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" id="auth-signup-tab" onclick="app.switchAuthTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="auth-login-form">
+        <input type="email" class="login-inp" id="customer-email-inp" placeholder="Email address" autocomplete="email">
+        <input type="password" class="login-inp" id="customer-pass-inp" placeholder="Password" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')app.customerSignIn()">
+        <div class="login-error" id="customer-auth-error"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;" onclick="app.customerSignIn()">SIGN IN</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="auth-signup-form" style="display:none;">
+        <input type="text" class="login-inp" id="customer-name-inp" placeholder="Your Name" autocomplete="name">
+        <input type="email" class="login-inp" id="customer-signup-email-inp" placeholder="Email address" autocomplete="email">
+        <input type="password" class="login-inp" id="customer-signup-pass-inp" placeholder="Create Password" autocomplete="new-password">
+        <input type="password" class="login-inp" id="customer-signup-pass-confirm-inp" placeholder="Confirm Password" autocomplete="new-password">
+        <div class="login-error" id="customer-signup-error"></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;" onclick="app.customerSignUp()">CREATE ACCOUNT</button>
+      </div>
+
+      <button class="btn btn-outline" style="width:100%;justify-content:center;padding:.8rem;margin-top:.6rem;" onclick="app.closeCustomerAuthModal()">CANCEL</button>
+      <p style="text-align:center;font-size:.6rem;color:var(--muted);margin-top:1.5rem;letter-spacing:.1em;">Miskeen Fragrance Center · Customer Portal</p>
     </div>
   </div>
 

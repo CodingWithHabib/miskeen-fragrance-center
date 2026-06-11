@@ -27,6 +27,8 @@ export const STORE = {
 export let products = [];
 export let reviews = [];
 export let currentUser = null;
+export let customerUser = null;
+export let customerProfile = null;
 export let adminPanelOpen = false;
 export let stockData = {};
 export let rtdbStats = {};
@@ -48,6 +50,8 @@ export const state = {
   get products()     { return products; },
   get reviews()      { return reviews; },
   get currentUser()  { return currentUser; },
+  get customerUser() { return customerUser; },
+  get customerProfile() { return customerProfile; },
   get adminPanelOpen(){ return adminPanelOpen; },
   get stockData()    { return stockData; },
   get rtdbStats()    { return rtdbStats; },
@@ -55,6 +59,8 @@ export const state = {
   setProducts(v)      { products = v; },
   setReviews(v)       { reviews  = v; },
   setCurrentUser(v)   { currentUser = v; },
+  setCustomerUser(v)  { customerUser = v; },
+  setCustomerProfile(v) { customerProfile = v; },
   setAdminPanelOpen(v){ adminPanelOpen = v; },
   setStockData(v)     { stockData = v; },
   setRtdbStats(v)     { rtdbStats = v; },

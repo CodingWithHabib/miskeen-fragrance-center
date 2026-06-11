@@ -367,7 +367,8 @@ async function submitProductReview(reviewData) {
 
     // Sanitize review data
     const sanitizedData = sanitizeReviewData(reviewData);
-
+    
+    console.log("Sanitized Review:", sanitizedData);
     // Save to database
     const result = await addReview(sanitizedData);
 
@@ -424,7 +425,7 @@ function validateReviewData(data) {
     errors.push('Name is required');
   }
 
-  if (VALID.required(data.text, 'Review text')) {
+  if (VALID.required(data.comment, 'Review text')) {
     errors.push('Review text is required');
   }
 
@@ -437,11 +438,11 @@ function validateReviewData(data) {
     errors.push('Name must be no more than 50 characters');
   }
 
-  if (data.text && VALID.minLength(data.text, 10, 'Review')) {
+  if (data.comment && VALID.minLength(data.comment, 10, 'Review')) {
     errors.push('Review must be at least 10 characters');
   }
 
-  if (data.text && VALID.maxLength(data.text, 500, 'Review')) {
+  if (data.comment && VALID.maxLength(data.comment, 500, 'Review')) {
     errors.push('Review must be no more than 500 characters');
   }
 
@@ -466,7 +467,7 @@ function sanitizeReviewData(data) {
     city: SANITIZE.text(data.city || ''),
     product: SANITIZE.text(data.product || ''),
     rating: parseInt(data.rating) || 5,
-    text: SANITIZE.text(data.text || '')
+    comment: SANITIZE.text(data.comment || '')
   };
 }
 
@@ -592,10 +593,10 @@ function formatProductForDisplay(product) {
 function formatReviewForDisplay(review) {
   return {
     ...review,
-    displayName: esc(review.name),
-    displayCity: review.city ? esc(review.city) : '',
-    displayText: esc(review.text),
-    displayProduct: review.product ? esc(review.product) : '',
+    displayName: review.name || '',
+    displayCity: review.city || '',
+    displayText: review.text || review.comment || '',
+    displayProduct: review.product || '',
     stars: generateStars(review.rating),
     relativeTime: formatRelativeTime(review.createdAt?.toDate?.() || new Date()),
     isApproved: Boolean(review.approved)

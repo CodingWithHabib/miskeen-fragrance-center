@@ -2,7 +2,7 @@
    REVIEWS MODULE — Review Display & Management
 ════════════════════════════════════════════════════════════════ */
 
-import { STORE, reviews, showToast } from '../config.js';
+import { STORE, reviews, showToast, state } from '../config.js';
 import { esc, generateStars, formatRelativeTime, storage } from './utils.js';
 import { submitProductReview, removeReview, formatReviewForDisplay } from './services.js';
 import { updateReview } from './firebase.js';
@@ -75,13 +75,26 @@ async function handleReviewSubmission() {
       return;
     }
 
-    const reviewData = {
-      name:   (document.getElementById('rv-name')?.value   || '').trim(),
-      city:   (document.getElementById('rv-city')?.value   || '').trim(),
+    // Check if user is authenticated
+    const customerUser = state.customerUser;
+    const customerProfile = state.customerProfile;
+
+    let reviewData = {
       product:(document.getElementById('rv-product')?.value || ''),
       rating: parseInt(document.getElementById('rv-rating')?.value || 5),
-      text:   (document.getElementById('rv-text')?.value   || '').trim(),
+      comment:   (document.getElementById('rv-text')?.value   || '').trim(),
     };
+console.log('Review Data:', reviewData);
+    // If authenticated, use customer profile data
+    if (customerUser && customerProfile) {
+      reviewData.uid = customerUser.uid;
+      reviewData.name = customerProfile.displayName || customerUser.email?.split('@')[0] || 'Customer';
+      reviewData.email = customerUser.email;
+    } else {
+      // Guest mode: use form fields
+      reviewData.name = (document.getElementById('rv-name')?.value || '').trim();
+      reviewData.city = (document.getElementById('rv-city')?.value || '').trim();
+    }
 
     const submitBtn = document.getElementById('rv-submit-btn');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'SUBMITTING...'; }
@@ -153,7 +166,7 @@ function renderAdminReviewsList(adminReviews) {
             <span style="color:var(--gold2);font-size:.7rem;margin-left:.5rem;">${generateStars(review.rating || 5)}</span>
             ${review.approved ? '<span style="font-size:.6rem;color:#4caf50;margin-left:.5rem;">✓ Approved</span>' : '<span style="font-size:.6rem;color:#ff9800;margin-left:.5rem;">⏳ Pending</span>'}
           </div>
-          <div class="adm-item-meta" style="white-space:normal;margin-top:.3rem;">${esc(review.text)}</div>
+          <div class="adm-item-meta" style="white-space:normal;margin-top:.3rem;">${esc(review.comment)}</div>
           ${review.product ? `<div style="font-size:.6rem;color:rgba(245,239,230,.3);margin-top:.2rem;">Product: ${esc(review.product)}</div>` : ''}
           <div style="font-size:.6rem;color:rgba(245,239,230,.3);margin-top:.2rem;">Submitted: ${formatRelativeTime(review.createdAt?.toDate?.() || new Date())}</div>
         </div>
