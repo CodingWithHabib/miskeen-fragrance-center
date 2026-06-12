@@ -83,6 +83,7 @@ async function handleReviewSubmission() {
       product:(document.getElementById('rv-product')?.value || ''),
       rating: parseInt(document.getElementById('rv-rating')?.value || 5),
       comment:   (document.getElementById('rv-text')?.value   || '').trim(),
+      city:      (document.getElementById('rv-city')?.value    || '').trim(),
     };
 console.log('Review Data:', reviewData);
     // If authenticated, use customer profile data
@@ -90,10 +91,10 @@ console.log('Review Data:', reviewData);
       reviewData.uid = customerUser.uid;
       reviewData.name = customerProfile.displayName || customerUser.email?.split('@')[0] || 'Customer';
       reviewData.email = customerUser.email;
+      reviewData.city = reviewData.city || customerProfile.city || '';
     } else {
       // Guest mode: use form fields
       reviewData.name = (document.getElementById('rv-name')?.value || '').trim();
-      reviewData.city = (document.getElementById('rv-city')?.value || '').trim();
     }
 
     const submitBtn = document.getElementById('rv-submit-btn');
