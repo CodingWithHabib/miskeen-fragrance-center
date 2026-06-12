@@ -5,6 +5,7 @@ import { initializeProducts, filterProducts, handleSearch, renderAllProducts, se
 import { initializeAdmin, showLoginModal, closeLoginModal, performSignIn, performSignOut, openAdminPanel, closeAdminPanel, switchAdminTab, closeEditModal, addProductSize, addEditSize, removeProductSize, doAddProduct, editProduct, doEditProduct, deleteProduct, saveSettings, saveContent, saveContact, doAddCategory, editCategory, doDeleteCategory } from './modules/admin.js';
 import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js';
 import { initializeUtils } from './modules/utils.js';
+import { buildWhatsAppUrl } from './modules/utils.js';
 import { STORE, products, reviews, showToast, state } from './config.js';
 
 /* ════════════════════════════════════════════════════════════════
@@ -139,8 +140,7 @@ window.app = {
     if (product) lines.push(`🌺 *Product Interest:* ${product}`);
     lines.push('', '💬 *Message:*', message);
 
-    const waNumber = (STORE.wa || '+923001234567').replace(/\D/g, '');
-    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
+    window.open(buildWhatsAppUrl(STORE.wa, lines.join('\n')), '_blank', 'noopener,noreferrer');
 
     const successEl = document.getElementById('contact-success');
     if (successEl) { successEl.style.display = 'block'; setTimeout(() => { successEl.style.display = 'none'; }, 5000); }
@@ -526,8 +526,7 @@ function updateUIFromSettings() {
 }
 
 function updateWALinks() {
-  const waNumber = (STORE.wa || '+923001234567').replace(/\D/g, '');
-  const waUrl    = `https://wa.me/${waNumber}`;
+  const waUrl = buildWhatsAppUrl(STORE.wa);
 
   ['wa-sticky-link','hdr-wa-btn','hero-wa-btn','mob-wa-btn','ft-wa-link','contact-wa-link'].forEach(id => {
     const el = document.getElementById(id);
