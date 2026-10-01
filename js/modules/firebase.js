@@ -6,6 +6,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref as rtRef, set as rtSet, update as rtUpdate, onValue, serverTimestamp as rtTimestamp, increment, onDisconnect, push as rtPush } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 import { firebaseConfig } from '../firebase-config.js';
 
 /* ════════════════════════════════════════════════════════════════
@@ -18,7 +19,7 @@ import { firebaseConfig } from '../firebase-config.js';
    FIREBASE INITIALIZATION
 ════════════════════════════════════════════════════════════════ */
 
-let app, db, auth, rtdb;
+let app, db, auth, rtdb, functions;
 let currentUser = null;
 let products = [];
 let reviews = [];
@@ -30,6 +31,7 @@ let authReadyResolve = null;
 const authReady = new Promise((resolve) => { authReadyResolve = resolve; });
 
 let prodsRef, revRef, settingsRef, categoriesRef;
+let seedInProgress = false;
 
 async function initializeFirebase() {
   try {
@@ -37,6 +39,7 @@ async function initializeFirebase() {
     db   = getFirestore(app);
     auth = getAuth(app);
     rtdb = getDatabase(app);
+    functions = getFunctions(app, 'asia-southeast1');
 
     prodsRef    = collection(db, 'products');
     revRef      = collection(db, 'reviews');
@@ -48,6 +51,12 @@ async function initializeFirebase() {
    onAuthStateChanged(auth, (user) => {
   currentUser = user;
   updateAuthUI();
+
+  if (user) {
+    user.getIdTokenResult().then((token) => {
+      if (token.claims.admin === true) seedIfEmpty();
+    }).catch((error) => console.warn('Could not verify admin token for seeding:', error.message));
+  }
 
   if (!authInitialized) {
     authInitialized = true;
@@ -163,8 +172,8 @@ async function getProducts() {
 
 async function addProduct(productData) {
   try {
-    const docRef = await addDoc(prodsRef, { ...productData, createdAt: serverTimestamp(), updatedAt: serverTimestamp(), createdBy: currentUser?.uid || 'system' });
-    return { success: true, id: docRef.id };
+    const result = await httpsCallable(functions, 'createProduct')({ product: productData });
+    return result.data;
   } catch (error) {
     console.error('Error adding product:', error);
     return { success: false, error: error.message };
@@ -173,8 +182,8 @@ async function addProduct(productData) {
 
 async function updateProduct(productId, productData) {
   try {
-    await setDoc(doc(db, 'products', productId), { ...productData, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'system' }, { merge: true });
-    return { success: true };
+    const result = await httpsCallable(functions, 'updateProduct')({ productId, product: productData });
+    return result.data;
   } catch (error) {
     console.error('Error updating product:', error);
     return { success: false, error: error.message };
@@ -183,8 +192,8 @@ async function updateProduct(productId, productData) {
 
 async function deleteProduct(productId) {
   try {
-    await deleteDoc(doc(db, 'products', productId));
-    return { success: true };
+    const result = await httpsCallable(functions, 'deleteProduct')({ productId });
+    return result.data;
   } catch (error) {
     console.error('Error deleting product:', error);
     return { success: false, error: error.message };
@@ -352,8 +361,8 @@ async function getCategories() {
 
 async function addCategory(categoryData) {
   try {
-    const docRef = await addDoc(categoriesRef, { ...categoryData, createdAt: serverTimestamp(), updatedAt: serverTimestamp(), createdBy: currentUser?.uid || 'system' });
-    return { success: true, id: docRef.id };
+    const result = await httpsCallable(functions, 'createCategory')({ category: categoryData });
+    return result.data;
   } catch (error) {
     console.error('Error adding category:', error);
     return { success: false, error: error.message };
@@ -362,8 +371,8 @@ async function addCategory(categoryData) {
 
 async function updateCategory(categoryId, categoryData) {
   try {
-    await setDoc(doc(db, 'categories', categoryId), { ...categoryData, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'system' }, { merge: true });
-    return { success: true };
+    const result = await httpsCallable(functions, 'updateCategory')({ categoryId, category: categoryData });
+    return result.data;
   } catch (error) {
     console.error('Error updating category:', error);
     return { success: false, error: error.message };
@@ -372,8 +381,8 @@ async function updateCategory(categoryId, categoryData) {
 
 async function deleteCategory(categoryId) {
   try {
-    await deleteDoc(doc(db, 'categories', categoryId));
-    return { success: true };
+    const result = await httpsCallable(functions, 'deleteCategory')({ categoryId });
+    return result.data;
   } catch (error) {
     console.error('Error deleting category:', error);
     return { success: false, error: error.message };
@@ -491,9 +500,13 @@ async function collectionHasDocuments(collectionRef) {
 }
 
 async function seedIfEmpty() {
-  // FIX: removed `if (!currentUser) return` — seeding should work for fresh databases
-  // regardless of auth state, since default products/reviews are public data
+  if (seedInProgress) return;
+  seedInProgress = true;
   try {
+    if (!currentUser) return;
+    const token = await currentUser.getIdTokenResult();
+    if (token.claims.admin !== true) return;
+
     const hasProducts = await collectionHasDocuments(prodsRef);
     const hasReviews  = await collectionHasDocuments(revRef);
     const hasCategories = await collectionHasDocuments(categoriesRef);
@@ -502,6 +515,8 @@ async function seedIfEmpty() {
     if (!hasCategories) await seedDefaultCategories();
   } catch (error) {
     console.error('Error during seedIfEmpty:', error);
+  } finally {
+    seedInProgress = false;
   }
 }
 
@@ -538,7 +553,10 @@ const DEFAULT_CATEGORIES = [
 async function seedDefaultProducts() {
   try {
     for (const product of DEFAULT_PRODUCTS) {
-      await addDoc(prodsRef, { ...product, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      const result = await addProduct(product);
+      if (!result.success && !String(result.error || '').includes('already exists')) {
+        console.error('Could not seed default product:', result.error);
+      }
     }
     console.log('✅ Default products seeded');
   } catch (error) { console.error('❌ Error seeding products:', error); }
@@ -562,7 +580,10 @@ async function seedDefaultReviews() {
 async function seedDefaultCategories() {
   try {
     for (const category of DEFAULT_CATEGORIES) {
-      await addDoc(categoriesRef, { ...category, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      const result = await addCategory(category);
+      if (!result.success && !String(result.error || '').includes('already exists')) {
+        console.error('Could not seed default category:', result.error);
+      }
     }
     console.log('✅ Default categories seeded');
   } catch (error) { console.error('❌ Error seeding categories:', error); }
