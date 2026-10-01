@@ -3,8 +3,9 @@
 ════════════════════════════════════════════════════════════════ */
 
 import { VALID, SANITIZE, esc, generateStars, formatRelativeTime, formatCurrency, parseCurrency } from './utils.js';
-import { getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
+import { getProducts, getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
 import { compressImage, validateImageFile, uploadToCloudinary } from './cloudinary.js';
+import { hasDuplicateProduct } from './product-guard.js';
 
 /* ════════════════════════════════════════════════════════════════
    INITIALIZATION
@@ -181,6 +182,11 @@ async function createProduct(productData, imageFile = null) {
       img: imageUrl
     });
 
+    const existingProducts = await getProducts();
+    if (hasDuplicateProduct(existingProducts, sanitizedData)) {
+      return { success: false, error: 'A product with the same name and category already exists.' };
+    }
+
     // Save to database
     const result = await addProduct(sanitizedData);
 
@@ -243,6 +249,11 @@ async function modifyProduct(productId, productData, imageFile = null) {
       ...productData,
       img: imageUrl
     });
+
+    const existingProducts = await getProducts();
+    if (hasDuplicateProduct(existingProducts, sanitizedData, productId)) {
+      return { success: false, error: 'Another product with the same name and category already exists.' };
+    }
 
     // Update in database
     const result = await updateProduct(productId, sanitizedData);
@@ -639,5 +650,6 @@ export {
   updateProductStock,
   formatProductForDisplay,
   formatReviewForDisplay,
-  generateWhatsAppOrderMessage
+  generateWhatsAppOrderMessage,
+  hasDuplicateProduct,
 };
