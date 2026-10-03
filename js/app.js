@@ -1,11 +1,10 @@
-import { initializeFirebase, getSettings, saveSettings as firebaseSaveSettings, listenProducts, listenReviews, listenStock, listenRTDBStats, listenVisitorCount, listenCategories, initPresence, seedIfEmpty, addProduct, updateProduct, deleteProduct as firebaseDeleteProduct, signInUser, signUpUser, signOutUser, onAuthChanged, createCustomerProfile, getCustomerProfile } from './modules/firebase.js';
+import { initializeFirebase, getSettings, saveSettings as firebaseSaveSettings, listenProducts, listenReviews, listenStock, listenRTDBStats, listenVisitorCount, listenCategories, initPresence, seedIfEmpty, addProduct, updateProduct, deleteProduct as firebaseDeleteProduct } from './modules/firebase.js';
 import { initializeCloudinary, updateCloudinaryConfig, uploadToCloudinary } from './modules/cloudinary.js';
 import { initializeServices } from './modules/services.js';
 import { initializeProducts, filterProducts, handleSearch, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
 import { initializeAdmin, showLoginModal, closeLoginModal, performSignIn, performSignOut, openAdminPanel, closeAdminPanel, switchAdminTab, closeEditModal, addProductSize, addEditSize, removeProductSize, doAddProduct, editProduct, doEditProduct, deleteProduct, saveSettings, saveContent, saveContact, doAddCategory, editCategory, doDeleteCategory } from './modules/admin.js';
 import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js';
 import { initializeUtils } from './modules/utils.js';
-import { buildWhatsAppUrl } from './modules/utils.js';
 import { STORE, products, reviews, showToast, state } from './config.js';
 
 /* ════════════════════════════════════════════════════════════════
@@ -21,6 +20,7 @@ let adminPanelOpen  = false;
 let stockData       = {};
 let rtdbStats       = {};
 let visitorRef      = null;
+let appInitialized = false;
 
 function previewFileInput(event, previewId) {
   const file = event?.target?.files?.[0];
@@ -140,7 +140,8 @@ window.app = {
     if (product) lines.push(`🌺 *Product Interest:* ${product}`);
     lines.push('', '💬 *Message:*', message);
 
-    window.open(buildWhatsAppUrl(STORE.wa, lines.join('\n')), '_blank', 'noopener,noreferrer');
+    const waNumber = (STORE.wa || '+923001234567').replace(/\D/g, '');
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
 
     const successEl = document.getElementById('contact-success');
     if (successEl) { successEl.style.display = 'block'; setTimeout(() => { successEl.style.display = 'none'; }, 5000); }
@@ -149,122 +150,7 @@ window.app = {
 
   submitReview: handleReviewSubmission,
 
-  // Customer Authentication Functions
-  showCustomerAuthModal: () => {
-    const overlay = document.getElementById('customer-auth-overlay');
-    if (overlay) overlay.style.display = 'flex';
-  },
-
-  closeCustomerAuthModal: () => {
-    const overlay = document.getElementById('customer-auth-overlay');
-    if (overlay) overlay.style.display = 'none';
-    document.getElementById('customer-auth-error').textContent = '';
-    document.getElementById('customer-signup-error').textContent = '';
-  },
-
-  switchAuthTab: (tab) => {
-    const loginTab = document.getElementById('auth-login-tab');
-    const signupTab = document.getElementById('auth-signup-tab');
-    const loginForm = document.getElementById('auth-login-form');
-    const signupForm = document.getElementById('auth-signup-form');
-
-    if (tab === 'login') {
-      loginTab.classList.add('active');
-      signupTab.classList.remove('active');
-      loginForm.style.display = 'block';
-      signupForm.style.display = 'none';
-    } else {
-      loginTab.classList.remove('active');
-      signupTab.classList.add('active');
-      loginForm.style.display = 'none';
-      signupForm.style.display = 'block';
-    }
-  },
-
-  customerSignIn: async () => {
-    const email = document.getElementById('customer-email-inp').value.trim();
-    const password = document.getElementById('customer-pass-inp').value;
-    const errorEl = document.getElementById('customer-auth-error');
-
-    if (!email || !password) {
-      errorEl.textContent = 'Please enter email and password';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    const result = await signInUser(email, password);
-    if (result.success) {
-      app.closeCustomerAuthModal();
-      showToast('Welcome back!', 'success');
-    } else {
-      errorEl.textContent = result.error || 'Login failed';
-      errorEl.style.display = 'block';
-    }
-  },
-
-  customerSignUp: async () => {
-    const name = document.getElementById('customer-name-inp').value.trim();
-    const email = document.getElementById('customer-signup-email-inp').value.trim();
-    const password = document.getElementById('customer-signup-pass-inp').value;
-    const confirmPassword = document.getElementById('customer-signup-pass-confirm-inp').value;
-    const errorEl = document.getElementById('customer-signup-error');
-
-    if (!name || !email || !password || !confirmPassword) {
-      errorEl.textContent = 'Please fill in all fields';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      errorEl.textContent = 'Passwords do not match';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    if (password.length < 6) {
-      errorEl.textContent = 'Password must be at least 6 characters';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    const result = await signUpUser(email, password);
-    if (result.success) {
-      app.closeCustomerAuthModal();
-        await createCustomerProfile(result.user.uid, {
-    email: email,
-    displayName: name
-  });
-      showToast('Account created successfully!', 'success');
-    } else {
-      errorEl.textContent = result.error || 'Signup failed';
-      errorEl.style.display = 'block';
-    }
-  },
-
-  customerSignOut: async () => {
-    const result = await signOutUser();
-    if (result.success) {
-      showToast('Logged out successfully', 'info');
-    } else {
-      showToast('Logout failed', 'error');
-    }
-  },
-
 };
-
-// Customer Auth UI Update Function
-function updateCustomerAuthUI(isLoggedIn) {
-  const authBtn = document.getElementById('customer-auth-btn');
-  const logoutBtn = document.getElementById('customer-logout-btn');
-
-  if (isLoggedIn) {
-    if (authBtn) authBtn.style.display = 'none';
-    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-  } else {
-    if (authBtn) authBtn.style.display = 'inline-flex';
-    if (logoutBtn) logoutBtn.style.display = 'none';
-  }
-}
 
 // Global bindings for inline HTML handlers
 window.selectSize        = selectProductSize;
@@ -277,6 +163,8 @@ window.removeProductSize = removeProductSize;   // FIX: expose for dynamically g
 ════════════════════════════════════════════════════════════════ */
 
 async function initializeApp() {
+  if (appInitialized) return;
+  appInitialized = true;
   try {
     await initializeFirebase();
     await initializeCloudinary();
@@ -352,36 +240,6 @@ async function initializeApp() {
     await seedIfEmpty();
     initPresence();
 
-    // Initialize customer auth state listener
-    onAuthChanged(async (user) => {
-      if (user) {
-        state.setCustomerUser(user);
-        // Load customer profile
-        const profileResult = await getCustomerProfile(user.uid);
-        if (profileResult.success) {
-          state.setCustomerProfile(profileResult.data);
-        } else {
-          // Create profile if it doesn't exist
-          await createCustomerProfile(user.uid, {
-            email: user.email,
-            displayName: user.displayName || ''
-          });
-          state.setCustomerProfile({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || '',
-            createdAt: new Date(),
-            updatedAt: new Date()
-          });
-        }
-        updateCustomerAuthUI(true);
-      } else {
-        state.setCustomerUser(null);
-        state.setCustomerProfile(null);
-        updateCustomerAuthUI(false);
-      }
-    });
-
     // FIX: pass callback so live visitor badge actually updates
     listenVisitorCount((count) => {
       const badge   = document.getElementById('live-visitor-badge');
@@ -447,6 +305,8 @@ function initializeKeyboardShortcuts() {
       if (document.getElementById('admin-login-overlay')?.classList.contains('show')) { closeLoginModal(); return; }
       if (document.getElementById('admin-panel')?.classList.contains('show'))         { closeAdminPanel(); return; }
     }
+    // FIX: only one place handles Ctrl+Shift+A (removed duplicate in admin.js setupAdminEventListeners)
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); showLoginModal(); }
   });
 }
 
@@ -526,7 +386,8 @@ function updateUIFromSettings() {
 }
 
 function updateWALinks() {
-  const waUrl = buildWhatsAppUrl(STORE.wa);
+  const waNumber = (STORE.wa || '+923001234567').replace(/\D/g, '');
+  const waUrl    = `https://wa.me/${waNumber}`;
 
   ['wa-sticky-link','hdr-wa-btn','hero-wa-btn','mob-wa-btn','ft-wa-link','contact-wa-link'].forEach(id => {
     const el = document.getElementById(id);
@@ -573,5 +434,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 export { initializeApp, goPage, toggleMobile };
 export { STORE, products, reviews, showToast } from './config.js';
-
-

@@ -7,6 +7,7 @@ import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteD
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref as rtRef, set as rtSet, update as rtUpdate, onValue, serverTimestamp as rtTimestamp, increment, onDisconnect, push as rtPush } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from '../firebase-config.js';
+import { buildCategoryRecord, dedupeCategories, normalizeCategorySlug } from './category-utils.js';
 
 /* ════════════════════════════════════════════════════════════════
    FIREBASE CONFIGURATION
@@ -30,8 +31,10 @@ let authReadyResolve = null;
 const authReady = new Promise((resolve) => { authReadyResolve = resolve; });
 
 let prodsRef, revRef, settingsRef, categoriesRef;
+let firebaseInitialized = false;
 
 async function initializeFirebase() {
+  if (firebaseInitialized) return;
   try {
     app  = initializeApp(firebaseConfig);
     db   = getFirestore(app);
@@ -45,16 +48,13 @@ async function initializeFirebase() {
 
     await setPersistence(auth, browserLocalPersistence);
 
-   onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  updateAuthUI();
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      updateAuthUI();
+      if (!authInitialized) { authInitialized = true; authReadyResolve(); }
+    });
 
-  if (!authInitialized) {
-    authInitialized = true;
-    authReadyResolve();
-  }
-});
-
+    firebaseInitialized = true;
     await authReady;
     console.log('✅ Firebase initialized successfully');
   } catch (error) {
@@ -206,56 +206,6 @@ function listenProducts(callback) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   CUSTOMER PROFILE OPERATIONS
-════════════════════════════════════════════════════════════════ */
-
-async function createCustomerProfile(uid, profileData) {
-  try {
-    const userRef = doc(db, 'users', uid);
-    await setDoc(userRef, {
-      uid,
-      email: profileData.email || '',
-      displayName: profileData.displayName || '',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-    return { success: true };
-  } catch (error) {
-    console.error('Error creating customer profile:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-async function getCustomerProfile(uid) {
-  try {
-    const userRef = doc(db, 'users', uid);
-    const docSnap = await getDoc(userRef);
-    if (docSnap.exists()) {
-      return { success: true, data: docSnap.data() };
-    } else {
-      return { success: false, error: 'Profile not found' };
-    }
-  } catch (error) {
-    console.error('Error getting customer profile:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-async function updateCustomerProfile(uid, profileData) {
-  try {
-    const userRef = doc(db, 'users', uid);
-    await setDoc(userRef, {
-      ...profileData,
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-    return { success: true };
-  } catch (error) {
-    console.error('Error updating customer profile:', error);
-    return { success: false, error: error.message };
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
    REVIEW OPERATIONS
 ════════════════════════════════════════════════════════════════ */
 
@@ -278,28 +228,14 @@ async function getReviews() {
 
 async function addReview(reviewData) {
   try {
-    if (!auth.currentUser) {
-      throw new Error("Login required");
-    }
-
-    const docRef = await addDoc(revRef, {
-      userId: auth.currentUser.uid,
-      name: reviewData.name || '',
-      city: reviewData.city || '',
-      product: reviewData.product || '',
-      comment: reviewData.comment || '',
-      rating: Number(reviewData.rating),
-      createdAt: serverTimestamp(),
-      approved: false
-    });
-
+    const docRef = await addDoc(revRef, { ...reviewData, createdAt: serverTimestamp(), approved: false });
     return { success: true, id: docRef.id };
-
   } catch (error) {
     console.error('Error adding review:', error);
     return { success: false, error: error.message };
   }
 }
+
 async function updateReview(reviewId, reviewData) {
   try {
     await setDoc(doc(db, 'reviews', reviewId), { ...reviewData, updatedAt: serverTimestamp() }, { merge: true });
@@ -352,7 +288,21 @@ async function getCategories() {
 
 async function addCategory(categoryData) {
   try {
-    const docRef = await addDoc(categoriesRef, { ...categoryData, createdAt: serverTimestamp(), updatedAt: serverTimestamp(), createdBy: currentUser?.uid || 'system' });
+    const normalized = buildCategoryRecord(categoryData);
+    const existing = await getCategories();
+    const key = normalized.slug;
+    const match = existing.find(cat => normalizeCategorySlug(cat.slug || cat.name) === key || normalizeCategorySlug(cat.name) === key);
+
+    if (match) {
+      return { success: true, id: match.id, duplicate: true, existing: match };
+    }
+
+    const docRef = await addDoc(categoriesRef, {
+      ...normalized,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      createdBy: currentUser?.uid || 'system'
+    });
     return { success: true, id: docRef.id };
   } catch (error) {
     console.error('Error adding category:', error);
@@ -362,7 +312,16 @@ async function addCategory(categoryData) {
 
 async function updateCategory(categoryId, categoryData) {
   try {
-    await setDoc(doc(db, 'categories', categoryId), { ...categoryData, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'system' }, { merge: true });
+    const normalized = buildCategoryRecord(categoryData);
+    const existing = await getCategories();
+    const key = normalized.slug;
+    const duplicateMatch = existing.find(cat => cat.id !== categoryId && (normalizeCategorySlug(cat.slug || cat.name) === key || normalizeCategorySlug(cat.name) === key));
+
+    if (duplicateMatch) {
+      return { success: false, error: `A category named "${duplicateMatch.name}" already exists.` };
+    }
+
+    await setDoc(doc(db, 'categories', categoryId), { ...normalized, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'system' }, { merge: true });
     return { success: true };
   } catch (error) {
     console.error('Error updating category:', error);
@@ -385,7 +344,8 @@ function listenCategories(callback) {
   return onSnapshot(q, (snap) => {
     const categories = [];
     snap.forEach(d => categories.push({ id: d.id, ...d.data() }));
-    if (callback) callback(categories);
+    const uniqueCategories = dedupeCategories(categories);
+    if (callback) callback(uniqueCategories);
   }, (error) => {
     console.error('Error listening to categories:', error);
     if (callback) callback([]);
@@ -490,10 +450,38 @@ async function collectionHasDocuments(collectionRef) {
   }
 }
 
-async function seedIfEmpty() {
-  // FIX: removed `if (!currentUser) return` — seeding should work for fresh databases
-  // regardless of auth state, since default products/reviews are public data
+async function cleanupDuplicateCategories() {
   try {
+    const categories = await getCategories();
+    const unique = dedupeCategories(categories);
+    const seen = new Set();
+    const duplicateIds = [];
+
+    categories.forEach((category) => {
+      const normalized = buildCategoryRecord(category);
+      const key = normalizeCategorySlug(normalized.slug || normalized.name);
+      if (seen.has(key)) {
+        duplicateIds.push(category.id);
+      } else {
+        seen.add(key);
+      }
+    });
+
+    for (const categoryId of duplicateIds) {
+      await deleteDoc(doc(db, 'categories', categoryId));
+    }
+
+    return unique;
+  } catch (error) {
+    console.error('Error cleaning duplicate categories:', error);
+    return [];
+  }
+}
+
+async function seedIfEmpty() {
+  try {
+    await cleanupDuplicateCategories();
+
     const hasProducts = await collectionHasDocuments(prodsRef);
     const hasReviews  = await collectionHasDocuments(revRef);
     const hasCategories = await collectionHasDocuments(categoriesRef);
@@ -561,8 +549,13 @@ async function seedDefaultReviews() {
 
 async function seedDefaultCategories() {
   try {
+    const existing = await getCategories();
     for (const category of DEFAULT_CATEGORIES) {
-      await addDoc(categoriesRef, { ...category, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      const normalized = buildCategoryRecord(category);
+      const key = normalizeCategorySlug(normalized.slug || normalized.name);
+      const exists = existing.some(cat => normalizeCategorySlug(cat.slug || cat.name) === key || normalizeCategorySlug(cat.name) === key);
+      if (exists) continue;
+      await addDoc(categoriesRef, { ...normalized, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
     }
     console.log('✅ Default categories seeded');
   } catch (error) { console.error('❌ Error seeding categories:', error); }
@@ -579,7 +572,6 @@ export { signUpUser, getCurrentUserClaims, onAuthChanged,
   getProducts, addProduct, updateProduct, deleteProduct, listenProducts,
   getReviews, addReview, updateReview, deleteReview, listenReviews,
   getCategories, addCategory, updateCategory, deleteCategory, listenCategories,
-  createCustomerProfile, getCustomerProfile, updateCustomerProfile,
   initPresence, listenVisitorCount, listenStock, listenRTDBStats,
   updateStock, logOrder, incrementViewCount,
   seedIfEmpty, seedDefaultProducts, seedDefaultReviews, seedDefaultCategories,

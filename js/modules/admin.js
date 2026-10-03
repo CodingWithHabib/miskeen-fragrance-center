@@ -15,25 +15,81 @@ import { STORE, showToast } from '../config.js';
 
 let adminPanelOpen = false;
 let currentUser    = null;
+let adminListenersBound = false;
 const LOGIN_LOCKOUT = { attempts: 0, lockedUntil: 0, MAX: 5, WINDOW_MS: 15 * 60 * 1000 };
 
 /* ════════════════════════════════════════════════════════════════
    INITIALIZATION
 ════════════════════════════════════════════════════════════════ */
 
+function ensureAdminShell() {
+  if (!document.body) return;
+
+  if (!document.getElementById('admin-login-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.id = 'admin-login-overlay';
+    overlay.innerHTML = `
+      <div class="login-box">
+        <h2>Admin Portal</h2>
+        <p>Authorized administrators only.</p>
+        <input type="email" class="login-inp" id="admin-email-inp" placeholder="Email">
+        <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password">
+        <div class="login-error" id="login-error"></div>
+        <button class="btn btn-primary" id="login-btn">Sign In</button>
+        <button class="btn btn-outline" id="signup-btn">Create Account</button>
+        <p class="admin-note">Signup does not grant admin access automatically.</p>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  if (!document.getElementById('admin-panel')) {
+    const panel = document.createElement('div');
+    panel.id = 'admin-panel';
+    panel.innerHTML = `
+      <div class="adm-header">
+        <div>
+          <div class="adm-title">Miskeen <span>Admin</span></div>
+          <div class="adm-user-info">Logged out</div>
+        </div>
+        <button class="adm-close-btn" onclick="app.closeAdminPanel()">CLOSE</button>
+      </div>
+      <div class="adm-tabs">
+        <button class="adm-tab on" onclick="app.switchAdminTab('adm-manage', this)">MANAGE</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-categories', this)">CATEGORIES</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-reviews', this)">REVIEWS</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-stock', this)">STOCK</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-dashboard', this)">DASHBOARD</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-settings', this)">SETTINGS</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-content', this)">CONTENT</button>
+        <button class="adm-tab" onclick="app.switchAdminTab('adm-contact', this)">CONTACT</button>
+      </div>
+      <div class="adm-sec on" id="adm-manage"></div>
+      <div class="adm-sec" id="adm-categories"></div>
+      <div class="adm-sec" id="adm-reviews"></div>
+      <div class="adm-sec" id="adm-stock"></div>
+      <div class="adm-sec" id="adm-dashboard"></div>
+      <div class="adm-sec" id="adm-settings"></div>
+      <div class="adm-sec" id="adm-content"></div>
+      <div class="adm-sec" id="adm-contact"></div>
+    `;
+    document.body.appendChild(panel);
+  }
+}
+
 function initializeAdmin() {
+  ensureAdminShell();
+  if (adminListenersBound) return;
   setupAdminEventListeners();
-  // Load saved admin tab preference from localStorage
+  adminListenersBound = true;
   const savedAdminTab = storage.get('lastAdminTab', 'adm-manage');
   if (!savedAdminTab) {
-    // If first time, set default
     storage.set('lastAdminTab', 'adm-manage');
   }
   console.log('✅ Admin module initialized');
 }
 
 function setupAdminEventListeners() {
-  // Click-outside closes edit modal
   const editModalOverlay = document.getElementById('edit-modal-overlay');
   if (editModalOverlay) {
     editModalOverlay.addEventListener('click', function(e) {
@@ -41,7 +97,30 @@ function setupAdminEventListeners() {
     });
   }
 
-  // Dedicated admin page only.
+  const overlay = document.getElementById('admin-login-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeLoginModal();
+    });
+  }
+
+  const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) {
+    loginBtn.onclick = performSignIn;
+  }
+
+  const signupBtn = document.getElementById('signup-btn');
+  if (signupBtn) {
+    signupBtn.onclick = () => {
+      const email = document.getElementById('admin-email-inp')?.value.trim();
+      const password = document.getElementById('admin-pass-inp')?.value || '';
+      if (!email || !password) {
+        showErrorMessage('Please enter email and password.');
+        return;
+      }
+      showErrorMessage('Create Account is not granted automatically. Ask an admin to assign the admin claim first.', 'info');
+    };
+  }
 
   // NOTE: Ctrl+Shift+A keyboard shortcut is handled ONLY in app.js — no duplicate here
 }
@@ -51,34 +130,15 @@ function setupAdminEventListeners() {
 ════════════════════════════════════════════════════════════════ */
 
 function showLoginModal() {
+  ensureAdminShell();
   const overlay = document.getElementById('admin-login-overlay');
-  if (!overlay) return;
-
-  overlay.classList.add('show');
-
-  const loginBox = overlay.querySelector('.login-box');
-
-  if (loginBox && !loginBox.dataset.bound) {
-    loginBox.dataset.bound = 'true';
-
-    loginBox.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    loginBox.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-    });
-  }
-
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closeLoginModal();
-    }
-  });
+  if (overlay) overlay.classList.add('show');
+  else window.location.href = 'admin.html';
 }
 
 function closeLoginModal() {
-  document.getElementById('admin-login-overlay')?.classList.remove('show');
+  const overlay = document.getElementById('admin-login-overlay');
+  if (overlay) overlay.classList.remove('show');
   const emailInput = document.getElementById('admin-email-inp');
   const passInput  = document.getElementById('admin-pass-inp');
   const errorMsg   = document.getElementById('login-error');
@@ -159,8 +219,12 @@ function showErrorMessage(message, type = 'error') {
 ════════════════════════════════════════════════════════════════ */
 
 function openAdminPanel() {
+  ensureAdminShell();
   const adminPanel = document.getElementById('admin-panel');
-  if (!adminPanel) return;
+  if (!adminPanel) {
+    window.location.href = 'admin.html';
+    return;
+  }
   adminPanel.classList.add('show');
   adminPanelOpen = true;
 

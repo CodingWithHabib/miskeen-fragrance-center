@@ -3,8 +3,9 @@
 ════════════════════════════════════════════════════════════════ */
 
 import { VALID, SANITIZE, esc, generateStars, formatRelativeTime, formatCurrency, parseCurrency } from './utils.js';
-import { getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
+import { getProducts, getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
 import { compressImage, validateImageFile, uploadToCloudinary } from './cloudinary.js';
+import { hasDuplicateProduct } from './product-guard.js';
 
 /* ════════════════════════════════════════════════════════════════
    INITIALIZATION
@@ -181,6 +182,14 @@ async function createProduct(productData, imageFile = null) {
       img: imageUrl
     });
 
+    const existingProducts = await getProducts();
+    if (hasDuplicateProduct(existingProducts, sanitizedData)) {
+      return {
+        success: false,
+        error: 'A product with the same name and category already exists.'
+      };
+    }
+
     // Save to database
     const result = await addProduct(sanitizedData);
 
@@ -243,6 +252,14 @@ async function modifyProduct(productId, productData, imageFile = null) {
       ...productData,
       img: imageUrl
     });
+
+    const existingProducts = await getProducts();
+    if (hasDuplicateProduct(existingProducts, sanitizedData, productId)) {
+      return {
+        success: false,
+        error: 'Another product with the same name and category already exists.'
+      };
+    }
 
     // Update in database
     const result = await updateProduct(productId, sanitizedData);
@@ -367,8 +384,7 @@ async function submitProductReview(reviewData) {
 
     // Sanitize review data
     const sanitizedData = sanitizeReviewData(reviewData);
-    
-    console.log("Sanitized Review:", sanitizedData);
+
     // Save to database
     const result = await addReview(sanitizedData);
 
@@ -425,7 +441,7 @@ function validateReviewData(data) {
     errors.push('Name is required');
   }
 
-  if (VALID.required(data.comment, 'Review text')) {
+  if (VALID.required(data.text, 'Review text')) {
     errors.push('Review text is required');
   }
 
@@ -438,11 +454,11 @@ function validateReviewData(data) {
     errors.push('Name must be no more than 50 characters');
   }
 
-  if (data.comment && VALID.minLength(data.comment, 10, 'Review')) {
+  if (data.text && VALID.minLength(data.text, 10, 'Review')) {
     errors.push('Review must be at least 10 characters');
   }
 
-  if (data.comment && VALID.maxLength(data.comment, 500, 'Review')) {
+  if (data.text && VALID.maxLength(data.text, 500, 'Review')) {
     errors.push('Review must be no more than 500 characters');
   }
 
@@ -467,7 +483,7 @@ function sanitizeReviewData(data) {
     city: SANITIZE.text(data.city || ''),
     product: SANITIZE.text(data.product || ''),
     rating: parseInt(data.rating) || 5,
-    comment: SANITIZE.text(data.comment || '')
+    text: SANITIZE.text(data.text || '')
   };
 }
 
@@ -593,10 +609,10 @@ function formatProductForDisplay(product) {
 function formatReviewForDisplay(review) {
   return {
     ...review,
-    displayName: review.name || '',
-    displayCity: review.city || '',
-    displayText: review.text || review.comment || '',
-    displayProduct: review.product || '',
+    displayName: esc(review.name),
+    displayCity: review.city ? esc(review.city) : '',
+    displayText: esc(review.text),
+    displayProduct: review.product ? esc(review.product) : '',
     stars: generateStars(review.rating),
     relativeTime: formatRelativeTime(review.createdAt?.toDate?.() || new Date()),
     isApproved: Boolean(review.approved)
@@ -639,5 +655,6 @@ export {
   updateProductStock,
   formatProductForDisplay,
   formatReviewForDisplay,
-  generateWhatsAppOrderMessage
+  generateWhatsAppOrderMessage,
+  hasDuplicateProduct
 };

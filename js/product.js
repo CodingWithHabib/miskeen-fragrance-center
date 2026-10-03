@@ -13,7 +13,6 @@ import {
 
 /* ─── Local config ─── */
 import { STORE } from './config.js';
-import { buildWhatsAppUrl } from './modules/utils.js';
 
 /* ════════════════════════════════════════════════════════════════
    FIREBASE SETUP
@@ -602,6 +601,8 @@ const PDP = {
     const size = (p.sizes || [])[state.selectedSize];
     const unit = parsePKR(size?.price || p.price || '0');
     const total = formatPKR(unit * state.qty);
+    const wa    = (STORE.wa || '+923001234567').replace(/\D/g, '');
+
     // Pre-filled Arabic-style WhatsApp greeting (matching existing codebase style)
     const msg = [
       `السلام عليكم`,
@@ -618,13 +619,14 @@ const PDP = {
       `Product link: ${window.location.href}`,
     ].join('\n');
 
-    window.open(buildWhatsAppUrl(STORE.wa, msg), '_blank', 'noopener,noreferrer');
+    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
     toast('Opening WhatsApp…', 'success');
   },
 
   /** Send entire cart to WhatsApp */
   checkoutWhatsApp() {
     if (!state.cart.length) return;
+    const wa   = (STORE.wa || '+923001234567').replace(/\D/g, '');
     const lines = state.cart.map((item, i) =>
       `${i + 1}. *${item.name}* — ${item.size} × ${item.qty} = ${formatPKR(parsePKR(item.price) * item.qty)}`
     );
@@ -641,7 +643,7 @@ const PDP = {
       `Please confirm and share payment/delivery details.`,
     ].join('\n');
 
-    window.open(buildWhatsAppUrl(STORE.wa, msg), '_blank', 'noopener,noreferrer');
+    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
     toast('Opening WhatsApp…', 'success');
   },
 

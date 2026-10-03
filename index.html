@@ -23,31 +23,41 @@
   <header id="site-header">
     <div class="container header-inner">
       <div class="logo" id="logo-trigger">
-        <span class="logo-name" id="hdr-logo-name">Miskeen Fragrance Center</span>
-        <span class="logo-tag" id="hdr-logo-tag">WHERE SCENT BECOMES SOUL</span>
+        <span class="logo-name" id="hdr-logo-name">Miskeen Fragrance</span>
+        <span class="logo-tag" id="hdr-logo-tag">PREMIUM ATTAR HOUSE</span>
       </div>
-      <nav class="main-nav">
+
+      <nav class="main-nav" aria-label="Main navigation">
         <span class="nav-link active" onclick="app.goPage('home')">HOME</span>
         <span class="nav-link" onclick="app.goPage('products')">COLLECTION</span>
         <span class="nav-link" onclick="app.goPage('about')">ABOUT</span>
         <span class="nav-link" onclick="app.goPage('reviews')">REVIEWS</span>
         <span class="nav-link" onclick="app.goPage('contact')">CONTACT</span>
-        <a class="btn btn-outline" id="customer-auth-btn" onclick="app.showCustomerAuthModal()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;">👤 SIGN IN</a>
-        <a class="btn btn-outline" id="customer-logout-btn" onclick="app.customerSignOut()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;display:none;">🚪 LOGOUT</a>
-        <a class="btn btn-outline" onclick="app.showLoginModal()" style="font-size:.6rem;padding:.6rem 1rem;margin-right:.5rem;">🔐 ADMIN PANEL</a>
-        <a class="btn btn-wa" id="hdr-wa-btn" href="#" target="_blank" rel="noopener" style="font-size:.6rem;padding:.6rem 1.2rem;">💬 ORDER NOW</a>
+
+        <div class="header-actions">
+          <a class="btn header-action-btn btn-outline" href="admin.html">SIGN IN</a>
+          <a class="btn header-action-btn btn-outline" href="admin.html">ADMIN PANEL</a>
+          <a class="btn btn-wa header-action-btn" id="hdr-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
+        </div>
       </nav>
+
       <button class="hamburger" onclick="app.toggleMobile()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
-    <nav class="mobile-nav" id="mobile-nav">
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
       <span class="nav-link" onclick="app.goPage('home');app.toggleMobile()">HOME</span>
       <span class="nav-link" onclick="app.goPage('products');app.toggleMobile()">COLLECTION</span>
       <span class="nav-link" onclick="app.goPage('about');app.toggleMobile()">ABOUT</span>
       <span class="nav-link" onclick="app.goPage('reviews');app.toggleMobile()">REVIEWS</span>
       <span class="nav-link" onclick="app.goPage('contact');app.toggleMobile()">CONTACT</span>
-      <a class="btn btn-wa" id="mob-wa-btn" href="#" target="_blank" rel="noopener" style="font-size:.65rem;justify-content:center;">💬 ORDER ON WHATSAPP</a>
+
+      <div class="mobile-actions">
+        <a class="btn btn-outline mobile-action-btn" href="admin.html">SIGN IN</a>
+        <a class="btn btn-outline mobile-action-btn" href="admin.html">ADMIN PANEL</a>
+        <a class="btn btn-wa mobile-action-btn" id="mob-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
+      </div>
     </nav>
   </header>
 
@@ -437,308 +447,7 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       ADMIN LOGIN MODAL — Firebase Auth
-  ════════════════════════════════════════════ -->
-  <div id="admin-login-overlay">
-    <div class="login-box">
-      <h2>Admin Access</h2>
-      <p>Sign in with your admin email & password to manage the store</p>
-      <input type="email" class="login-inp" id="admin-email-inp" placeholder="admin@miskeenfragrance.com" autocomplete="email">
-      <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password" autocomplete="current-password"
-             onkeydown="if(event.key==='Enter')app.doLogin()">
-      <div class="login-error" id="login-error">✕ Invalid email or password. Please try again.</div>
-      <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;padding:1rem;" onclick="app.doLogin()">SIGN IN</button>
-      <button class="btn btn-outline" style="width:100%;justify-content:center;padding:.8rem;margin-top:.6rem;" onclick="app.closeLogin()">CANCEL</button>
-      <p style="text-align:center;font-size:.6rem;color:var(--muted);margin-top:1.5rem;letter-spacing:.1em;">Miskeen Fragrance Center · Admin Portal</p>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════
-       CUSTOMER AUTH MODAL — Login/Signup
-  ════════════════════════════════════════════ -->
-  <div id="customer-auth-overlay">
-    <div class="login-box">
-      <h2>Customer Account</h2>
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="auth-login-tab" onclick="app.switchAuthTab('login')">Sign In</button>
-        <button class="auth-tab" id="auth-signup-tab" onclick="app.switchAuthTab('signup')">Create Account</button>
-      </div>
-
-      <!-- Login Form -->
-      <div id="auth-login-form">
-        <input type="email" class="login-inp" id="customer-email-inp" placeholder="Email address" autocomplete="email">
-        <input type="password" class="login-inp" id="customer-pass-inp" placeholder="Password" autocomplete="current-password"
-               onkeydown="if(event.key==='Enter')app.customerSignIn()">
-        <div class="login-error" id="customer-auth-error"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;" onclick="app.customerSignIn()">SIGN IN</button>
-      </div>
-
-      <!-- Signup Form -->
-      <div id="auth-signup-form" style="display:none;">
-        <input type="text" class="login-inp" id="customer-name-inp" placeholder="Your Name" autocomplete="name">
-        <input type="email" class="login-inp" id="customer-signup-email-inp" placeholder="Email address" autocomplete="email">
-        <input type="password" class="login-inp" id="customer-signup-pass-inp" placeholder="Create Password" autocomplete="new-password">
-        <input type="password" class="login-inp" id="customer-signup-pass-confirm-inp" placeholder="Confirm Password" autocomplete="new-password">
-        <div class="login-error" id="customer-signup-error"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;" onclick="app.customerSignUp()">CREATE ACCOUNT</button>
-      </div>
-
-      <button class="btn btn-outline" style="width:100%;justify-content:center;padding:.8rem;margin-top:.6rem;" onclick="app.closeCustomerAuthModal()">CANCEL</button>
-      <p style="text-align:center;font-size:.6rem;color:var(--muted);margin-top:1.5rem;letter-spacing:.1em;">Miskeen Fragrance Center · Customer Portal</p>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════
-       ADMIN PANEL
-  ════════════════════════════════════════════ -->
-  <div id="admin-panel">
-    <div class="adm-header">
-      <div>
-        <div class="adm-title">Admin Panel — <span>Miskeen Fragrance Center</span></div>
-        <div class="adm-user-info" id="adm-user-info">Not signed in</div>
-      </div>
-      <div style="display:flex;gap:.6rem;align-items:center;">
-        <button class="adm-close-btn" onclick="app.doLogout()" style="border-color:rgba(192,57,43,.3);color:rgba(192,57,43,.6);">⎋ LOGOUT</button>
-        <button class="adm-close-btn" onclick="app.closeAdmin()">✕ CLOSE</button>
-      </div>
-    </div>
-
-    <div class="adm-tabs">
-      <button class="adm-tab on" onclick="app.swAdmTab('adm-add',this)">+ ADD PRODUCT</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-manage',this)">📦 PRODUCTS</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-categories',this)">🏷 CATEGORIES</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-reviews',this)">⭐ REVIEWS</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-stock',this)">📊 STOCK</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-dashboard',this)">🔴 LIVE DASHBOARD</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-content',this)">✏ CONTENT</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-contact',this)">📞 CONTACT</button>
-      <button class="adm-tab" onclick="app.swAdmTab('adm-settings',this)">⚙ SETTINGS</button>
-    </div>
-
-    <!-- ADD PRODUCT -->
-    <div class="adm-sec on" id="adm-add">
-      <div class="adm-msg" id="add-msg"></div>
-      <div class="adm-section-title">Add New Product</div>
-      <div class="adm-form-grid">
-        <div class="adm-field"><label>PRODUCT NAME *</label><input id="pn" placeholder="e.g. Office For Men"></div>
-        <div class="adm-field">
-          <label>CATEGORY *</label>
-          <select id="pc">
-            <!-- Categories will be loaded dynamically from Firebase -->
-          </select>
-        </div>
-        <div class="adm-field" style="grid-column:span 2">
-          <label>SHORT DESCRIPTION</label>
-          <textarea id="pd" rows="2" placeholder="Brief description of fragrance notes, character, occasion..."></textarea>
-        </div>
-        <div class="adm-field"><label>BADGE (optional)</label><input id="pb" placeholder="BESTSELLER · NEW · LIMITED"></div>
-        <div class="adm-field">
-          <label>FEATURED ON HOME PAGE</label>
-          <select id="pf"><option value="no">No</option><option value="yes">Yes</option></select>
-        </div>
-        <div class="adm-field">
-          <label>PRODUCT IMAGE (upload)</label>
-          <input type="file" id="pi" accept="image/*" onchange="app.prevProdImg(event)">
-          <div class="upload-progress" id="upload-progress"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
-          <img id="pi-preview" class="img-preview" alt="Preview">
-        </div>
-        <div class="adm-field"><label>IMAGE URL (alternative)</label><input id="pi-url" placeholder="https://example.com/image.jpg"></div>
-      </div>
-      <!-- Sizes -->
-      <div style="margin:1.2rem 0 1rem;">
-        <div class="adm-section-title" style="font-size:.85rem;margin-bottom:.8rem;">Size & Price Options <span style="font-size:.7rem;color:rgba(245,239,230,.3);font-style:normal;">(add multiple sizes)</span></div>
-        <div id="sizes-wrap">
-          <div class="size-entry">
-            <div class="adm-field"><label>SIZE</label><input class="sz-ml" placeholder="e.g. 3ml"></div>
-            <div class="adm-field"><label>PRICE</label><input class="sz-pr" placeholder="e.g. PKR 650"></div>
-            <button class="rem-size-btn" onclick="app.remSize(this)" title="Remove">✕</button>
-          </div>
-        </div>
-        <button class="add-size-btn" onclick="app.addSize()">+ ADD SIZE</button>
-      </div>
-      <button class="adm-submit" id="add-prod-btn" onclick="app.doAddProd()">+ ADD TO COLLECTION</button>
-    </div>
-
-    <!-- MANAGE PRODUCTS -->
-    <div class="adm-sec" id="adm-manage">
-      <div class="adm-msg" id="manage-msg"></div>
-      <div class="adm-products-list" id="adm-prod-list">
-        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading products...</p>
-      </div>
-    </div>
-
-    <!-- CATEGORIES MANAGEMENT -->
-    <div class="adm-sec" id="adm-categories">
-      <div class="adm-msg" id="categories-msg"></div>
-      <div class="adm-section-title">Manage Categories</div>
-      
-      <!-- Add New Category -->
-      <div style="background:rgba(245,239,230,.05);border:1px solid rgba(245,239,230,.1);padding:1.5rem;border-radius:8px;margin-bottom:2rem;">
-        <div style="font-size:.75rem;letter-spacing:.2em;font-weight:600;color:var(--gold2);margin-bottom:1rem;">ADD NEW CATEGORY</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:1rem;align-items:end;">
-          <div class="adm-field"><label>CATEGORY NAME *</label><input id="cat-name" placeholder="e.g. Attar"></div>
-          <div class="adm-field"><label>CATEGORY SLUG *</label><input id="cat-slug" placeholder="e.g. attar (lowercase, no spaces)"></div>
-          <button class="adm-submit" onclick="app.addCategory()" style="margin-bottom:.2rem;">+ ADD</button>
-        </div>
-      </div>
-
-      <!-- Categories List -->
-      <div class="adm-products-list" id="adm-categories-list">
-        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading categories...</p>
-      </div>
-    </div>
-
-    <!-- REVIEWS MANAGEMENT -->
-    <div class="adm-sec" id="adm-reviews">
-      <div class="adm-section-title">Manage Reviews</div>
-      <div class="adm-products-list" id="adm-review-list">
-        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading reviews...</p>
-      </div>
-    </div>
-
-    <!-- CONTENT EDITOR -->
-    <div class="adm-sec" id="adm-content">
-      <div class="adm-msg" id="content-msg"></div>
-      <div class="adm-section-title">Home Page Content</div>
-      <div class="adm-settings-grid">
-        <div class="adm-field"><label>HERO EYEBROW TEXT</label><input id="c-eyebrow" value="Premium Online Attar Store"></div>
-        <div class="adm-field"><label>HERO FEATURED PRODUCT NAME</label><input id="c-feat-name" value="Office For Men"></div>
-        <div class="adm-field" style="grid-column:span 2">
-          <label>HERO DESCRIPTION</label>
-          <textarea id="c-desc" rows="2">100% natural, alcohol-free attars sourced from the finest botanicals. Browse our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</textarea>
-        </div>
-        <div class="adm-field"><label>HERO IMAGE (upload)</label><input type="file" id="c-hero-img" accept="image/*" onchange="app.applyHeroImg(event)"></div>
-        <div class="adm-field"><label>HERO IMAGE URL (alternative)</label><input id="c-hero-url" placeholder="https://..."></div>
-      </div>
-      <div class="adm-section-title" style="margin-top:2rem;font-size:.85rem;">About Page Content</div>
-      <div class="adm-settings-grid">
-        <div class="adm-field"><label>ABOUT TITLE</label><input id="c-ab-title" value="Pure Fragrance, Delivered Online"></div>
-        <div class="adm-field" style="grid-column:span 2"><label>ABOUT PARAGRAPH 1</label><textarea id="c-ab-p1" rows="2">Miskeen Fragrance Center is a 100% online attar store dedicated to bringing you the finest, most authentic non-alcoholic perfumes.</textarea></div>
-        <div class="adm-field" style="grid-column:span 2"><label>ABOUT PARAGRAPH 2</label><textarea id="c-ab-p2" rows="2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless.</textarea></div>
-      </div>
-      <button class="adm-submit" onclick="app.saveContent()">SAVE CONTENT</button>
-    </div>
-
-    <!-- CONTACT SETTINGS -->
-    <div class="adm-sec" id="adm-contact">
-      <div class="adm-msg" id="contact-msg"></div>
-      <div class="adm-section-title">Contact & Order Settings</div>
-      <div class="adm-settings-grid">
-        <div class="adm-field"><label>WHATSAPP NUMBER (+country code)</label><input id="s-wa" value="+923001234567"></div>
-        <div class="adm-field"><label>DISPLAY PHONE</label><input id="s-ph" value="+92 300 1234567"></div>
-        <div class="adm-field"><label>EMAIL ADDRESS</label><input id="s-em" value="info@miskeenfragrance.com"></div>
-        <div class="adm-field"><label>ORDER HOURS</label><input id="s-hr" value="Mon–Sun 12am–12pm "></div>
-        <div class="adm-field"><label>INSTAGRAM LINK</label><input id="s-ig" placeholder="https://instagram.com/..."></div>
-        <div class="adm-field"><label>FACEBOOK LINK</label><input id="s-fb" placeholder="https://facebook.com/..."></div>
-      </div>
-      <button class="adm-submit" onclick="app.saveContact()">SAVE CONTACT INFO</button>
-    </div>
-
-    <!-- STORE SETTINGS -->
-    <div class="adm-sec" id="adm-settings">
-      <div class="adm-msg" id="settings-msg"></div>
-      <div class="adm-section-title">Store Settings</div>
-      <div class="adm-settings-grid">
-        <div class="adm-field"><label>STORE NAME</label><input id="s-name" value="Miskeen Fragrance Center"></div>
-        <div class="adm-field"><label>TAGLINE</label><input id="s-tag" value="WHERE SCENT BECOMES SOUL"></div>
-        <div class="adm-field"><label>FOOTER DESCRIPTION</label><input id="s-ftdesc" value="Pakistan's online attar & perfume store."></div>
-        <div class="adm-field"><label>FOOTER COPYRIGHT</label><input id="s-copy" value="© 2026 Miskeen Fragrance Center. All Rights Reserved."></div>
-        <div class="adm-field"><label>BROWSER TAB TITLE</label><input id="s-title" value="Miskeen Fragrance Center – Pure Attar & Perfumes"></div>
-      </div>
-      <!-- Cloudinary Config -->
-      <div class="adm-section-title" style="margin-top:2rem;font-size:.85rem;">☁ Cloudinary Image Upload Config</div>
-      <p style="font-size:.72rem;color:rgba(245,239,230,.35);margin-bottom:1rem;line-height:1.7;">
-        Images are uploaded via Cloudinary (free plan supports 25GB storage).<br>
-        1. Sign up free at <strong style="color:var(--gold2);">cloudinary.com</strong><br>
-        2. Copy your <strong style="color:var(--gold2);">Cloud Name</strong> from the dashboard<br>
-        3. Go to Settings → Upload → Add upload preset → set Mode to <strong style="color:var(--gold2);">Unsigned</strong> → copy the preset name
-      </p>
-      <div class="adm-settings-grid">
-        <div class="adm-field"><label>CLOUDINARY CLOUD NAME *</label><input id="s-cloudname" placeholder="e.g. dxyz12abc"></div>
-        <div class="adm-field"><label>CLOUDINARY UPLOAD PRESET *</label><input id="s-uploadpreset" placeholder="e.g. miskeen_unsigned"></div>
-      </div>
-      <p style="font-size:.72rem;color:rgba(245,239,230,.3);margin-bottom:1rem;line-height:1.6;">
-        ⚠ To change the admin password, use Firebase Console → Authentication → Users → Reset Password.
-      </p>
-      <button class="adm-submit" onclick="app.saveSettings()">SAVE SETTINGS</button>
-    </div>
-
-    <!-- STOCK MANAGEMENT (RTDB) -->
-    <div class="adm-sec" id="adm-stock">
-      <div class="adm-section-title">📊 Live Stock & Availability
-        <span style="font-size:.65rem;color:rgba(245,239,230,.3);font-style:italic;font-weight:400;letter-spacing:0;margin-left:.5rem;">Powered by Realtime Database — updates instantly for all visitors</span>
-      </div>
-      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.2rem;">
-        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(30,190,93,.15);border:1px solid rgba(30,190,93,.3);color:var(--success);">● In Stock — available to order</span>
-        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(226,160,63,.15);border:1px solid rgba(226,160,63,.3);color:var(--warn);">🔥 Low Stock — shows urgency badge</span>
-        <span style="font-size:.62rem;padding:.3rem .8rem;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--danger);">✕ Out of Stock — disables order button</span>
-      </div>
-      <div class="adm-products-list" id="adm-stock-list">
-        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">Loading products...</p>
-      </div>
-    </div>
-
-    <!-- LIVE DASHBOARD (RTDB) -->
-    <div class="adm-sec" id="adm-dashboard">
-      <div class="adm-section-title">🔴 Live Dashboard
-        <span style="font-size:.65rem;color:rgba(245,239,230,.3);font-style:italic;font-weight:400;letter-spacing:0;margin-left:.5rem;">All data streams live from Firebase Realtime Database</span>
-      </div>
-
-      <!-- Stat Cards -->
-      <div class="dash-grid">
-        <div class="dash-card">
-          <div class="dash-card-icon">👁</div>
-          <div class="dash-card-val" id="dash-visitors">—</div>
-          <div class="dash-card-label">Live Visitors Now</div>
-          <div class="dash-card-sub">People browsing the store</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-icon">🛒</div>
-          <div class="dash-card-val" id="dash-orders-today">—</div>
-          <div class="dash-card-label">Orders Today</div>
-          <div class="dash-card-sub">WhatsApp order taps today</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-icon">📦</div>
-          <div class="dash-card-val" id="dash-orders-total">—</div>
-          <div class="dash-card-label">Total Orders</div>
-          <div class="dash-card-sub">All-time WhatsApp order taps</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-icon">🌐</div>
-          <div class="dash-card-val" id="dash-views">—</div>
-          <div class="dash-card-label">Total Page Views</div>
-          <div class="dash-card-sub">Cumulative site visits</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-icon">🌺</div>
-          <div class="dash-card-val" id="dash-products">—</div>
-          <div class="dash-card-label">Active Products</div>
-          <div class="dash-card-sub">Products in Firestore</div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-icon">⭐</div>
-          <div class="dash-card-val" id="dash-reviews">—</div>
-          <div class="dash-card-label">Customer Reviews</div>
-          <div class="dash-card-sub">Total reviews submitted</div>
-        </div>
-      </div>
-
-      <!-- Recent Order Log -->
-      <div class="adm-section-title" style="margin-top:2rem;font-size:.8rem;">Recent Order Activity
-        <span style="font-size:.62rem;color:rgba(245,239,230,.3);font-weight:400;letter-spacing:0;margin-left:.5rem;">Last 20 WhatsApp order taps — updates in real-time</span>
-      </div>
-      <div class="adm-products-list" id="adm-order-log">
-        <p style="color:rgba(245,239,230,.3);font-size:.8rem;">No orders yet...</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Development: Enable audio debugging to track play/pause conflicts -->
-  <!-- Uncomment the line below to enable audio debugging: -->
-  <!-- <script src="js/audio-debug.js"></script> -->
-  
+  <!-- ADMIN SYSTEM MOVED TO admin.html -->
   <script type="module" src="js/app.js"></script>
   <div id="imgModal" onclick="app.closeImage()" style="
   display:none;

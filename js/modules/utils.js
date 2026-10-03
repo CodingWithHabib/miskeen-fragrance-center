@@ -61,19 +61,6 @@ const VALID = {
   rating: (val) => { const r = parseInt(val); return (isNaN(r) || r < 1 || r > 5) ? 'Please select a rating between 1 and 5 stars.' : null; },
   contactName:    (val) => VALID.reviewName(val),
   contactMessage: (val) => VALID.required(val, 'Message') || VALID.minLength(val, 10, 'Message') || VALID.maxLength(val, 1000, 'Message'),
-  // Customer authentication validation
-  customerName: (val) => VALID.required(val, 'Name') || VALID.minLength(val, 2, 'Name') || VALID.maxLength(val, 50, 'Name'),
-  customerEmail: (val) => VALID.required(val, 'Email') || VALID.email(val),
-  customerPassword: (val) => {
-    if (!val || typeof val !== 'string' || val.trim().length === 0) return 'Password is required.';
-    if (val.length < 6) return 'Password must be at least 6 characters.';
-    if (val.length > 128) return 'Password must be no more than 128 characters.';
-    return null;
-  },
-  passwordMatch: (password, confirmPassword) => {
-    if (password !== confirmPassword) return 'Passwords do not match.';
-    return null;
-  },
 };
 
 const SANITIZE = {
@@ -155,23 +142,6 @@ function formatCurrency(amount, currency = 'PKR') {
   return `${currency} ${(parseFloat(amount) || 0).toLocaleString()}`;
 }
 
-function normalizeWhatsAppNumber(value) {
-  const digits = String(value || '').replace(/\D/g, '');
-  if (!digits) return '923001234567';
-
-  if (digits.startsWith('92')) return digits;
-  if (digits.startsWith('0') && digits.length >= 11) return `92${digits.slice(1)}`;
-  if (digits.startsWith('3') && digits.length === 10) return `92${digits}`;
-
-  return digits;
-}
-
-function buildWhatsAppUrl(number, message = '') {
-  const waNumber = normalizeWhatsAppNumber(number);
-  const url = `https://wa.me/${waNumber}`;
-  return message ? `${url}?text=${encodeURIComponent(message)}` : url;
-}
-
 function parseCurrency(str) {
   if (typeof str !== 'string') return 0;
   return parseFloat(str.replace(/[^\d.]/g, '')) || 0;
@@ -226,4 +196,4 @@ function initializeUtils() {
   console.log('✅ Utils module initialized');
 }
 
-export { VALID, SANITIZE, esc, generateStars, formatRelativeTime, debounce, throttle, generateId, isOnline, formatCurrency, normalizeWhatsAppNumber, buildWhatsAppUrl, parseCurrency, storage, cookies, initializeUtils };
+export { VALID, SANITIZE, esc, generateStars, formatRelativeTime, debounce, throttle, generateId, isOnline, formatCurrency, parseCurrency, storage, cookies, initializeUtils };

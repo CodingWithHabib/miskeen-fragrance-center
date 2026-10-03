@@ -3,21 +3,24 @@
 ════════════════════════════════════════════════════════════════ */
 
 import { STORE, products, showToast } from '../config.js';
-import { esc, generateStars, formatCurrency, parseCurrency, buildWhatsAppUrl } from './utils.js';
+import { esc, generateStars, formatCurrency, parseCurrency } from './utils.js';
 import { createProduct, modifyProduct, removeProduct, updateProductStock, formatProductForDisplay, generateWhatsAppOrderMessage, processWhatsAppOrder } from './services.js';
 
 let currentFilter  = 'all';
 let searchQuery    = '';
 let selectedSizes  = {};
 let quantities     = {};
+let productsInitialized = false;
 
 /* ════════════════════════════════════════════════════════════════
    INITIALIZATION
 ════════════════════════════════════════════════════════════════ */
 
 function initializeProducts() {
+  if (productsInitialized) return;
   initializeProductFilters();
   initializeSearchFunctionality();
+  productsInitialized = true;
   console.log('✅ Products module initialized');
 }
 
@@ -201,7 +204,8 @@ async function orderOnWhatsApp(productId) {
     processWhatsAppOrder(orderData).catch(err => console.warn('Failed to log order:', err));
 
     const message  = generateWhatsAppOrderMessage(orderData);
-    window.open(buildWhatsAppUrl(STORE.wa, message), '_blank', 'noopener,noreferrer');
+    const waNumber = STORE.wa.replace(/\D/g, '');
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     showToast('Opening WhatsApp...', 'success');
   } catch (error) {
     console.error('Error processing WhatsApp order:', error);

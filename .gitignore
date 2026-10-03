@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.*.local
+js/serviceAccountKey.json
 
 # Dependencies
 node_modules/
@@ -31,7 +32,3 @@ out/
 # Temporary files
 temp/
 tmp/
-
-# Firebase Service Account Key (NEVER commit this)
-serviceAccountKey.json
-
