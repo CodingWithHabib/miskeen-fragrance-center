@@ -43,9 +43,28 @@ loginForm.addEventListener('submit', async(event)=>{
  loginButton.textContent='Signing in...';
  try {
    const result=await signInUser(email,password);
-   if(!result.success) showError(result.error);
+   if(!result.success) {
+     showError(result.error || 'Sign-in failed. Check your email and password.');
+     return;
+   }
+
+   const token=await result.user.getIdTokenResult(true);
+   if(token.claims.admin!==true) {
+     authView.style.display='none';
+     frame.style.display='none';
+     deniedMessage.textContent='Sign-in succeeded, but this account does not have the Firebase admin role. Ask an administrator to assign the admin claim.';
+     deniedView.style.display='block';
+     return;
+   }
+
+   adminAccess=true;
+   authView.style.display='none';
+   deniedView.style.display='none';
+   frame.style.display='block';
+   openDashboardWhenReady();
  } catch(error) {
-   showError('Sign-in could not be completed. Please try again.');
+   console.error('Admin sign-in failed:',error);
+   showError(error.message || 'Sign-in could not be completed. Please try again.');
  } finally {
    if(!adminAccess) {
      loginButton.disabled=false;
@@ -57,11 +76,15 @@ loginForm.addEventListener('submit', async(event)=>{
 signupButton.addEventListener('click', async()=>{
  const email=document.getElementById('admin-email-inp').value.trim();
  const password=document.getElementById('admin-pass-inp').value;
- const result=await signUpUser(email,password);
- if(result.success){
-   showError('Account created. Admin claim must be assigned manually from backend/CLI.','info');
- }else{
-   showError(result.error);
+ try {
+   const result=await signUpUser(email,password);
+   if(result.success){
+     showError('Account created. Admin access still requires an administrator role.','info');
+   }else{
+     showError(result.error);
+   }
+ } catch(error) {
+   showError(error.message || 'Account creation failed.');
  }
 });
 

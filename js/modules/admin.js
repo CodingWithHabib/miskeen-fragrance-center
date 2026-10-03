@@ -52,7 +52,10 @@ function ensureAdminShell() {
           <div class="adm-title">Miskeen <span>Admin</span></div>
           <div class="adm-user-info">Logged out</div>
         </div>
-        <button class="adm-close-btn" onclick="app.closeAdminPanel()">CLOSE</button>
+        <div class="adm-header-actions">
+          <button class="adm-close-btn" onclick="app.performSignOut()">SIGN OUT</button>
+          <button class="adm-close-btn" onclick="app.closeAdminPanel()">CLOSE</button>
+        </div>
       </div>
       <div class="adm-tabs">
         <button class="adm-tab on" onclick="app.switchAdminTab('adm-manage', this)">MANAGE</button>
@@ -65,6 +68,8 @@ function ensureAdminShell() {
         <button class="adm-tab" onclick="app.switchAdminTab('adm-contact', this)">CONTACT</button>
       </div>
       <div class="adm-sec on" id="adm-manage">
+        <div class="adm-section-title">PRODUCT MANAGEMENT</div>
+        <div class="adm-msg" id="manage-msg"></div>
         <div class="adm-form-grid">
           <div class="adm-msg" id="add-msg"></div>
           <div class="adm-field"><label>PRODUCT NAME *</label><input id="pn" placeholder="e.g. Office For Men"></div>
@@ -84,13 +89,65 @@ function ensureAdminShell() {
         <button class="adm-submit" onclick="app.doAddProd()" type="button">ADD PRODUCT</button>
         <div id="adm-prod-list"></div>
       </div>
-      <div class="adm-sec" id="adm-categories"></div>
-      <div class="adm-sec" id="adm-reviews"></div>
-      <div class="adm-sec" id="adm-stock"></div>
+      <div class="adm-sec" id="adm-categories">
+        <div class="adm-section-title">CATEGORY MANAGEMENT</div>
+        <div class="adm-msg" id="categories-msg"></div>
+        <div class="adm-form-grid">
+          <div class="adm-field"><label>CATEGORY NAME *</label><input id="cat-name" placeholder="e.g. Attar"></div>
+          <div class="adm-field"><label>SLUG *</label><input id="cat-slug" placeholder="e.g. attar"></div>
+        </div>
+        <button class="adm-submit" onclick="app.addCategory()" type="button">ADD CATEGORY</button>
+        <div id="adm-categories-list"></div>
+      </div>
+      <div class="adm-sec" id="adm-reviews">
+        <div class="adm-section-title">REVIEW MANAGEMENT</div>
+        <div id="adm-review-list"></div>
+      </div>
+      <div class="adm-sec" id="adm-stock">
+        <div class="adm-section-title">STOCK MANAGEMENT</div>
+        <div id="adm-stock-list"></div>
+      </div>
       <div class="adm-sec" id="adm-dashboard"></div>
-      <div class="adm-sec" id="adm-settings"></div>
-      <div class="adm-sec" id="adm-content"></div>
-      <div class="adm-sec" id="adm-contact"></div>
+      <div class="adm-sec" id="adm-settings">
+        <div class="adm-section-title">STORE SETTINGS</div>
+        <div class="adm-msg" id="settings-msg"></div>
+        <div class="adm-settings-grid">
+          <div class="adm-field"><label>STORE NAME</label><input id="s-name"></div>
+          <div class="adm-field"><label>TAGLINE</label><input id="s-tag"></div>
+          <div class="adm-field"><label>FOOTER DESCRIPTION</label><textarea id="s-ftdesc" rows="3"></textarea></div>
+          <div class="adm-field"><label>FOOTER COPYRIGHT</label><input id="s-copy"></div>
+          <div class="adm-field"><label>PAGE TITLE</label><input id="s-title"></div>
+          <div class="adm-field"><label>CLOUDINARY CLOUD NAME</label><input id="s-cloudname"></div>
+          <div class="adm-field"><label>CLOUDINARY UPLOAD PRESET</label><input id="s-uploadpreset"></div>
+        </div>
+        <button class="adm-submit" onclick="app.saveSettings()" type="button">SAVE SETTINGS</button>
+      </div>
+      <div class="adm-sec" id="adm-content">
+        <div class="adm-section-title">HOME PAGE CONTENT</div>
+        <div class="adm-msg" id="content-msg"></div>
+        <div class="adm-form-grid">
+          <div class="adm-field"><label>HERO EYEBROW</label><input id="c-eyebrow"></div>
+          <div class="adm-field"><label>FEATURED PRODUCT NAME</label><input id="c-feat-name"></div>
+          <div class="adm-field" style="grid-column:span 2"><label>HERO DESCRIPTION</label><textarea id="c-desc" rows="3"></textarea></div>
+          <div class="adm-field"><label>ABOUT TITLE</label><input id="c-ab-title"></div>
+          <div class="adm-field"><label>ABOUT PARAGRAPH 1</label><textarea id="c-ab-p1" rows="3"></textarea></div>
+          <div class="adm-field"><label>ABOUT PARAGRAPH 2</label><textarea id="c-ab-p2" rows="3"></textarea></div>
+        </div>
+        <button class="adm-submit" onclick="app.saveContent()" type="button">SAVE CONTENT</button>
+      </div>
+      <div class="adm-sec" id="adm-contact">
+        <div class="adm-section-title">CONTACT DETAILS</div>
+        <div class="adm-msg" id="contact-msg"></div>
+        <div class="adm-settings-grid">
+          <div class="adm-field"><label>WHATSAPP NUMBER</label><input id="s-wa"></div>
+          <div class="adm-field"><label>PHONE NUMBER</label><input id="s-ph"></div>
+          <div class="adm-field"><label>EMAIL</label><input id="s-em" type="email"></div>
+          <div class="adm-field"><label>BUSINESS HOURS</label><input id="s-hr"></div>
+          <div class="adm-field"><label>INSTAGRAM URL</label><input id="s-ig"></div>
+          <div class="adm-field"><label>FACEBOOK URL</label><input id="s-fb"></div>
+        </div>
+        <button class="adm-submit" onclick="app.saveContact()" type="button">SAVE CONTACT</button>
+      </div>
     `;
     document.body.appendChild(panel);
   }

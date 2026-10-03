@@ -306,6 +306,7 @@ input,textarea,select{font-family:'Jost',sans-serif;}
 #admin-panel{display:none;position:fixed;inset:0;z-index:800;background:rgba(26,18,8,.97);overflow-y:auto;padding:2rem 3rem;}
 #admin-panel.show{display:block;}
 .adm-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1.5rem;border-bottom:1px solid rgba(245,239,230,.1);margin-bottom:2rem;}
+.adm-header-actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end;}
 .adm-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--sand);}
 .adm-title span{font-style:italic;color:var(--gold2);}
 .adm-user-info{font-size:.68rem;color:rgba(245,239,230,.4);margin-top:.3rem;letter-spacing:.1em;}
@@ -418,6 +419,8 @@ footer{background:var(--forest);color:rgba(245,239,230,.65);padding:3.5rem 0 1.5
   .about-values{grid-template-columns:1fr;}
   .review-form-wrap{padding:2rem 1.5rem;}
   .adm-item{flex-wrap:wrap;}
+  .adm-header{align-items:flex-start;gap:1rem;}
+  .adm-header-actions{flex-direction:column;}
   .login-box{padding:2rem 1.5rem;}
 }
 /* ═══ LIVE VISITOR BADGE ═══ */

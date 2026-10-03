@@ -68,12 +68,7 @@ function normalizeTagKey(value = '') {
 }
 
 function getProductTags(product) {
-  if (Array.isArray(product.tags) && product.tags.length) return product.tags;
-  return [
-    product.badge || '',
-    product.cat || '',
-    product.featured ? 'featured' : ''
-  ].filter(Boolean);
+  return Array.isArray(product.tags) ? product.tags : [];
 }
 
 function renderTagButtons(productList = getUniqueProducts()) {
@@ -89,7 +84,7 @@ function renderTagButtons(productList = getUniqueProducts()) {
   });
 
   if (tags.size === 0) {
-    tagBar.innerHTML = '<span class="tag-empty">No tags available while products are unavailable.</span>';
+    tagBar.innerHTML = '<span class="tag-empty">No product tags have been added yet.</span>';
     return;
   }
 
