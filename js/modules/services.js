@@ -656,5 +656,5 @@ export {
   formatProductForDisplay,
   formatReviewForDisplay,
   generateWhatsAppOrderMessage,
-  hasDuplicateProduct
+  hasDuplicateProduct,
 };

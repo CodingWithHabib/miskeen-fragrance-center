@@ -5,6 +5,7 @@
 import { STORE, products, showToast } from '../config.js';
 import { esc, generateStars, formatCurrency, parseCurrency } from './utils.js';
 import { createProduct, modifyProduct, removeProduct, updateProductStock, formatProductForDisplay, generateWhatsAppOrderMessage, processWhatsAppOrder } from './services.js';
+import { normalizeProductKey } from './product-guard.js';
 
 let currentFilter  = 'all';
 let searchQuery    = '';
@@ -115,7 +116,7 @@ function renderFeaturedProducts() {
   const container = document.getElementById('featured-grid');
   if (!container) return;
 
-  const featured = products.filter(p => p.featured).slice(0, 4);
+  const featured = getUniqueProducts().filter(p => p.featured).slice(0, 4);
   container.innerHTML = featured.length
     ? featured.map(renderProductCard).join('')
     : `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">✨</span><h3>No Featured Products</h3><p>Mark products as featured in the Admin Panel.</p></div>`;
@@ -127,7 +128,8 @@ function renderAllProducts() {
   const container = document.getElementById('all-products-grid');
   if (!container) return;
 
-  let filtered = currentFilter === 'all' ? products : products.filter(p => p.cat === currentFilter);
+  const uniqueProducts = getUniqueProducts();
+  let filtered = currentFilter === 'all' ? uniqueProducts : uniqueProducts.filter(p => p.cat === currentFilter);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(p => (p.name||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q));
@@ -254,10 +256,21 @@ function applyStockIndicators() {
 
 function updateProductSelectOptions() {
   const opts = '<option value="">-- Select Fragrance --</option>' +
-    products.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+    getUniqueProducts().map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
   ['cf-product','rv-product'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = opts;
+  });
+}
+
+function getUniqueProducts(productList = products) {
+  const seen = new Set();
+  return productList.filter((product) => {
+    const key = normalizeProductKey(product);
+    if (!key || key === '|') return true;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
   });
 }
 
