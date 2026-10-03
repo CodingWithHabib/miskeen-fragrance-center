@@ -61,7 +61,9 @@ input,textarea,select{font-family:'Jost',sans-serif;}
 #site-header{position:sticky;top:0;z-index:200;background:rgba(245,239,230,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:box-shadow .3s;}
 #site-header.scrolled{box-shadow:0 2px 20px rgba(28,58,42,.1);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:70px;}
-.logo{display:flex;flex-direction:column;cursor:pointer;min-width:0;}
+.logo{display:flex;align-items:center;gap:.8rem;cursor:pointer;min-width:0;}
+.logo-copy{display:flex;flex-direction:column;}
+.logo-mark{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;border:1.5px solid rgba(176,141,87,.7);background:linear-gradient(135deg, rgba(28,58,42,.98), rgba(52,92,70,.96));color:var(--sand);font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;letter-spacing:.08em;box-shadow:0 6px 18px rgba(28,58,42,.14);}
 .logo-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,2vw,2.2rem);font-weight:700;color:var(--forest);letter-spacing:.04em;line-height:1;white-space:nowrap;}
 .logo-tag{font-size:.48rem;letter-spacing:.38em;color:var(--gold);font-weight:600;margin-top:4px;white-space:nowrap;}
 .main-nav{display:flex;align-items:center;gap:1.1rem;margin-left:auto;}
