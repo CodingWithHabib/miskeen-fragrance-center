@@ -22,6 +22,11 @@
   <!-- ═══ HEADER ═══ -->
   <header id="site-header">
     <div class="container header-inner">
+      <div class="logo" id="logo-trigger">
+        <span class="logo-name" id="hdr-logo-name">Miskeen Fragrance</span>
+        <span class="logo-tag" id="hdr-logo-tag">PREMIUM ATTAR HOUSE</span>
+      </div>
+
       <nav class="main-nav" aria-label="Main navigation">
         <span class="nav-link active" onclick="app.goPage('home')">HOME</span>
         <span class="nav-link" onclick="app.goPage('products')">COLLECTION</span>
@@ -30,17 +35,10 @@
         <span class="nav-link" onclick="app.goPage('contact')">CONTACT</span>
       </nav>
 
-      <div class="header-right">
-        <div class="header-actions">
-          <a class="btn header-action-btn btn-outline" href="admin.html">SIGN IN</a>
-          <a class="btn header-action-btn btn-outline" href="admin.html">ADMIN PANEL</a>
-          <a class="btn btn-wa header-action-btn" id="hdr-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
-        </div>
-
-        <div class="logo" id="logo-trigger">
-          <span class="logo-name" id="hdr-logo-name">Miskeen Fragrance</span>
-          <span class="logo-tag" id="hdr-logo-tag">PREMIUM ATTAR HOUSE</span>
-        </div>
+      <div class="header-actions">
+        <a class="btn header-action-btn btn-outline" href="admin.html">SIGN IN</a>
+        <a class="btn header-action-btn btn-outline" href="admin.html">ADMIN PANEL</a>
+        <a class="btn btn-wa header-action-btn" id="hdr-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
       </div>
 
       <button class="hamburger" onclick="app.toggleMobile()" aria-label="Menu">
