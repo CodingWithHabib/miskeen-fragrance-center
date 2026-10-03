@@ -155,6 +155,8 @@ function ensureAdminShell() {
 
 function initializeAdmin() {
   ensureAdminShell();
+  document.getElementById('admin-login-overlay')?.classList.remove('show');
+  document.getElementById('admin-panel')?.classList.remove('show');
   if (adminListenersBound) return;
   setupAdminEventListeners();
   adminListenersBound = true;

@@ -299,15 +299,12 @@ function initializeScrollEffects() {
 }
 
 function initializeKeyboardShortcuts() {
-  // FIX: use the correct imported function names — no more undefined closeLogin/closeAdmin/showLogin
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       if (document.getElementById('edit-modal-overlay')?.classList.contains('show')) { closeEditModal();   return; }
       if (document.getElementById('admin-login-overlay')?.classList.contains('show')) { closeLoginModal(); return; }
       if (document.getElementById('admin-panel')?.classList.contains('show'))         { closeAdminPanel(); return; }
     }
-    // FIX: only one place handles Ctrl+Shift+A (removed duplicate in admin.js setupAdminEventListeners)
-    if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); showLoginModal(); }
   });
 }
 
