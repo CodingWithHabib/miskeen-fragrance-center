@@ -190,6 +190,10 @@
           <button class="cat-btn active" data-category="all" onclick="app.filterProds('all',this)">ALL</button>
           <!-- Categories will be loaded dynamically from Firebase -->
         </div>
+        <div class="tag-filter-label">BROWSE BY TAG</div>
+        <div class="tag-bar" id="tag-bar">
+          <!-- Tag filters will be injected here -->
+        </div>
         <div class="products-grid" id="all-products-grid">
           <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
           <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
@@ -429,6 +433,7 @@
           <textarea id="edit-pd" rows="2" placeholder="Brief description..."></textarea>
         </div>
         <div class="adm-field"><label>BADGE (optional)</label><input id="edit-pb" placeholder="BESTSELLER · NEW · LIMITED"></div>
+        <div class="adm-field"><label>TAGS (comma-separated)</label><input id="edit-pt" placeholder="oud, woody, evening"></div>
         <div class="adm-field">
           <label>FEATURED ON HOME PAGE</label>
           <select id="edit-pf"><option value="no">No</option><option value="yes">Yes</option></select>

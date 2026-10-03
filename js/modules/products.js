@@ -8,6 +8,7 @@ import { createProduct, modifyProduct, removeProduct, updateProductStock, format
 import { normalizeProductKey } from './product-guard.js';
 
 let currentFilter  = 'all';
+let currentTag     = 'all';
 let searchQuery    = '';
 let selectedSizes  = {};
 let quantities     = {};
@@ -28,6 +29,10 @@ function initializeProducts() {
 function initializeProductFilters() {
   document.querySelectorAll('.cat-btn').forEach(btn => {
     btn.addEventListener('click', () => filterProducts(btn.dataset.category || 'all'));
+  });
+
+  document.querySelectorAll('.tag-btn').forEach(btn => {
+    btn.addEventListener('click', () => filterByTag(btn.dataset.tag || 'all'));
   });
 }
 
@@ -50,6 +55,63 @@ function filterProducts(category) {
   document.querySelectorAll('.cat-btn').forEach(btn => {
     const cat = btn.dataset.category || btn.getAttribute('data-category') || 'all';
     btn.classList.toggle('active', cat === category);
+  });
+  renderAllProducts();
+}
+
+function normalizeTagKey(value = '') {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getProductTags(product) {
+  if (Array.isArray(product.tags) && product.tags.length) return product.tags;
+  return [
+    product.badge || '',
+    product.cat || '',
+    product.featured ? 'featured' : ''
+  ].filter(Boolean);
+}
+
+function renderTagButtons(productList = getUniqueProducts()) {
+  const tagBar = document.getElementById('tag-bar');
+  if (!tagBar) return;
+
+  const tags = new Map();
+  productList.forEach(product => {
+    getProductTags(product).forEach(tag => {
+      const value = normalizeTagKey(tag);
+      if (value && !tags.has(value)) tags.set(value, String(tag).trim().toUpperCase());
+    });
+  });
+
+  if (tags.size === 0) {
+    tagBar.innerHTML = '<span class="tag-empty">No tags available while products are unavailable.</span>';
+    return;
+  }
+
+  const options = [
+    { value: 'all', label: 'ALL TAGS' },
+    ...Array.from(tags.entries()).map(([value, label]) => ({ value, label }))
+  ];
+
+  tagBar.innerHTML = options.map(option => `
+    <button class="tag-btn ${currentTag === option.value ? 'active' : ''}" data-tag="${esc(option.value)}">${esc(option.label)}</button>
+  `).join('');
+
+  tagBar.querySelectorAll('.tag-btn').forEach(btn => {
+    btn.addEventListener('click', () => filterByTag(btn.dataset.tag || 'all'));
+  });
+}
+
+function filterByTag(tag) {
+  currentTag = tag || 'all';
+  document.querySelectorAll('.tag-btn').forEach(btn => {
+    const btnTag = btn.dataset.tag || 'all';
+    btn.classList.toggle('active', btnTag === currentTag);
   });
   renderAllProducts();
 }
@@ -130,10 +192,20 @@ function renderAllProducts() {
 
   const uniqueProducts = getUniqueProducts();
   let filtered = currentFilter === 'all' ? uniqueProducts : uniqueProducts.filter(p => p.cat === currentFilter);
+
+  if (currentTag !== 'all') {
+    filtered = filtered.filter(product => {
+      const tagKey = normalizeTagKey(currentTag);
+      return getProductTags(product).some(tag => normalizeTagKey(tag) === tagKey);
+    });
+  }
+
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(p => (p.name||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q));
   }
+
+  renderTagButtons(uniqueProducts);
 
   container.innerHTML = filtered.length
     ? filtered.map(renderProductCard).join('')
@@ -280,7 +352,7 @@ function debounce(func, wait) {
 }
 
 export {
-  initializeProducts, filterProducts, handleSearch,
+  initializeProducts, filterProducts, filterByTag, handleSearch,
   renderFeaturedProducts, renderAllProducts,
   selectSize as selectProductSize,
   changeQuantity as changeProductQuantity,

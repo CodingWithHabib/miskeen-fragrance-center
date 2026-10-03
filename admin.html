@@ -12,18 +12,20 @@
   <div class="login-box">
     <h2>Admin Portal</h2>
     <p>Authorized administrators only.</p>
-    <input type="email" class="login-inp" id="admin-email-inp" placeholder="Email">
-    <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password">
-    <div class="login-error" id="login-error"></div>
-    <button class="btn btn-primary" id="login-btn">Sign In</button>
-    <button class="btn btn-outline" id="signup-btn">Create Account</button>
+    <form id="admin-login-form">
+      <input type="email" class="login-inp" id="admin-email-inp" placeholder="Email" autocomplete="username" required>
+      <input type="password" class="login-inp" id="admin-pass-inp" placeholder="Password" autocomplete="current-password" required>
+      <div class="login-error" id="login-error" role="alert"></div>
+      <button class="btn btn-primary" id="login-btn" type="submit">Sign In</button>
+      <button class="btn btn-outline" id="signup-btn" type="button">Create Account</button>
+    </form>
     <p class="admin-note">Signup does not grant admin access automatically.</p>
   </div>
 </div>
 
 <div id="access-denied" class="hidden-state">
   <h2>Access Denied</h2>
-  <p>Your account does not have administrator privileges.</p>
+  <p id="access-denied-message">Your account does not have administrator privileges.</p>
   <a href="index.html" class="btn btn-primary">Return Home</a>
 </div>
 

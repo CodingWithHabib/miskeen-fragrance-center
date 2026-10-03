@@ -5,17 +5,56 @@ const authView=document.getElementById('auth-view');
 const deniedView=document.getElementById('access-denied');
 const frame=document.getElementById('dashboard-frame');
 const errorBox=document.getElementById('login-error');
+const loginForm=document.getElementById('admin-login-form');
+const loginButton=document.getElementById('login-btn');
+const signupButton=document.getElementById('signup-btn');
+const deniedMessage=document.getElementById('access-denied-message');
+let adminAccess=false;
+let dashboardOpened=false;
+let firebaseReady=false;
 
-await initializeFirebase();
+function openDashboardWhenReady() {
+ if(!adminAccess || dashboardOpened) return;
+ const app=frame.contentWindow?.app;
+ if(typeof app?.openAdminPanel==='function'){
+   app.openAdminPanel();
+   dashboardOpened=true;
+ }
+}
 
-document.getElementById('login-btn').addEventListener('click', async()=>{
+frame.addEventListener('load', openDashboardWhenReady);
+
+try {
+ await initializeFirebase();
+ firebaseReady=true;
+} catch(error) {
+ showError('Could not connect to Firebase. Check your internet connection and configuration.');
+ loginButton.disabled=true;
+ signupButton.disabled=true;
+}
+
+loginForm.addEventListener('submit', async(event)=>{
+ event.preventDefault();
+ if(loginButton.disabled) return;
+
  const email=document.getElementById('admin-email-inp').value.trim();
  const password=document.getElementById('admin-pass-inp').value;
- const result=await signInUser(email,password);
- if(!result.success){showError(result.error);return;}
+ loginButton.disabled=true;
+ loginButton.textContent='Signing in...';
+ try {
+   const result=await signInUser(email,password);
+   if(!result.success) showError(result.error);
+ } catch(error) {
+   showError('Sign-in could not be completed. Please try again.');
+ } finally {
+   if(!adminAccess) {
+     loginButton.disabled=false;
+     loginButton.textContent='Sign In';
+   }
+ }
 });
 
-document.getElementById('signup-btn').addEventListener('click', async()=>{
+signupButton.addEventListener('click', async()=>{
  const email=document.getElementById('admin-email-inp').value.trim();
  const password=document.getElementById('admin-pass-inp').value;
  const result=await signUpUser(email,password);
@@ -26,32 +65,42 @@ document.getElementById('signup-btn').addEventListener('click', async()=>{
  }
 });
 
-onAuthChanged(async(user)=>{
+if(firebaseReady) onAuthChanged(async(user)=>{
  if(!user){
+   adminAccess=false;
+   dashboardOpened=false;
    authView.style.display='flex';
    deniedView.style.display='none';
    frame.style.display='none';
    return;
  }
- const claims=await getCurrentUserClaims();
- if(claims.admin===true){
-   authView.style.display='none';
-   deniedView.style.display='none';
-   frame.style.display='block';
-   frame.onload=()=>{
-      try{
-        frame.contentWindow.app?.openAdminPanel?.();
-      }catch(e){}
+
+ try {
+   const claims=await getCurrentUserClaims();
+   if(claims.admin===true){
+     adminAccess=true;
+     authView.style.display='none';
+     deniedView.style.display='none';
+     frame.style.display='block';
+     openDashboardWhenReady();
+   }else{
+     adminAccess=false;
+     authView.style.display='none';
+     frame.style.display='none';
+     deniedMessage.textContent='Sign-in succeeded, but this account does not have the Firebase admin role. Ask an administrator to assign the admin claim.';
+     deniedView.style.display='block';
    }
- }else{
+ } catch(error) {
+   adminAccess=false;
    authView.style.display='none';
-   deniedView.style.display='block';
    frame.style.display='none';
-   setTimeout(()=>window.location.href='index.html',3000);
+   deniedMessage.textContent='Could not verify administrator access. Check your connection and reload this page.';
+   deniedView.style.display='block';
  }
 });
 
-function showError(msg){
+function showError(msg,type='error'){
  errorBox.style.display='block';
  errorBox.textContent=msg;
+ errorBox.classList.toggle('info',type==='info');
 }

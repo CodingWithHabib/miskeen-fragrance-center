@@ -1,7 +1,7 @@
 import { initializeFirebase, getSettings, saveSettings as firebaseSaveSettings, listenProducts, listenReviews, listenStock, listenRTDBStats, listenVisitorCount, listenCategories, initPresence, seedIfEmpty, addProduct, updateProduct, deleteProduct as firebaseDeleteProduct } from './modules/firebase.js';
 import { initializeCloudinary, updateCloudinaryConfig, uploadToCloudinary } from './modules/cloudinary.js';
 import { initializeServices } from './modules/services.js';
-import { initializeProducts, filterProducts, handleSearch, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
+import { initializeProducts, filterProducts, filterByTag, handleSearch, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
 import { initializeAdmin, showLoginModal, closeLoginModal, performSignIn, performSignOut, openAdminPanel, closeAdminPanel, switchAdminTab, closeEditModal, addProductSize, addEditSize, removeProductSize, doAddProduct, editProduct, doEditProduct, deleteProduct, saveSettings, saveContent, saveContact, doAddCategory, editCategory, doDeleteCategory } from './modules/admin.js';
 import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js';
 import { initializeUtils } from './modules/utils.js';
@@ -47,6 +47,7 @@ window.app = {
   updateWALinks,
   updateUIFromSettings,
   filterProds: filterProducts,
+  filterByTag,
   renderAllProducts,
   handleSearch,
   selectProductSize,

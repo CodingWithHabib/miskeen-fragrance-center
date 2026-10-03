@@ -358,6 +358,9 @@ function sanitizeProductData(data) {
     cat: SANITIZE.text(data.cat || ''),
     desc: SANITIZE.text(data.desc || ''),
     badge: SANITIZE.text(data.badge || ''),
+    tags: Array.isArray(data.tags) ? [...new Set(data.tags
+      .map(tag => SANITIZE.text(String(tag || '').trim()).slice(0, 40))
+      .filter(Boolean))].slice(0, 20) : [],
     img: data.img || '',
     featured: Boolean(data.featured),
     sizes: Array.isArray(data.sizes) ? data.sizes.map(size => ({

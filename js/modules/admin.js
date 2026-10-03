@@ -64,7 +64,26 @@ function ensureAdminShell() {
         <button class="adm-tab" onclick="app.switchAdminTab('adm-content', this)">CONTENT</button>
         <button class="adm-tab" onclick="app.switchAdminTab('adm-contact', this)">CONTACT</button>
       </div>
-      <div class="adm-sec on" id="adm-manage"></div>
+      <div class="adm-sec on" id="adm-manage">
+        <div class="adm-form-grid">
+          <div class="adm-msg" id="add-msg"></div>
+          <div class="adm-field"><label>PRODUCT NAME *</label><input id="pn" placeholder="e.g. Office For Men"></div>
+          <div class="adm-field"><label>CATEGORY *</label><select id="pc"></select></div>
+          <div class="adm-field" style="grid-column:span 2"><label>SHORT DESCRIPTION</label><textarea id="pd" rows="2" placeholder="Brief description..."></textarea></div>
+          <div class="adm-field"><label>BADGE (optional)</label><input id="pb" placeholder="BESTSELLER · NEW · LIMITED"></div>
+          <div class="adm-field"><label>TAGS (comma-separated)</label><input id="pt" placeholder="oud, woody, evening"></div>
+          <div class="adm-field"><label>FEATURED ON HOME PAGE</label><select id="pf"><option value="no">No</option><option value="yes">Yes</option></select></div>
+          <div class="adm-field"><label>PRODUCT IMAGE (upload)</label><input type="file" id="pi" accept="image/*" onchange="app.prevProdImg(event)"><img id="pi-preview" class="img-preview" alt="Product preview"></div>
+          <div class="adm-field"><label>IMAGE URL (alternative)</label><input id="pi-url" placeholder="https://example.com/image.jpg"></div>
+        </div>
+        <div style="margin:1rem 0;">
+          <div class="adm-section-title" style="font-size:.85rem;margin-bottom:.8rem;">Size &amp; Price Options</div>
+          <div id="sizes-wrap"><div class="size-entry"><div class="adm-field"><label>SIZE</label><input class="sz-ml" placeholder="e.g. 3ml"></div><div class="adm-field"><label>PRICE</label><input class="sz-pr" placeholder="e.g. PKR 650"></div><button class="rem-size-btn" onclick="app.remSize(this)" type="button">✕</button></div></div>
+          <button class="add-size-btn" onclick="app.addSize()" type="button">+ ADD SIZE</button>
+        </div>
+        <button class="adm-submit" onclick="app.doAddProd()" type="button">ADD PRODUCT</button>
+        <div id="adm-prod-list"></div>
+      </div>
       <div class="adm-sec" id="adm-categories"></div>
       <div class="adm-sec" id="adm-reviews"></div>
       <div class="adm-sec" id="adm-stock"></div>
@@ -714,6 +733,7 @@ async function doAddProduct() {
     const category = document.getElementById('pc')?.value;
     const desc     = document.getElementById('pd')?.value?.trim();
     const badge    = document.getElementById('pb')?.value?.trim();
+    const tags     = (document.getElementById('pt')?.value || '').split(',').map(tag => tag.trim()).filter(Boolean);
     const featured = document.getElementById('pf')?.value === 'yes';
 
     if (!name || !category) { showAdminMessage('add-msg', 'error', 'Product name and category are required'); return; }
@@ -727,7 +747,7 @@ async function doAddProduct() {
 
     if (sizes.length === 0) { showAdminMessage('add-msg', 'error', 'At least one size is required'); return; }
 
-    const productData = { name, cat: category, desc: desc || '', badge: badge || '', featured, sizes };
+    const productData = { name, cat: category, desc: desc || '', badge: badge || '', tags, featured, sizes };
 
     const imageFile     = document.getElementById('pi')?.files?.[0] || null;
     const imageUrlInput = document.getElementById('pi-url')?.value?.trim();
@@ -754,6 +774,7 @@ async function doAddProduct() {
       document.getElementById('pc').value = 'attar';
       document.getElementById('pd').value = '';
       document.getElementById('pb').value = '';
+      document.getElementById('pt').value = '';
       document.getElementById('pf').value = 'no';
       // FIX: reset size row with correct onclick
       const sizesWrap = document.getElementById('sizes-wrap');
@@ -785,6 +806,7 @@ async function editProduct(productId) {
   set('edit-pc',  product.cat   || 'attar');
   set('edit-pd',  product.desc  || '');
   set('edit-pb',  product.badge || '');
+  set('edit-pt',  (product.tags || []).join(', '));
   set('edit-pf',  product.featured ? 'yes' : 'no');
 
   const sizesWrap = document.getElementById('edit-sizes-wrap');
@@ -811,6 +833,7 @@ async function doEditProduct() {
     const category = document.getElementById('edit-pc')?.value;
     const desc     = document.getElementById('edit-pd')?.value?.trim();
     const badge    = document.getElementById('edit-pb')?.value?.trim();
+    const tags     = (document.getElementById('edit-pt')?.value || '').split(',').map(tag => tag.trim()).filter(Boolean);
     const featured = document.getElementById('edit-pf')?.value === 'yes';
 
     if (!name || !category) { showAdminMessage('edit-msg', 'error', 'Product name and category are required'); return; }
@@ -824,7 +847,7 @@ async function doEditProduct() {
 
     if (sizes.length === 0) { showAdminMessage('edit-msg', 'error', 'At least one size is required'); return; }
 
-    const productData = { name, cat: category, desc: desc || '', badge: badge || '', featured, sizes };
+    const productData = { name, cat: category, desc: desc || '', badge: badge || '', tags, featured, sizes };
 
     showAdminMessage('edit-msg', 'info', 'Updating product...');
     const result = await window.firebaseUpdateProduct(productId, productData);
