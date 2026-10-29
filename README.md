@@ -23,6 +23,10 @@ python -m http.server 8000
 
 Then open: **http://localhost:8000**
 
+### Bootstrap compatibility
+
+Bootstrap 5.3.3 is included on the application pages as an optional utility layer. The existing theme stylesheets are loaded after Bootstrap, so the current colors, typography, components, JavaScript behavior, and responsive breakpoints remain unchanged. New Bootstrap utilities can be introduced incrementally without replacing the existing design system.
+
 ### Option 2: Node.js
 
 Install `http-server` globally:
