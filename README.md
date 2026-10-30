@@ -169,34 +169,34 @@ Click Save ✓
 - **Submit Reviews**: Leave feedback on Reviews page (1-minute cooldown between submissions)
 
 ### Admin Features
-Access with: **Triple-click the logo** OR **Ctrl+Shift+A**
+Open **admin.html** directly from the deployed site or local server. The administration panel uses a standalone responsive luxury dashboard and verifies the Firebase `admin: true` custom claim after sign-in.
 
 Login with your Firebase credentials (email/password from setup step E)
 
-#### Tabs:
-1. **Manage (Products)**
+#### Dashboard sections:
+1. **Dashboard**
+   - Live product, review, visitor, stock, and order counters where the existing database supports them
+   - Pending review and low-stock attention panels
+
+2. **Products**
    - View all products
-   - Edit/Delete products
+   - Add, edit, search, filter, and delete products
    - Mark as Featured
    - Upload product images
 
-2. **Reviews**
+3. **Categories**
+   - Add, edit, and safely delete unused categories
+
+4. **Reviews**
    - View all customer reviews
    - Approve/Delete reviews
 
-3. **Stock**
+5. **Stock management**
    - Track inventory levels
-   - Update stock quantities
+   - Update stock quantities in Realtime Database
 
-4. **Dashboard**
-   - View sales statistics
-   - See recent orders
-   - Monitor visitor count
-
-5. **Settings**
-   - Update store name, WhatsApp, email, hours
-   - Enter Cloudinary credentials
-   - Set featured product image
+6. **Settings, Homepage content, and Contact details**
+   - Edit the existing Firestore-backed settings used by the public storefront
 
 ---
 
