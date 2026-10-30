@@ -408,6 +408,7 @@ footer{background:var(--forest);color:rgba(245,239,230,.65);padding:3.5rem 0 1.5
 }
 @media(max-width:768px){
   .main-nav{display:none;}
+  .header-actions{display:none;}
   .hamburger{display:flex;}
   .header-inner{height:64px;}
   .logo-tag{letter-spacing:.22em;}
