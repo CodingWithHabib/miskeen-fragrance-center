@@ -81,20 +81,15 @@
             <h1 class="hero-title">
               The <em>Ancient</em> Art<br>of <strong>Pure Fragrance</strong>
             </h1>
-            <p class="hero-desc" id="hero-desc">100% natural, alcohol-free attars sourced from the finest botanicals. Browse our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</p>
+            <p class="hero-desc" id="hero-desc">Luxury fragrances sourced from renowned perfume houses. Explore our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</p>
             <div class="hero-actions">
               <button class="btn btn-primary" onclick="app.goPage('products')">EXPLORE COLLECTION →</button>
               <a class="btn btn-wa" id="hero-wa-btn" href="#" target="_blank" rel="noopener">💬 ORDER NOW</a>
             </div>
             <div class="hero-trust">
-              <div class="trust-item"><div class="trust-num">100%</div><div class="trust-label">HALAL &amp; ALCOHOL-FREE</div></div>
+              <div class="trust-item"><div class="trust-num">50+</div><div class="trust-label">SIGNATURE SCENTS</div></div>
               <div class="trust-item"><div class="trust-num">50+</div><div class="trust-label">PREMIUM FRAGRANCES</div></div>
-              <div class="trust-item"><div class="trust-num">★4.9</div><div class="trust-label">CUSTOMER RATING</div></div>
-            </div>
-            <!-- Live Visitor Badge -->
-            <div id="live-visitor-badge" style="display:none;" class="live-visitor-badge">
-              <span class="live-dot"></span>
-              <span id="live-visitor-count">0</span> people browsing now
+              <div class="trust-item"><div class="trust-num" id="public-rating-value">—</div><div class="trust-label" id="public-rating-label">CUSTOMER RATING</div></div>
             </div>
           </div>
           <div class="hero-right">
@@ -116,16 +111,16 @@
     <!-- Marquee -->
     <div class="marquee-bar">
       <div class="marquee-inner">
-        <span class="marquee-item">PURE ATTAR</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">ALCOHOL-FREE</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">SIGNATURE SCENTS</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">TIMELESS IMPRESSIONS</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">NATIONWIDE DELIVERY</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">HALAL CERTIFIED</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">CURATED QUALITY</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">ORDER ON WHATSAPP</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">PREMIUM QUALITY</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">PURE ATTAR</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">ALCOHOL-FREE</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">SIGNATURE SCENTS</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">TIMELESS IMPRESSIONS</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">NATIONWIDE DELIVERY</span><span class="marquee-sep">✦</span>
-        <span class="marquee-item">HALAL CERTIFIED</span><span class="marquee-sep">✦</span>
+        <span class="marquee-item">CURATED QUALITY</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">ORDER ON WHATSAPP</span><span class="marquee-sep">✦</span>
         <span class="marquee-item">PREMIUM QUALITY</span><span class="marquee-sep">✦</span>
       </div>
@@ -160,7 +155,7 @@
           <h2 class="section-title mt-1">Crafted for the <em>Discerning</em></h2>
         </div>
         <div class="why-grid">
-          <div class="why-card"><div class="why-icon">🌿</div><div class="why-title">100% Natural Attars</div><div class="why-text">Pure oil-based fragrances with no alcohol, no synthetics. Safe for skin and perfectly halal.</div></div>
+          <div class="why-card"><div class="why-icon">🌿</div><div class="why-title">Signature Fragrances</div><div class="why-text">Thoughtfully selected scents designed to become part of your everyday rituals.</div></div>
           <div class="why-card"><div class="why-icon">📦</div><div class="why-title">Nationwide Delivery</div><div class="why-text">We ship across all of Pakistan — from Karachi to Gilgit. Fast, tracked, and reliable.</div></div>
           <div class="why-card"><div class="why-icon">💬</div><div class="why-title">WhatsApp Ordering</div><div class="why-text">No complicated checkout. Just message us, choose your fragrance, and pay with ease.</div></div>
           <div class="why-card"><div class="why-icon">✨</div><div class="why-title">Premium Sourcing</div><div class="why-text">Sourced directly from renowned distillers in Kannauj, Taif, and Arabia.</div></div>
@@ -196,6 +191,7 @@
         <div class="tag-bar" id="tag-bar">
           <!-- Tag filters will be injected here -->
         </div>
+        <button class="clear-filters-btn" id="clear-filters-btn" type="button">CLEAR FILTERS</button>
         <div class="products-grid" id="all-products-grid">
           <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
           <div class="skel-card"><div class="skel-img skeleton"></div><div class="skel-body"><div class="skel-line short skeleton"></div><div class="skel-line long skeleton"></div><div class="skel-line med skeleton"></div></div></div>
@@ -213,7 +209,7 @@
     <div class="container" style="position:relative;z-index:1;">
       <span class="tag">Who We Are</span>
       <h1>Our <em>Story</em></h1>
-      <p>Dedicated to authentic, alcohol-free fragrance since day one</p>
+      <p>Dedicated to memorable fragrance experiences since day one</p>
     </div>
   </div>
 
@@ -232,11 +228,11 @@
         <div>
           <span class="tag">Who We Are</span>
           <h2 class="section-title mt-1" id="about-title">Pure <em>Fragrance</em>,<br>Delivered Online</h2>
-          <p class="section-sub mt-1" id="about-text1">Miskeen Fragrance Center is a 100% online attar store dedicated to bringing you the finest, most authentic non-alcoholic perfumes straight from trusted sources to your doorstep anywhere in Pakistan.</p>
+          <p class="section-sub mt-1" id="about-text1">Miskeen Fragrance Center is an online fragrance store dedicated to bringing you distinctive scents from trusted sources to your doorstep anywhere in Pakistan.</p>
           <p class="section-sub mt-1" id="about-text2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection, ensuring purity, longevity, and authenticity in every drop.</p>
 
           <div class="about-values mt-2">
-            <div class="val-card"><div class="val-title">Halal &amp; Alcohol-Free</div><div class="val-text">All our attars are 100% natural oil-based — safe for all, suitable for prayer.</div></div>
+            <div class="val-card"><div class="val-title">Thoughtful Curation</div><div class="val-text">A considered collection for discovering a scent that feels distinctly yours.</div></div>
             <div class="val-card"><div class="val-title">Premium Sourcing</div><div class="val-text">Sourced directly from trusted distillers in Kannauj, Taif, and Arabia.</div></div>
             <div class="val-card"><div class="val-title">Fast Delivery</div><div class="val-text">We ship nationwide — from Karachi to Lahore, Islamabad to Peshawar.</div></div>
             <div class="val-card"><div class="val-title">Personal Service</div><div class="val-text">Chat directly with us on WhatsApp for recommendations and custom orders.</div></div>
@@ -269,7 +265,7 @@
           <div>
             <span class="tag">Reach Out</span>
             <h2 class="section-title mt-1">Order Online,<br><em>Delivered to You</em></h2>
-            <p class="section-sub mt-1">We're a 100% online store. Message us on WhatsApp to place orders, ask about fragrances, or inquire about bulk pricing.</p>
+            <p class="section-sub mt-1">We're an online store. Message us on WhatsApp to place orders, ask about fragrances, or inquire about bulk pricing.</p>
             <div class="contact-methods">
               <a class="cmethod" id="contact-wa-link" href="#" target="_blank" rel="noopener">
                 <div class="cmethod-icon">💬</div>
@@ -379,7 +375,7 @@
             <span class="logo-name" id="ft-logo-name">Miskeen Fragrance Center</span>
             <span class="logo-tag" id="ft-logo-tag">WHERE SCENT BECOMES SOUL</span>
           </div>
-          <p id="ft-desc">Pakistan's online attar & perfume store. Pure, natural, alcohol-free fragrances delivered to your doorstep.</p>
+          <p id="ft-desc">Pakistan's online attar and perfume store. Discover memorable fragrances delivered to your doorstep.</p>
         </div>
         <div class="ft-col">
           <h5>SHOP</h5>
@@ -405,7 +401,7 @@
       </div>
       <div class="ft-bottom">
         <p id="ft-copy">© 2026 Miskeen Fragrance Center. All Rights Reserved. | 100% Online Store</p>
-        <span>Pure · Natural · Halal · Delivered Nationwide</span>
+        <span>Signature · Curated · Delivered Nationwide</span>
       </div>
     </div>
   </footer>

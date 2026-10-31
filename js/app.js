@@ -1,11 +1,11 @@
-import { initializeFirebase, getSettings, saveSettings as firebaseSaveSettings, listenProducts, listenReviews, listenStock, listenRTDBStats, listenVisitorCount, listenCategories, initPresence, seedIfEmpty, addProduct, updateProduct, deleteProduct as firebaseDeleteProduct } from './modules/firebase.js';
+import { initializeFirebase, getSettings, saveSettings as firebaseSaveSettings, listenProducts, listenReviews, listenStock, listenRTDBStats, listenCategories, seedIfEmpty, addProduct, updateProduct, deleteProduct as firebaseDeleteProduct } from './modules/firebase.js';
 import { initializeCloudinary, updateCloudinaryConfig, uploadToCloudinary } from './modules/cloudinary.js';
 import { initializeServices } from './modules/services.js';
-import { initializeProducts, filterProducts, filterByTag, handleSearch, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
+import { initializeProducts, filterProducts, filterByTag, handleSearch, clearFilters, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
 import { initializeAdmin, showLoginModal, closeLoginModal, performSignIn, performSignOut, openAdminPanel, closeAdminPanel, switchAdminTab, closeEditModal, addProductSize, addEditSize, removeProductSize, doAddProduct, editProduct, doEditProduct, deleteProduct, saveSettings, saveContent, saveContact, doAddCategory, editCategory, doDeleteCategory } from './modules/admin.js';
 import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js';
 import { initializeUtils } from './modules/utils.js';
-import { STORE, products, reviews, showToast, state } from './config.js';
+import { STORE, products, reviews, showToast, state, cleanPublicCopy } from './config.js';
 
 /* ════════════════════════════════════════════════════════════════
    MAIN APPLICATION ORCHESTRATOR
@@ -19,7 +19,6 @@ let currentUser     = null;
 let adminPanelOpen  = false;
 let stockData       = {};
 let rtdbStats       = {};
-let visitorRef      = null;
 let appInitialized = false;
 
 function previewFileInput(event, previewId) {
@@ -50,6 +49,7 @@ window.app = {
   filterByTag,
   renderAllProducts,
   handleSearch,
+  clearFilters,
   selectProductSize,
   changeProductQuantity,
   orderProductViaWhatsApp,
@@ -176,6 +176,7 @@ async function initializeApp() {
     await initializeUtils();
 
     initializeNavigation();
+    document.getElementById('clear-filters-btn')?.addEventListener('click', clearFilters);
     initializeScrollEffects();
     initializeKeyboardShortcuts();
 
@@ -206,11 +207,27 @@ async function initializeApp() {
     listenReviews(async (revs) => {
       window.firebaseReviews = revs;
       state.setReviews(revs);
+      updatePublicRating(revs);
       try {
         const m = await import('./modules/reviews.js');
         m.renderAllReviews(revs);
       } catch (err) {
         console.error('Failed to render reviews:', err);
+      }
+
+      function updatePublicRating(reviewList = []) {
+        const approved = reviewList.filter(review => review.approved === true && Number(review.rating) >= 1 && Number(review.rating) <= 5);
+        const value = document.getElementById('public-rating-value');
+        const label = document.getElementById('public-rating-label');
+        if (!value || !label) return;
+        if (!approved.length) {
+          value.textContent = '—';
+          label.textContent = 'NO REVIEWS YET';
+          return;
+        }
+        const average = approved.reduce((sum, review) => sum + Number(review.rating), 0) / approved.length;
+        value.textContent = `★${average.toFixed(1)}`;
+        label.textContent = `${approved.length} APPROVED REVIEW${approved.length === 1 ? '' : 'S'}`;
       }
       if (document.getElementById('admin-panel')?.classList.contains('show')) {
         try {
@@ -239,16 +256,6 @@ async function initializeApp() {
 
     await loadSettings();
     await seedIfEmpty();
-    initPresence();
-
-    // FIX: pass callback so live visitor badge actually updates
-    listenVisitorCount((count) => {
-      const badge   = document.getElementById('live-visitor-badge');
-      const countEl = document.getElementById('live-visitor-count');
-      if (countEl) countEl.textContent = count;
-      if (badge)   badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-
     console.log('✅ Miskeen Fragrance Center initialized successfully');
   } catch (error) {
     console.error('❌ Application initialization failed:', error);
@@ -336,7 +343,7 @@ function updateUIFromSettings() {
   const heroFeat    = document.getElementById('hero-featured-name');
   const heroWrap    = document.getElementById('hero-img-wrap');
   if (heroEyebrow) heroEyebrow.textContent = STORE.heroEyebrow     || 'Premium Online Attar Store';
-  if (heroDesc)    heroDesc.textContent    = STORE.heroDesc        || '100% natural, alcohol-free attars sourced from the finest botanicals. Browse our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.';
+  if (heroDesc)    heroDesc.textContent    = cleanPublicCopy(STORE.heroDesc || 'Luxury fragrances sourced from renowned perfume houses. Explore our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.');
   if (heroFeat)    heroFeat.textContent    = STORE.heroFeaturedName || 'Office For Men';
   if (heroWrap) {
     const featName = STORE.heroFeaturedName || 'Office For Men';
@@ -352,8 +359,8 @@ function updateUIFromSettings() {
   const aboutP1    = document.getElementById('about-text1');
   const aboutP2    = document.getElementById('about-text2');
   if (aboutTitle) aboutTitle.innerHTML   = STORE.aboutTitle || 'Pure <em>Fragrance</em>,<br>Delivered Online';
-  if (aboutP1)    aboutP1.textContent    = STORE.aboutP1    || 'Miskeen Fragrance Center is a 100% online attar store dedicated to bringing you the finest, most authentic non-alcoholic perfumes straight from trusted sources to your doorstep anywhere in Pakistan.';
-  if (aboutP2)    aboutP2.textContent    = STORE.aboutP2    || "We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection, ensuring purity, longevity, and authenticity in every drop.";
+  if (aboutP1)    aboutP1.textContent    = cleanPublicCopy(STORE.aboutP1 || 'Miskeen Fragrance Center is an online fragrance store dedicated to bringing you distinctive scents from trusted sources to your doorstep anywhere in Pakistan.');
+  if (aboutP2)    aboutP2.textContent    = cleanPublicCopy(STORE.aboutP2 || "We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection.");
 
   // Footer
   const ftName = document.getElementById('ft-logo-name');
@@ -362,7 +369,7 @@ function updateUIFromSettings() {
   const ftCopy = document.getElementById('ft-copy');
   if (ftName) ftName.textContent = STORE.name   || 'Miskeen Fragrance Center';
   if (ftTag)  ftTag.textContent  = STORE.tag    || 'WHERE SCENT BECOMES SOUL';
-  if (ftDesc) ftDesc.textContent = STORE.ftdesc || "Pakistan's online attar & perfume store. Pure, natural, alcohol-free fragrances delivered to your doorstep.";
+  if (ftDesc) ftDesc.textContent = cleanPublicCopy(STORE.ftdesc || "Pakistan's online attar and perfume store. Discover memorable fragrances delivered to your doorstep.");
   if (ftCopy) ftCopy.textContent = STORE.copy   || '© 2026 Miskeen Fragrance Center. All Rights Reserved.';
 
   // Contact info

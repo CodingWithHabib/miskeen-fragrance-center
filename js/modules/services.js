@@ -6,6 +6,7 @@ import { VALID, SANITIZE, esc, generateStars, formatRelativeTime, formatCurrency
 import { getProducts, getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
 import { compressImage, validateImageFile, uploadToCloudinary } from './cloudinary.js';
 import { hasDuplicateProduct } from './product-guard.js';
+import { cleanPublicCopy } from '../config.js';
 
 /* ════════════════════════════════════════════════════════════════
    INITIALIZATION
@@ -603,7 +604,7 @@ function formatProductForDisplay(product) {
   const formatted = {
     ...product,
     displayName: esc(product.name),
-    displayDesc: esc(product.desc),
+    displayDesc: esc(cleanPublicCopy(product.desc)),
     displayCat: esc(product.cat).toUpperCase(),
     displayBadge: esc(product.badge),
     displayPrice: product.sizes && product.sizes.length > 0
@@ -647,7 +648,7 @@ function generateWhatsAppOrderMessage(orderData) {
 Thank you for your order! We'll contact you shortly to confirm details and arrange payment/delivery.
 
 *Miskeen Fragrance Center*
-Pure • Natural • Halal • Delivered Nationwide`;
+Signature • Curated • Delivered Nationwide`;
 }
 
 /* ════════════════════════════════════════════════════════════════

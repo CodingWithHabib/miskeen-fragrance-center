@@ -12,7 +12,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ─── Local config ─── */
-import { STORE } from './config.js';
+import { STORE, cleanPublicCopy } from './config.js';
 
 /* ════════════════════════════════════════════════════════════════
    FIREBASE SETUP
@@ -297,7 +297,7 @@ function renderProduct(product) {
   }
 
   /* ── Description ── */
-  document.getElementById('pdp-desc').textContent = p.desc || '';
+  document.getElementById('pdp-desc').textContent = cleanPublicCopy(p.desc || '');
 
   /* ── Meta tags (category, featured badge) ── */
   const metaEl = document.getElementById('pdp-meta');

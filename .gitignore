@@ -3,6 +3,7 @@
 .env.local
 .env.*.local
 js/serviceAccountKey.json
+js/firebase-config.js
 
 # Dependencies
 node_modules/

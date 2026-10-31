@@ -116,6 +116,16 @@ function handleSearch() {
   if (searchInput) { searchQuery = searchInput.value.trim(); renderAllProducts(); }
 }
 
+function clearFilters() {
+  currentFilter = 'all';
+  currentTag = 'all';
+  searchQuery = '';
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.value = '';
+  renderAllProducts();
+  document.querySelectorAll('.cat-btn').forEach(button => button.classList.toggle('active', button.dataset.category === 'all'));
+}
+
 /* ════════════════════════════════════════════════════════════════
    PRODUCT RENDERING
 ════════════════════════════════════════════════════════════════ */
@@ -173,7 +183,7 @@ function renderFeaturedProducts() {
   const container = document.getElementById('featured-grid');
   if (!container) return;
 
-  const featured = getUniqueProducts().filter(p => p.featured).slice(0, 4);
+  const featured = getUniqueProducts().filter(p => p.active !== false && p.featured).slice(0, 4);
   container.innerHTML = featured.length
     ? featured.map(renderProductCard).join('')
     : `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">✨</span><h3>No Featured Products</h3><p>Mark products as featured in the Admin Panel.</p></div>`;
@@ -186,7 +196,8 @@ function renderAllProducts() {
   if (!container) return;
 
   const uniqueProducts = getUniqueProducts();
-  let filtered = currentFilter === 'all' ? uniqueProducts : uniqueProducts.filter(p => p.cat === currentFilter);
+  let filtered = uniqueProducts.filter(p => p.active !== false);
+  filtered = currentFilter === 'all' ? filtered : filtered.filter(p => p.cat === currentFilter);
 
   if (currentTag !== 'all') {
     filtered = filtered.filter(product => {
@@ -197,7 +208,10 @@ function renderAllProducts() {
 
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(p => (p.name||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q));
+    filtered = filtered.filter(p => {
+      const tags = getProductTags(p).join(' ');
+      return `${p.name || ''} ${p.desc || ''} ${p.cat || ''} ${tags}`.toLowerCase().includes(q);
+    });
   }
 
   renderTagButtons(uniqueProducts);
@@ -347,7 +361,7 @@ function debounce(func, wait) {
 }
 
 export {
-  initializeProducts, filterProducts, filterByTag, handleSearch,
+  initializeProducts, filterProducts, filterByTag, handleSearch, clearFilters,
   renderFeaturedProducts, renderAllProducts,
   selectSize as selectProductSize,
   changeQuantity as changeProductQuantity,

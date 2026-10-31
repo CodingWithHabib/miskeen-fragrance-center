@@ -17,11 +17,20 @@ export const STORE = {
   hr:           'Mon–Sat 9am–9pm · Sun 11am–6pm',
   ig: '',
   fb: '',
-  ftdesc:       "Pakistan's online attar & perfume store. Pure, natural, alcohol-free fragrances delivered to your doorstep.",
+  ftdesc:       "Pakistan's online attar and perfume store. Discover memorable fragrances delivered to your doorstep.",
   copy:         '© 2026 Miskeen Fragrance Center. All Rights Reserved. | 100% Online Store',
   cloudName:    'dc5ajtraa',
   uploadPreset: 'miskeen_unsigned', // FIX: was incorrectly set to 'dc5ajtraa' (same as cloudName) — set to your actual unsigned preset name
 };
+
+export function cleanPublicCopy(value = '') {
+  return String(value || '')
+    .replace(/\b100%\s*natural\b/gi, 'carefully selected')
+    .replace(/\balcohol[-\s]?free\b/gi, 'carefully formulated')
+    .replace(/\bchemical[-\s]?free\b/gi, 'carefully formulated')
+    .replace(/\bcompletely\s+safe\b/gi, 'thoughtfully made')
+    .replace(/\bguaranteed\s+to\s+last\b/gi, 'designed for a lasting impression');
+}
 
 // Global application state (use state.setX() to mutate)
 export let products = [];

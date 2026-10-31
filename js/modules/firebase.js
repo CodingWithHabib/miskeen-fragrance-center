@@ -498,7 +498,7 @@ async function seedIfEmpty() {
 ════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_PRODUCTS = [
-  { name:'Office For Men',    cat:'attar',   desc:'Sophisticated woody-citrus blend perfect for the modern professional. Long-lasting and alcohol-free.',  badge:'BESTSELLER', featured:true,  img:'', sizes:[{ml:'3ml',price:'PKR 650'},{ml:'6ml',price:'PKR 1,200'},{ml:'12ml',price:'PKR 2,200'},{ml:'20ml',price:'PKR 3,500'}] },
+  { name:'Office For Men',    cat:'attar',   desc:'Sophisticated woody-citrus blend perfect for the modern professional. Long-lasting and memorable.',  badge:'BESTSELLER', featured:true,  img:'', sizes:[{ml:'3ml',price:'PKR 650'},{ml:'6ml',price:'PKR 1,200'},{ml:'12ml',price:'PKR 2,200'},{ml:'20ml',price:'PKR 3,500'}] },
   { name:'Rose Taif Premium', cat:'rose',    desc:'Heavenly Rosa damascena from the mountains of Taif — soft, powdery, and deeply feminine.',                badge:'',           featured:true,  img:'', sizes:[{ml:'3ml',price:'PKR 800'},{ml:'6ml',price:'PKR 1,500'},{ml:'10ml',price:'PKR 2,800'}] },
   { name:'Oud Maliki',        cat:'oud',     desc:'Seven-year aged Agarwood from Assam. Rich, dark, and resinous — the hallmark of royalty.',               badge:'PREMIUM',    featured:true,  img:'', sizes:[{ml:'3ml',price:'PKR 1,800'},{ml:'6ml',price:'PKR 3,500'},{ml:'12ml',price:'PKR 7,000'}] },
   { name:'Shamama Special',   cat:'attar',   desc:'A classic blend of 40+ botanicals distilled over charcoal. Earthy, warm, meditative.',                  badge:'',           featured:false, img:'', sizes:[{ml:'3ml',price:'PKR 500'},{ml:'6ml',price:'PKR 950'},{ml:'12ml',price:'PKR 1,800'}] },

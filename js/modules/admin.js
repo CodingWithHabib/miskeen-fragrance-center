@@ -16,6 +16,7 @@ import { STORE, showToast } from '../config.js';
 let adminPanelOpen = false;
 let currentUser    = null;
 let adminListenersBound = false;
+let loginHistoryActive = false;
 const LOGIN_LOCKOUT = { attempts: 0, lockedUntil: 0, MAX: 5, WINDOW_MS: 15 * 60 * 1000 };
 
 /* ════════════════════════════════════════════════════════════════
@@ -182,6 +183,13 @@ function setupAdminEventListeners() {
     });
   }
 
+  if (!loginHistoryActive) {
+    window.addEventListener('popstate', () => {
+      const currentOverlay = document.getElementById('admin-login-overlay');
+      if (currentOverlay?.classList.contains('show')) closeLoginModal({ fromHistory: true });
+    });
+  }
+
   const loginBtn = document.getElementById('login-btn');
   if (loginBtn) {
     loginBtn.onclick = performSignIn;
@@ -210,19 +218,31 @@ function setupAdminEventListeners() {
 function showLoginModal() {
   ensureAdminShell();
   const overlay = document.getElementById('admin-login-overlay');
-  if (overlay) overlay.classList.add('show');
+  if (overlay) {
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if (!loginHistoryActive) {
+      history.pushState({ adminLogin: true }, '', `${location.pathname}${location.search}#admin-login`);
+      loginHistoryActive = true;
+    }
+  }
   else window.location.href = 'admin.html';
 }
 
-function closeLoginModal() {
+function closeLoginModal(options = {}) {
   const overlay = document.getElementById('admin-login-overlay');
   if (overlay) overlay.classList.remove('show');
+  document.body.style.overflow = '';
   const emailInput = document.getElementById('admin-email-inp');
   const passInput  = document.getElementById('admin-pass-inp');
   const errorMsg   = document.getElementById('login-error');
   if (emailInput) emailInput.value = '';
   if (passInput)  passInput.value  = '';
   if (errorMsg)   errorMsg.style.display = 'none';
+  if (loginHistoryActive) {
+    loginHistoryActive = false;
+    if (!options.fromHistory) history.back();
+  }
 }
 
 async function performSignIn() {
@@ -643,9 +663,9 @@ async function loadAdminContent() {
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
       set('c-eyebrow',   settings.heroEyebrow     || 'Premium Online Attar Store');
       set('c-feat-name', settings.heroFeaturedName || 'Office For Men');
-      set('c-desc',      settings.heroDesc         || '100% natural, alcohol-free attars sourced from the finest botanicals.');
+      set('c-desc',      settings.heroDesc         || 'Luxury fragrances sourced from renowned perfume houses.');
       set('c-ab-title',  settings.aboutTitle       || 'Pure Fragrance, Delivered Online');
-      set('c-ab-p1',     settings.aboutP1          || 'Miskeen Fragrance Center is a 100% online attar store.');
+      set('c-ab-p1',     settings.aboutP1          || 'Miskeen Fragrance Center is an online fragrance store.');
       set('c-ab-p2',     settings.aboutP2          || 'We believe that fragrance is personal.');
     }
   } catch (error) {

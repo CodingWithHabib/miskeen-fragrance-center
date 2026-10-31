@@ -57,7 +57,7 @@ function renderAllReviews(reviewsList) {
   const container = document.getElementById('reviews-grid');
   if (!container) return;
 
-  const approved = reviewsList.filter(r => r.approved !== false);
+  const approved = reviewsList.filter(r => r.approved === true);
   container.innerHTML = approved.length
     ? approved.map(renderReviewCard).join('')
     : `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">⭐</span><h3>No Reviews Yet</h3><p>Be the first to share your experience with our fragrances!</p></div>`;
