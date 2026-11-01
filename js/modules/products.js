@@ -68,9 +68,12 @@ function normalizeTagKey(value = '') {
 }
 
 function getProductTags(product) {
-  const explicitTags = Array.isArray(product.tags) ? product.tags : [];
-  if (explicitTags.length > 0) return explicitTags;
-  return product.cat ? [product.cat] : [];
+  const values = [
+    ...(Array.isArray(product.tags) ? product.tags : []),
+    product.badge,
+    product.cat
+  ].filter(Boolean);
+  return [...new Map(values.map(tag => [normalizeTagKey(tag), String(tag).trim()])).values()];
 }
 
 function renderTagButtons(productList = getUniqueProducts()) {
