@@ -1,9 +1,7 @@
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json" with { type: "json" };
+import { applicationDefault } from "firebase-admin/app";
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+admin.initializeApp({ credential: applicationDefault() });
 
 admin.auth().setCustomUserClaims(
   "LXiwrjGVhiPf5aMMRoq7hzBGCiF2",

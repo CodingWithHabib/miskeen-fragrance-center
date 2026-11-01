@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from './serviceAccountKey.json' with { type: 'json' };
+import { applicationDefault } from 'firebase-admin/app';
 
 const expectedProjectId = 'miskeen-fragrance-center';
 
@@ -9,9 +9,7 @@ if (serviceAccount.project_id !== expectedProjectId) {
   process.exit(1);
 }
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+admin.initializeApp({ credential: applicationDefault() });
 
 const auth = admin.auth();
 
@@ -40,7 +38,7 @@ async function grantAdminClaim(email) {
 const adminEmail = process.argv[2]?.trim();
 
 if (!adminEmail) {
-  console.error('Usage: node js/grant-admin.js admin@example.com');
+  console.error('Usage: GOOGLE_APPLICATION_CREDENTIALS=/secure/path/service-account.json node js/grant-admin.js admin@example.com');
   process.exitCode = 1;
 } else {
   grantAdminClaim(adminEmail);

@@ -5,10 +5,10 @@ The admin authentication system requires Firebase custom claims to work. Users m
 
 ## Step 1: Assign the Admin Claim
 
-The project includes an ES-module-compatible grant script. Keep the Firebase service-account JSON at `js/serviceAccountKey.json` locally; never commit or share that key.
+The project includes an ES-module-compatible grant script. Keep the Firebase service-account JSON outside this repository and set `GOOGLE_APPLICATION_CREDENTIALS` to its absolute path. Never commit or share that key.
 
 ```bash
-node js/grant-admin.js your-login-email@example.com
+GOOGLE_APPLICATION_CREDENTIALS=/secure/path/service-account.json node js/grant-admin.js your-login-email@example.com
 ```
 
 The script preserves the user's other custom claims and adds `admin: true`.
@@ -39,6 +39,7 @@ await auth.setCustomUserClaims(user.uid, { admin: false });
 
 ## Security Notes
 
-- Keep `serviceAccountKey.json` secure and never commit it to Git
+- Keep the service-account JSON outside the repository and never commit or share it
+- If a service-account key has ever been stored in this project or shared, revoke it in Google Cloud IAM and create a replacement before using this script
 - Only grant admin access to trusted users
 - Admin users have full access to all CRUD operations
