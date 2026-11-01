@@ -7,7 +7,7 @@ import { renderAdminReviewsList as renderReviewsAdminListFromReviews } from './r
 import { createProduct } from './services.js';
 import { esc, storage } from './utils.js';
 import { updateCloudinaryConfig } from './cloudinary.js';
-import { STORE, showToast } from '../config.js';
+import { STORE, showToast, cleanPublicCopy } from '../config.js';
 
 /* ════════════════════════════════════════════════════════════════
    STATE MANAGEMENT
@@ -631,7 +631,7 @@ async function saveSettings() {
     const settings = {
       name:         get('s-name'),
       tag:          get('s-tag'),
-      ftdesc:       get('s-ftdesc'),
+      ftdesc:       cleanPublicCopy(get('s-ftdesc')),
       copy:         get('s-copy'),
       title:        get('s-title'),
       cloudName:    get('s-cloudname'),
@@ -680,10 +680,10 @@ async function saveContent() {
     const content = {
       heroEyebrow:      get('c-eyebrow'),
       heroFeaturedName: get('c-feat-name'),
-      heroDesc:         get('c-desc'),
+      heroDesc:         cleanPublicCopy(get('c-desc')),
       aboutTitle:       get('c-ab-title'),
-      aboutP1:          get('c-ab-p1'),
-      aboutP2:          get('c-ab-p2'),
+      aboutP1:          cleanPublicCopy(get('c-ab-p1')),
+      aboutP2:          cleanPublicCopy(get('c-ab-p2')),
     };
 
     showAdminMessage('content-msg', 'info', 'Saving content...');
@@ -826,7 +826,7 @@ async function doAddProduct() {
 
     if (sizes.length === 0) { showAdminMessage('add-msg', 'error', 'At least one size is required'); return; }
 
-    const productData = { name, cat: category, desc: desc || '', badge: badge || '', tags, featured, sizes };
+    const productData = { name, cat: category, desc: cleanPublicCopy(desc || ''), badge: badge || '', tags, featured, sizes };
 
     const imageFile     = document.getElementById('pi')?.files?.[0] || null;
     const imageUrlInput = document.getElementById('pi-url')?.value?.trim();
@@ -926,7 +926,7 @@ async function doEditProduct() {
 
     if (sizes.length === 0) { showAdminMessage('edit-msg', 'error', 'At least one size is required'); return; }
 
-    const productData = { name, cat: category, desc: desc || '', badge: badge || '', tags, featured, sizes };
+    const productData = { name, cat: category, desc: cleanPublicCopy(desc || ''), badge: badge || '', tags, featured, sizes };
 
     showAdminMessage('edit-msg', 'info', 'Updating product...');
     const result = await window.firebaseUpdateProduct(productId, productData);

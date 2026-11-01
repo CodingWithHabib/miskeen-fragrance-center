@@ -34,6 +34,7 @@ a { color: inherit; text-decoration: none; }
 h1, h2, h3, p { margin-top: 0; }
 .auth-card h1 { margin: .55rem 0 .45rem; font: 600 2.5rem/1 "Cormorant Garamond", serif; }
 .auth-copy { color: var(--admin-muted); margin-bottom: 2rem; }
+.auth-back-link { display: inline-block; margin: -.75rem 0 1.25rem; color: var(--admin-gold); font-size: .78rem; }
 label { display: block; color: var(--admin-muted); font-size: .75rem; margin: 1rem 0 .4rem; }
 input, select, textarea { width: 100%; border: 1px solid var(--admin-border); border-radius: 8px; background: #0c141b; color: var(--admin-text); padding: .8rem .9rem; outline: none; }
 input:focus, select:focus, textarea:focus { border-color: var(--admin-gold); box-shadow: 0 0 0 3px rgba(214,173,104,.1); }

@@ -293,10 +293,23 @@ $('#denied-signout').addEventListener('click', () => signOutUser());
 $('#toggle-password').addEventListener('click', () => { const input = $('#admin-pass-inp'); input.type = input.type === 'password' ? 'text' : 'password'; $('#toggle-password').textContent = input.type === 'password' ? 'Show' : 'Hide'; });
 $('#admin-login-form').addEventListener('submit', async event => {
   event.preventDefault(); const button = $('#login-btn'); const email = $('#admin-email-inp').value.trim(); const password = $('#admin-pass-inp').value; $('#login-error').textContent = '';
-  if (!email || !password) return $('#login-error').textContent = 'Enter your email and password.';
+  if (!email || !password) { $('#login-error').textContent = 'Enter your email and password.'; toast('Enter your email and password.', 'error'); return; }
   button.disabled = true; button.textContent = 'Signing in…';
-  const result = await signInUser(email, password);
-  if (!result.success) { $('#login-error').textContent = result.error; button.disabled = false; button.textContent = 'Sign in'; }
+  try {
+    const result = await signInUser(email, password);
+    if (!result.success) {
+      $('#login-error').textContent = result.error;
+      toast(result.error || 'Sign in failed.', 'error');
+      button.disabled = false; button.textContent = 'Sign in';
+    } else {
+      toast('Signed in successfully.', 'success');
+    }
+  } catch (error) {
+    console.error('Admin sign-in failed:', error);
+    $('#login-error').textContent = 'Sign in failed. Please try again.';
+    toast('Sign in failed. Please try again.', 'error');
+    button.disabled = false; button.textContent = 'Sign in';
+  }
 });
 
 try {
