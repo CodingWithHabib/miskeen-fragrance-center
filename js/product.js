@@ -95,7 +95,7 @@ function toast(msg, type = 'info') {
   const c = document.getElementById('toast-container');
   if (!c) return;
   const t = document.createElement('div');
-  t.className = `toast ${type}`;
+  t.className = `toast show ${type}`;
   t.textContent = msg;
   c.appendChild(t);
   setTimeout(() => t.parentNode?.removeChild(t), 2700);

@@ -24,7 +24,7 @@ const viewRoot = $('#view-root');
 
 function toast(message, type = 'success') {
   const item = document.createElement('div');
-  item.className = `toast ${type}`;
+  item.className = `toast show ${type}`;
   item.textContent = message;
   $('#toast-region').append(item);
   setTimeout(() => item.remove(), 4200);

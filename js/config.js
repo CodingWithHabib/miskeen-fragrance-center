@@ -49,7 +49,7 @@ export function showToast(message, type = 'info') {
     document.body.appendChild(container);
   }
   const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
+  toast.className = `toast show ${type}`;
   toast.textContent = message;
   container.appendChild(toast);
   setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 2700);
