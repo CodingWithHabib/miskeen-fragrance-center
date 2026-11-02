@@ -281,7 +281,11 @@ function goPage(pageId) {
 }
 
 function toggleMobile() {
-  document.getElementById('mobile-nav')?.classList.toggle('open');
+  const mobileNav = document.getElementById('mobile-nav');
+  const hamburger = document.querySelector('.hamburger');
+  if (!mobileNav) return;
+  const isOpen = mobileNav.classList.toggle('open');
+  hamburger?.setAttribute('aria-expanded', String(isOpen));
 }
 
 function initializeNavigation() {

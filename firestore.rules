@@ -24,7 +24,7 @@ service cloud.firestore {
     }
 
     match /reviews/{document=**} {
-      allow read: if true;
+      allow read: if isAdmin() || resource.data.approved == true;
       allow create: if request.auth != null;
       allow update, delete: if isAdmin();
     }

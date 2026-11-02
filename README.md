@@ -62,28 +62,15 @@ Start Mode: Test Mode (for development)
 #### B. Deploy Firestore Security Rules
 ```
 Firestore Database → Rules tab
-Replace with:
+Publish the rules from `firestore.rules` in this repository.
 
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /products/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    match /reviews/{doc} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if request.auth != null;
-    }
-    match /settings/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
+They allow public product/category/settings reads, allow public reads only
+for approved reviews, and require the Firebase `admin: true` custom claim
+for catalog, category, settings, and review moderation writes.
 
-Click "Publish" ✓
+Review creation currently requires an authenticated Firebase user.
+Do not replace these rules with Firebase Test Mode or broad
+`request.auth != null` write rules.
 ```
 
 #### C. Enable Realtime Database
@@ -96,34 +83,12 @@ Start Mode: Test Mode
 #### D. Deploy Realtime Database Rules
 ```
 Realtime Database → Rules tab
-Replace with:
+Review the deployed rules for `presence`, `stock`, `stats`, and `orderLog`
+in Firebase Console before enabling production traffic. Do not use
+unrestricted public writes or Firebase Test Mode in production.
 
-{
-  "rules": {
-    "presence": {
-      "visitors": {
-        ".read": true,
-        ".write": true
-      }
-    },
-    "stock": {
-      ".read": true,
-      ".write": "auth != null"
-    },
-    "stats": {
-      ".read": "auth != null",
-      "totalViews": { ".read": true, ".write": true },
-      "totalOrders": { ".read": true, ".write": true },
-      "ordersToday": { ".read": true, ".write": true }
-    },
-    "orderLog": {
-      ".read": "auth != null",
-      ".write": true
-    }
-  }
-}
-
-Click "Publish" ✓
+Realtime Database rules are not stored in this repository, so their current
+production state must be verified manually in Firebase Console.
 ```
 
 #### E. Enable Email/Password Authentication

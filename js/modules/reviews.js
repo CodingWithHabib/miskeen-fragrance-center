@@ -57,10 +57,22 @@ function renderAllReviews(reviewsList) {
   const container = document.getElementById('reviews-grid');
   if (!container) return;
 
-  const approved = reviewsList.filter(r => r.approved === true);
+  const approved = reviewsList.filter(isPublicReview);
   container.innerHTML = approved.length
     ? approved.map(renderReviewCard).join('')
     : `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">⭐</span><h3>No Reviews Yet</h3><p>Be the first to share your experience with our fragrances!</p></div>`;
+}
+
+function isPublicReview(review) {
+  const name = String(review?.name || '').trim();
+  const text = String(review?.text || '').trim();
+  const rating = Number(review?.rating);
+  return review?.approved === true &&
+    name.length >= 2 &&
+    text.length >= 10 &&
+    Number.isInteger(rating) &&
+    rating >= 1 &&
+    rating <= 5;
 }
 
 /* ════════════════════════════════════════════════════════════════

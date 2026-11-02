@@ -3,7 +3,7 @@
 ════════════════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref as rtRef, set as rtSet, update as rtUpdate, onValue, serverTimestamp as rtTimestamp, increment, onDisconnect, push as rtPush } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from '../firebase-config.js';
@@ -257,7 +257,7 @@ async function deleteReview(reviewId) {
 }
 
 function listenReviews(callback) {
-  const q = query(revRef, orderBy('createdAt', 'desc'));
+  const q = query(revRef, where('approved', '==', true), orderBy('createdAt', 'desc'));
   return onSnapshot(q, (snap) => {
     reviews = [];
     snap.forEach(d => reviews.push({ id: d.id, ...d.data() }));

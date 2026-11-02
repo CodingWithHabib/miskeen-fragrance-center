@@ -554,6 +554,11 @@ function validateOrderData(data) {
     errors.push('Total price is required');
   }
 
+  const quantity = Number(data.quantity);
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    errors.push('Quantity must be a positive whole number');
+  }
+
   return {
     valid: errors.length === 0,
     errors: errors
@@ -634,16 +639,19 @@ function formatReviewForDisplay(review) {
 
 function generateWhatsAppOrderMessage(orderData) {
   const { product, size, quantity, total, customerName, customerPhone } = orderData;
+  const messageValue = (value, fallback = '') => String(value ?? fallback)
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .trim();
 
-  return `🛍️ *NEW ORDER - ${esc(product)}*
+  return `🛍️ *NEW ORDER - ${messageValue(product)}*
 
-👤 *Customer:* ${esc(customerName || 'Not provided')}
-📞 *Phone:* ${esc(customerPhone || 'Not provided')}
+👤 *Customer:* ${messageValue(customerName, 'Not provided')}
+📞 *Phone:* ${messageValue(customerPhone, 'Not provided')}
 
-📦 *Product:* ${esc(product)}
-📏 *Size:* ${esc(size)}
+📦 *Product:* ${messageValue(product)}
+📏 *Size:* ${messageValue(size)}
 🔢 *Quantity:* ${quantity || 1}
-💰 *Total:* ${esc(total)}
+💰 *Total:* ${messageValue(total)}
 
 Thank you for your order! We'll contact you shortly to confirm details and arrange payment/delivery.
 

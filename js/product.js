@@ -144,7 +144,12 @@ async function fetchReviews(productId, productName) {
 
     // Filter to this product — reviews store product name as string
     return all.filter(r =>
-      r.productId === productId || r.product === productName
+      (r.productId === productId || r.product === productName) &&
+      String(r.name || '').trim().length >= 2 &&
+      String(r.text || '').trim().length >= 10 &&
+      Number.isInteger(Number(r.rating)) &&
+      Number(r.rating) >= 1 &&
+      Number(r.rating) <= 5
     );
   } catch (err) {
     console.warn('Could not load reviews:', err);

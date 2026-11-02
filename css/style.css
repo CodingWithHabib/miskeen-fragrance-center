@@ -68,7 +68,7 @@ input,textarea,select{font-family:'Jost',sans-serif;}
 .logo-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,2vw,2.2rem);font-weight:700;color:var(--forest);letter-spacing:.04em;line-height:1;white-space:nowrap;}
 .logo-tag{font-size:.48rem;letter-spacing:.38em;color:var(--gold);font-weight:600;margin-top:4px;white-space:nowrap;}
 .main-nav{display:flex;align-items:center;gap:1.1rem;margin-left:auto;}
-.nav-link{font-size:.72rem;letter-spacing:.18em;font-weight:500;color:var(--ink2);position:relative;padding-bottom:2px;transition:color .25s;cursor:pointer;}
+.nav-link{font:inherit;font-size:.72rem;letter-spacing:.18em;font-weight:500;color:var(--ink2);position:relative;padding:0 0 2px;background:none;border:0;transition:color .25s;cursor:pointer;}
 .nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--forest);transition:width .25s;}
 .nav-link:hover,.nav-link.active{color:var(--forest);}
 .nav-link:hover::after,.nav-link.active::after{width:100%;}

@@ -7,5 +7,6 @@ Allow: /
 # Sitemap location
 Sitemap: https://miskeenfragrance.com/sitemap.xml
 
-# Disallow admin-related paths (if any)
-Disallow: /admin/
+# Keep authenticated and test utilities out of search results
+Disallow: /admin.html
+Disallow: /test-modules.html

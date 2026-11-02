@@ -6,7 +6,7 @@ When clicking the "Admin Panel" button, a login popup appeared but instantly dis
 ## Root Cause
 The project had TWO conflicting admin systems:
 1. **OLD Modal System** (`modules/admin.js`): Used `#admin-login-overlay` and `#admin-panel` overlays with event listeners that closed on focus/click
-2. **NEW Dedicated Page** (`admin.html` + `admin-app.js`): Standalone admin page
+2. **NEW Dedicated Page** (`admin.html` + `admin-dashboard.js`): Standalone admin page
 
 The modal disappearing on input focus was caused by old modal system event listeners interfering with the new admin.html page.
 
@@ -49,19 +49,13 @@ The modal disappearing on input focus was caused by old modal system event liste
 - **Added**: Dashboard stats cards
 - **Added**: Responsive design for mobile
 
-### 5. `js/admin-app.js`
-- **Complete rewrite**: Stable admin authentication and dashboard
-- **Added**: Proper Firebase Auth with custom claims verification
-- **Added**: Event handlers with `e.preventDefault()` and `e.stopPropagation()` to prevent event bubbling
-- **Added**: Stable view management (auth view, denied view, dashboard view)
-- **Added**: Tab management for dashboard sections
-- **Added**: Complete CRUD operations:
-  - Products: add, delete
-  - Categories: add, delete
-  - Reviews: approve, delete
-  - Settings: load, save
-- **Removed**: Redirect logic that caused page refreshes
-- **Removed**: All modal-based authentication code
+### 5. `js/admin-dashboard.js`
+- **Current active entry point** for the standalone admin page
+- Provides Firebase Auth with custom-claims verification
+- Handles dashboard navigation, CRUD operations, notifications, and listener cleanup
+
+The obsolete iframe-based `js/admin-app.js` entry point was removed after confirming that
+no HTML or JavaScript file referenced it.
 
 ## Files Created
 
