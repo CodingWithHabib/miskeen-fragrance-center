@@ -418,6 +418,15 @@ function listenRTDBStats(callback) {
   });
 }
 
+function listenOrderLog(callback) {
+  const ordersRef = rtRef(rtdb, 'orderLog');
+  onValue(ordersRef, (snapshot) => {
+    if (callback) callback(snapshot.val() || {});
+  }, (error) => {
+    console.error('Error listening to RTDB order log:', error);
+  });
+}
+
 async function updateStock(productId, newStock) {
   try {
     const stockRef = rtRef(rtdb, `stock/${productId}`);
@@ -594,7 +603,7 @@ export { signUpUser, resetUserPassword, getCurrentUser, getCurrentUserClaims, on
   getProducts, addProduct, updateProduct, deleteProduct, listenProducts,
   getReviews, addReview, updateReview, deleteReview, listenReviews,
   getCategories, addCategory, updateCategory, deleteCategory, listenCategories,
-  initPresence, listenVisitorCount, listenStock, listenRTDBStats,
+  initPresence, listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog,
   updateStock, logOrder, incrementViewCount,
   seedIfEmpty, seedDefaultProducts, seedDefaultReviews, seedDefaultCategories,
   // NOTE: currentUser/products/reviews are module-internal; access via callbacks or window.firebase* globals

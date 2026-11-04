@@ -3,7 +3,7 @@ import {
   getProducts, addProduct, updateProduct, deleteProduct,
   getCategories, addCategory, updateCategory, deleteCategory,
   getReviews, updateReview, deleteReview, getSettings, saveSettings,
-  listenVisitorCount, listenStock, listenRTDBStats, updateStock
+  listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, updateStock
 } from './modules/firebase.js';
 import {
   updateCloudinaryConfig, compressImage, validateImageFile, uploadToCloudinary
@@ -14,7 +14,7 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const esc = (value = '') => String(value).replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[char]));
-const state = { products: [], categories: [], reviews: [], stock: {}, stats: {}, settings: {}, view: 'dashboard' };
+const state = { products: [], categories: [], reviews: [], stock: {}, stats: {}, orders: {}, settings: {}, view: 'dashboard' };
 let unsubscribe = [];
 
 const authView = $('#auth-view');
@@ -87,7 +87,7 @@ function renderView() {
 function renderDashboard() {
   const pending = state.reviews.filter(review => !review.approved).length;
   const lowStock = state.products.filter(product => Number(state.stock[product.id]?.quantity ?? product.stock ?? 0) <= 5).length;
-  const totalOrders = Number(state.stats.totalOrders || 0);
+  const totalOrders = Object.keys(state.orders).length;
   return `
     <div class="page-heading"><div><h1>Good to see you</h1><p>A clear view of your fragrance business at a glance.</p></div></div>
     <div class="stats-grid">
@@ -274,6 +274,7 @@ function subscribeData() {
   unsubscribe.push(listenVisitorCount(count => { state.visitorCount = count; if (state.view === 'dashboard') renderView(); }));
   unsubscribe.push(listenStock(stock => { state.stock = stock; if (state.view === 'dashboard' || state.view === 'stock') renderView(); }));
   unsubscribe.push(listenRTDBStats(stats => { state.stats = stats; if (state.view === 'dashboard') renderView(); }));
+  unsubscribe.push(listenOrderLog(orders => { state.orders = orders; if (state.view === 'dashboard') renderView(); }));
 }
 
 async function enterDashboard(user) {

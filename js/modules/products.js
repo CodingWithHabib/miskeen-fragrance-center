@@ -302,7 +302,11 @@ async function orderOnWhatsApp(productId) {
       timestamp: new Date().toISOString()
     };
 
-    processWhatsAppOrder(orderData).catch(err => console.warn('Failed to log order:', err));
+    const orderResult = await processWhatsAppOrder(orderData);
+    if (!orderResult.success) {
+      showToast(`Could not record order: ${orderResult.error || 'Please try again.'}`, 'error');
+      return;
+    }
 
     const message  = generateWhatsAppOrderMessage(orderData);
     const waNumber = STORE.wa.replace(/\D/g, '');
