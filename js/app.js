@@ -3,8 +3,9 @@ import { initializeCloudinary, updateCloudinaryConfig, uploadToCloudinary } from
 import { initializeServices } from './modules/services.js';
 import { initializeProducts, filterProducts, filterByTag, handleSearch, clearFilters, renderAllProducts, selectProductSize, changeProductQuantity, orderProductViaWhatsApp } from './modules/products.js';
 import { initializeAdmin, showLoginModal, closeLoginModal, performSignIn, performSignOut, openAdminPanel, closeAdminPanel, switchAdminTab, closeEditModal, addProductSize, addEditSize, removeProductSize, doAddProduct, editProduct, doEditProduct, deleteProduct, saveSettings, saveContent, saveContact, doAddCategory, editCategory, doDeleteCategory } from './modules/admin.js';
-import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js';
+import { initializeReviews, handleReviewSubmission, deleteReview, approveReview } from './modules/reviews.js?v=auth1';
 import { initializeUtils } from './modules/utils.js';
+import { initializeCustomerAuth } from './modules/customer-auth.js?v=auth3';
 import { STORE, products, reviews, showToast, state, cleanPublicCopy } from './config.js';
 
 /* ════════════════════════════════════════════════════════════════
@@ -174,6 +175,7 @@ async function initializeApp() {
     await initializeAdmin();
     await initializeReviews();
     await initializeUtils();
+    await initializeCustomerAuth();
 
     initializeNavigation();
     document.getElementById('clear-filters-btn')?.addEventListener('click', clearFilters);
@@ -245,8 +247,6 @@ async function initializeApp() {
         import('./modules/admin.js').then(m => m.renderAdminStock());
       }
     });
-
-    listenRTDBStats((stats) => { window.firebaseRTDBStats = stats; });
 
     listenCategories((cats) => {
       window.firebaseCategories = cats;
@@ -347,7 +347,7 @@ function updateUIFromSettings() {
   const heroFeat    = document.getElementById('hero-featured-name');
   const heroWrap    = document.getElementById('hero-img-wrap');
   if (heroEyebrow) heroEyebrow.textContent = STORE.heroEyebrow     || 'Premium Online Attar Store';
-  if (heroDesc)    heroDesc.textContent    = cleanPublicCopy(STORE.heroDesc || 'Luxury fragrances sourced from renowned perfume houses. Explore our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.');
+  if (heroDesc)    heroDesc.textContent    = cleanPublicCopy(STORE.heroDesc || 'Explore a considered collection of attars and perfumes, then order across Pakistan through WhatsApp.');
   if (heroFeat)    heroFeat.textContent    = STORE.heroFeaturedName || 'Office For Men';
   if (heroWrap) {
     const featName = STORE.heroFeaturedName || 'Office For Men';
@@ -364,7 +364,7 @@ function updateUIFromSettings() {
   const aboutP2    = document.getElementById('about-text2');
   if (aboutTitle) aboutTitle.innerHTML   = STORE.aboutTitle || 'Pure <em>Fragrance</em>,<br>Delivered Online';
   if (aboutP1)    aboutP1.textContent    = cleanPublicCopy(STORE.aboutP1 || 'Miskeen Fragrance Center is an online fragrance store dedicated to bringing you distinctive scents from trusted sources to your doorstep anywhere in Pakistan.');
-  if (aboutP2)    aboutP2.textContent    = cleanPublicCopy(STORE.aboutP2 || "We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection.");
+  if (aboutP2)    aboutP2.textContent    = cleanPublicCopy(STORE.aboutP2 || "We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection for a memorable fragrance experience.");
 
   // Footer
   const ftName = document.getElementById('ft-logo-name');
@@ -384,7 +384,9 @@ function updateUIFromSettings() {
   const cEmailLink = document.getElementById('contact-email-link');
   if (cPhoneNum)  cPhoneNum.textContent  = STORE.ph || '+92 300 1234567';
   if (cEmailVal)  cEmailVal.textContent  = STORE.em || 'info@miskeenfragrance.com';
-  if (cHours)     cHours.textContent     = STORE.hr || 'Mon–Sat 9am–9pm · Sun 11am–6pm';
+  if (cHours)     cHours.textContent     = STORE.hr === 'Mon–Sun 12am–12pm'
+    ? 'Mon–Sat 9am–9pm · Sun 11am–6pm'
+    : (STORE.hr || 'Mon–Sat 9am–9pm · Sun 11am–6pm');
   if (cPhoneLink) cPhoneLink.href        = `tel:${STORE.ph || '+923001234567'}`;
   if (cEmailLink) cEmailLink.href        = `mailto:${STORE.em || 'info@miskeenfragrance.com'}`;
 
@@ -406,8 +408,13 @@ function updateWALinks() {
   const cWaNum = document.getElementById('contact-wa-num');
   if (cWaNum) cWaNum.textContent = STORE.ph || STORE.wa || '+92 300 1234567';
 
-  if (STORE.ig) { const el = document.getElementById('ft-ig'); if (el) el.href = STORE.ig; }
-  if (STORE.fb) { const el = document.getElementById('ft-fb'); if (el) el.href = STORE.fb; }
+  ['ft-ig', 'ft-fb'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const url = id === 'ft-ig' ? STORE.ig : STORE.fb;
+    el.hidden = !url;
+    if (url) el.href = url;
+  });
 }
 
 function renderCategoryButtons(categories) {

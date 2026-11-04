@@ -6,6 +6,7 @@ import { STORE, reviews, showToast } from '../config.js';
 import { esc, generateStars, formatRelativeTime, storage } from './utils.js';
 import { submitProductReview, removeReview, formatReviewForDisplay } from './services.js';
 import { updateReview } from './firebase.js';
+import { requireCustomerAuth } from './customer-auth.js';
 
 const REVIEW_COOLDOWN_MS = 60_000;
 let lastReviewSubmissionTime = 0;
@@ -81,6 +82,12 @@ function isPublicReview(review) {
 
 async function handleReviewSubmission() {
   try {
+    if (!window.firebaseCurrentUser) {
+      showToast('Please sign in to submit a review.', 'info');
+      requireCustomerAuth(() => document.getElementById('rv-name')?.focus());
+      return;
+    }
+
     const timeSince = Date.now() - lastReviewSubmissionTime;
     if (timeSince < REVIEW_COOLDOWN_MS) {
       showReviewCooldownMessage(Math.ceil((REVIEW_COOLDOWN_MS - timeSince) / 1000));

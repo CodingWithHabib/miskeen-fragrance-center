@@ -87,8 +87,11 @@ Review the deployed rules for `presence`, `stock`, `stats`, and `orderLog`
 in Firebase Console before enabling production traffic. Do not use
 unrestricted public writes or Firebase Test Mode in production.
 
-Realtime Database rules are not stored in this repository, so their current
-production state must be verified manually in Firebase Console.
+The repository includes [database.rules.json](./database.rules.json). Publish
+it in Firebase Console before production traffic. Anonymous presence writes
+are disabled; stock remains publicly readable but admin-writable, order logs
+are customer-owned on create and admin-readable, and aggregate stats are
+admin-readable only.
 ```
 
 #### E. Enable Email/Password Authentication

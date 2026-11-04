@@ -4,7 +4,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref as rtRef, set as rtSet, update as rtUpdate, onValue, serverTimestamp as rtTimestamp, increment, onDisconnect, push as rtPush } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from '../firebase-config.js';
 import { buildCategoryRecord, dedupeCategories, normalizeCategorySlug } from './category-utils.js';
@@ -87,11 +87,31 @@ async function signOutUser() {
   }
 }
 
-async function signUpUser(email,password){ try { const result=await createUserWithEmailAndPassword(auth,email,password); return {success:true,user:result.user}; } catch(error){ return {success:false,error:getAuthErrorMessage(error.code)}; } }
+async function signUpUser(email, password, displayName = '') {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    if (displayName.trim()) await updateProfile(result.user, { displayName: displayName.trim() });
+    return { success: true, user: result.user };
+  } catch (error) {
+    console.error('Sign up error:', error);
+    return { success: false, error: getAuthErrorMessage(error.code) };
+  }
+}
+
+async function resetUserPassword(email) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error) {
+    console.error('Password reset error:', error);
+    return { success: false, error: getAuthErrorMessage(error.code) };
+  }
+}
 
 async function getCurrentUserClaims(){ if(!auth.currentUser) return {}; const token=await auth.currentUser.getIdTokenResult(true); return token.claims || {}; }
 
 function onAuthChanged(callback){ return onAuthStateChanged(auth,callback); }
+function getCurrentUser() { return currentUser; }
 
 function getAuthErrorMessage(code) {
   const messages = {
@@ -105,6 +125,8 @@ function getAuthErrorMessage(code) {
     'auth/too-many-requests':       'Too many failed attempts. Try again later.',
     'auth/operation-not-allowed':   'This sign-in method is not enabled.',
     'auth/invalid-credential':      'Invalid email or password.',
+    'auth/missing-password':        'Please enter your password.',
+    'auth/requires-recent-login':  'Please sign in again before trying this.',
   };
   return messages[code] || 'Authentication failed. Please try again.';
 }
@@ -228,8 +250,18 @@ async function getReviews() {
 
 async function addReview(reviewData) {
   try {
-    const docRef = await addDoc(revRef, { ...reviewData, createdAt: serverTimestamp(), approved: false });
-    return { success: true, id: docRef.id };
+    const user = getCurrentUser();
+    if (!user?.uid || !reviewData?.productId) {
+      return { success: false, error: 'You must be signed in and select a product.' };
+    }
+    const reviewId = `${user.uid}_${String(reviewData.productId).slice(0, 128)}`;
+    await setDoc(doc(db, 'reviews', reviewId), {
+      ...reviewData,
+      uid: user.uid,
+      createdAt: serverTimestamp(),
+      approved: false
+    });
+    return { success: true, id: reviewId };
   } catch (error) {
     console.error('Error adding review:', error);
     return { success: false, error: error.message };
@@ -357,14 +389,8 @@ function listenCategories(callback) {
 ════════════════════════════════════════════════════════════════ */
 
 function initPresence() {
-  // FIX: removed `if (!currentUser) return` — all visitors should be tracked, not just admins
-  try {
-    visitorRef = rtRef(rtdb, `presence/visitors/${Date.now()}_${Math.random().toString(36).slice(2)}`);
-    rtSet(visitorRef, { timestamp: rtTimestamp(), userAgent: navigator.userAgent, url: window.location.href });
-    onDisconnect(visitorRef).remove();
-  } catch (error) {
-    console.warn('Could not initialize presence:', error);
-  }
+  // Anonymous presence writes are disabled until they can be handled server-side.
+  return null;
 }
 
 function listenVisitorCount(callback) {
@@ -405,17 +431,13 @@ async function updateStock(productId, newStock) {
 
 async function logOrder(orderData) {
   try {
+    if (!currentUser?.uid) {
+      return { success: false, error: 'You must be signed in to log an order.' };
+    }
     // Log the order entry
     const ordersRef  = rtRef(rtdb, 'orderLog');
     const newOrderRef = rtPush(ordersRef);
-    await rtSet(newOrderRef, { ...orderData, timestamp: rtTimestamp() });
-
-    // FIX: use rtUpdate with increment() (server-side atomic increment for RTDB)
-    const today = new Date().toISOString().split('T')[0];
-    await rtUpdate(rtRef(rtdb, 'stats'), {
-      [`ordersToday/${today}`]: increment(1),
-      totalOrders:             increment(1),
-    });
+    await rtSet(newOrderRef, { ...orderData, uid: currentUser.uid, timestamp: rtTimestamp() });
 
     return { success: true };
   } catch (error) {
@@ -565,7 +587,7 @@ async function seedDefaultCategories() {
    EXPORTS
 ════════════════════════════════════════════════════════════════ */
 
-export { signUpUser, getCurrentUserClaims, onAuthChanged,
+export { signUpUser, resetUserPassword, getCurrentUser, getCurrentUserClaims, onAuthChanged,
   initializeFirebase,
   signInUser, signOutUser, getAuthErrorMessage,
   getSettings, saveSettings,

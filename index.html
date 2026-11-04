@@ -50,7 +50,8 @@
       </nav>
 
       <div class="header-actions">
-        <a class="btn header-action-btn btn-outline" href="admin.html">SIGN IN</a>
+        <button class="btn header-action-btn btn-outline" type="button" data-customer-guest onclick="window.customerAuth?.open()">ACCOUNT</button>
+        <button class="btn header-action-btn btn-outline customer-account-name" type="button" data-customer-authenticated data-customer-name hidden onclick="window.customerAuth?.open()">ACCOUNT</button>
         <a class="btn header-action-btn btn-outline" href="admin.html">ADMIN PANEL</a>
         <a class="btn btn-wa header-action-btn" id="hdr-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
       </div>
@@ -68,7 +69,8 @@
       <button class="nav-link" type="button" onclick="app.goPage('contact');app.toggleMobile()">CONTACT</button>
 
       <div class="mobile-actions">
-        <a class="btn btn-outline mobile-action-btn" href="admin.html">SIGN IN</a>
+        <button class="btn btn-outline mobile-action-btn" type="button" data-customer-guest onclick="window.customerAuth?.open()">CUSTOMER ACCOUNT</button>
+        <button class="btn btn-outline mobile-action-btn customer-account-name" type="button" data-customer-authenticated data-customer-name hidden onclick="window.customerAuth?.open()">ACCOUNT</button>
         <a class="btn btn-outline mobile-action-btn" href="admin.html">ADMIN PANEL</a>
         <a class="btn btn-wa mobile-action-btn" id="mob-wa-btn" href="#" target="_blank" rel="noopener">ORDER NOW</a>
       </div>
@@ -90,7 +92,7 @@
             <h1 class="hero-title">
               The <em>Ancient</em> Art<br>of <strong>Pure Fragrance</strong>
             </h1>
-            <p class="hero-desc" id="hero-desc">Luxury fragrances sourced from renowned perfume houses. Explore our collection and order instantly via WhatsApp — delivered anywhere in Pakistan.</p>
+            <p class="hero-desc" id="hero-desc">Explore a considered collection of attars and perfumes, then order across Pakistan through WhatsApp.</p>
             <div class="hero-actions">
               <button class="btn btn-primary" onclick="app.goPage('products')">EXPLORE COLLECTION →</button>
               <a class="btn btn-wa" id="hero-wa-btn" href="#" target="_blank" rel="noopener">💬 ORDER NOW</a>
@@ -165,9 +167,9 @@
         </div>
         <div class="why-grid">
           <div class="why-card"><div class="why-icon">🌿</div><div class="why-title">Signature Fragrances</div><div class="why-text">Thoughtfully selected scents designed to become part of your everyday rituals.</div></div>
-          <div class="why-card"><div class="why-icon">📦</div><div class="why-title">Nationwide Delivery</div><div class="why-text">We ship across all of Pakistan — from Karachi to Gilgit. Fast, tracked, and reliable.</div></div>
+          <div class="why-card"><div class="why-icon">📦</div><div class="why-title">Nationwide Delivery</div><div class="why-text">We ship across Pakistan; delivery options and timing vary by location.</div></div>
           <div class="why-card"><div class="why-icon">💬</div><div class="why-title">WhatsApp Ordering</div><div class="why-text">No complicated checkout. Just message us, choose your fragrance, and pay with ease.</div></div>
-          <div class="why-card"><div class="why-icon">✨</div><div class="why-title">Premium Sourcing</div><div class="why-text">Sourced directly from renowned distillers in Kannauj, Taif, and Arabia.</div></div>
+          <div class="why-card"><div class="why-icon">✨</div><div class="why-title">Thoughtful Sourcing</div><div class="why-text">A considered selection from fragrance suppliers and perfume houses.</div></div>
         </div>
       </div>
     </section>
@@ -240,11 +242,11 @@
           <span class="tag">Who We Are</span>
           <h2 class="section-title mt-1" id="about-title">Pure <em>Fragrance</em>,<br>Delivered Online</h2>
           <p class="section-sub mt-1" id="about-text1">Miskeen Fragrance Center is an online fragrance store dedicated to bringing you distinctive scents from trusted sources to your doorstep anywhere in Pakistan.</p>
-          <p class="section-sub mt-1" id="about-text2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection, ensuring purity, longevity, and authenticity in every drop.</p>
+          <p class="section-sub mt-1" id="about-text2">We believe that fragrance is personal — it tells your story, lifts your spirit, and connects you to something timeless. That's why we carefully curate every attar in our collection for a memorable fragrance experience.</p>
 
           <div class="about-values mt-2">
             <div class="val-card"><div class="val-title">Thoughtful Curation</div><div class="val-text">A considered collection for discovering a scent that feels distinctly yours.</div></div>
-            <div class="val-card"><div class="val-title">Premium Sourcing</div><div class="val-text">Sourced directly from trusted distillers in Kannauj, Taif, and Arabia.</div></div>
+            <div class="val-card"><div class="val-title">Thoughtful Sourcing</div><div class="val-text">A considered selection from fragrance suppliers and perfume houses.</div></div>
             <div class="val-card"><div class="val-title">Fast Delivery</div><div class="val-text">We ship nationwide — from Karachi to Lahore, Islamabad to Peshawar.</div></div>
             <div class="val-card"><div class="val-title">Personal Service</div><div class="val-text">Chat directly with us on WhatsApp for recommendations and custom orders.</div></div>
           </div>
@@ -296,7 +298,7 @@
               </div>
               <div class="cmethod" style="cursor:default;">
                 <div class="cmethod-icon">🕐</div>
-                <div><div class="cmethod-label">Order Hours</div><div class="cmethod-val" id="contact-hours">Mon–Sun 12am–12pm </div></div>
+                <div><div class="cmethod-label">Order Hours</div><div class="cmethod-val" id="contact-hours">Mon–Sat 9am–9pm · Sun 11am–6pm</div></div>
               </div>
             </div>
           </div>
@@ -405,13 +407,13 @@
         <div class="ft-col">
           <h5>CONNECT</h5>
           <a id="ft-wa-link" href="#" target="_blank" rel="noopener">WhatsApp Order</a>
-          <a id="ft-ig" href="#" target="_blank" rel="noopener">Instagram</a>
-          <a id="ft-fb" href="#" target="_blank" rel="noopener">Facebook</a>
+          <a id="ft-ig" href="#" target="_blank" rel="noopener" hidden>Instagram</a>
+          <a id="ft-fb" href="#" target="_blank" rel="noopener" hidden>Facebook</a>
           <p id="ft-hours">Mon–Sat 9am–9pm</p>
         </div>
       </div>
       <div class="ft-bottom">
-        <p id="ft-copy">© 2026 Miskeen Fragrance Center. All Rights Reserved. | 100% Online Store</p>
+        <p id="ft-copy">© 2026 Miskeen Fragrance Center. All Rights Reserved. | Online fragrance store</p>
         <span>Signature · Curated · Delivered Nationwide</span>
       </div>
     </div>
@@ -419,6 +421,43 @@
 
   <!-- ═══ BACK TO TOP ═══ -->
   <button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
+
+  <div id="customer-auth-modal" class="customer-auth-modal" hidden>
+    <div class="customer-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="customer-auth-title">
+      <button id="customer-auth-close" class="customer-auth-close" type="button" aria-label="Close account dialog">×</button>
+      <span class="tag">Customer Account</span>
+      <h2 id="customer-auth-title">Welcome back</h2>
+      <p id="customer-auth-copy">Sign in to continue with your customer account.</p>
+      <div class="customer-auth-tabs" role="tablist" aria-label="Account options">
+        <button type="button" data-auth-mode="login" class="active">SIGN IN</button>
+        <button type="button" data-auth-mode="register">REGISTER</button>
+      </div>
+      <form id="customer-auth-form" novalidate>
+        <input type="hidden" id="customer-auth-mode" value="login">
+        <div id="customer-auth-name-group" class="customer-auth-field" hidden>
+          <label for="customer-auth-name">YOUR NAME</label>
+          <input id="customer-auth-name" type="text" autocomplete="name">
+        </div>
+        <div class="customer-auth-field">
+          <label for="customer-auth-email">EMAIL ADDRESS</label>
+          <input id="customer-auth-email" type="email" autocomplete="email" required>
+        </div>
+        <div id="customer-auth-password-group" class="customer-auth-field">
+          <label for="customer-auth-password">PASSWORD</label>
+          <input id="customer-auth-password" type="password" autocomplete="current-password">
+        </div>
+        <div id="customer-auth-confirm-group" class="customer-auth-field" hidden>
+          <label for="customer-auth-confirm">CONFIRM PASSWORD</label>
+          <input id="customer-auth-confirm" type="password" autocomplete="new-password">
+        </div>
+        <button id="customer-auth-submit" class="btn btn-gold customer-auth-submit" type="submit">SIGN IN</button>
+        <p id="customer-auth-message" class="customer-auth-message" role="alert" aria-live="polite"></p>
+      </form>
+      <button id="customer-auth-reset" class="customer-auth-link" type="button">Forgot password?</button>
+      <p class="customer-auth-switch" id="customer-auth-switch">You can browse as a guest without an account.</p>
+      <button id="customer-auth-signout" class="customer-auth-link" type="button" data-customer-authenticated hidden>Sign out</button>
+    </div>
+  </div>
 
   <!-- ═══ EDIT PRODUCT MODAL ═══ -->
   <div id="edit-modal-overlay">
@@ -465,7 +504,7 @@
   </div>
 
   <!-- ADMIN SYSTEM MOVED TO admin.html -->
-  <script type="module" src="js/app.js?v=toastfix"></script>
+  <script type="module" src="js/app.js?v=auth4"></script>
   <div id="imgModal" role="dialog" aria-modal="true" aria-label="Expanded product image" onclick="app.closeImage()" style="
   display:none;
   position:fixed;

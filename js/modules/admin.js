@@ -710,7 +710,7 @@ async function loadAdminContact() {
       set('s-wa', settings.wa || '+923001234567');
       set('s-ph', settings.ph || '+92 300 1234567');
       set('s-em', settings.em || 'info@miskeenfragrance.com');
-      set('s-hr', settings.hr || 'Mon–Sun 12am–12pm');
+      set('s-hr', settings.hr || 'Mon–Sat 9am–9pm · Sun 11am–6pm');
       set('s-ig', settings.ig || '');
       set('s-fb', settings.fb || '');
     }

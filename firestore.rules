@@ -23,9 +23,23 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    match /reviews/{document=**} {
+    match /reviews/{reviewId} {
       allow read: if isAdmin() || resource.data.approved == true;
-      allow create: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.uid is string
+        && reviewId == request.resource.data.uid + '_' + request.resource.data.productId
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.approved == false
+        && request.resource.data.productId is string
+        && request.resource.data.productId.size() >= 1
+        && request.resource.data.productId.size() <= 128
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 10;
       allow update, delete: if isAdmin();
     }
 

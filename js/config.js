@@ -18,13 +18,16 @@ export const STORE = {
   ig: '',
   fb: '',
   ftdesc:       "Pakistan's online attar and perfume store. Discover memorable fragrances delivered to your doorstep.",
-  copy:         '© 2026 Miskeen Fragrance Center. All Rights Reserved. | 100% Online Store',
+  copy:         '© 2026 Miskeen Fragrance Center. All Rights Reserved. | Online fragrance store',
   cloudName:    'dc5ajtraa',
   uploadPreset: 'miskeen_unsigned', // FIX: was incorrectly set to 'dc5ajtraa' (same as cloudName) — set to your actual unsigned preset name
 };
 
 export function cleanPublicCopy(value = '') {
   return String(value || '')
+    .replace(/\bluxury fragrances sourced from renowned perfume houses\b/gi, 'a considered collection of attars and perfumes')
+    .replace(/\bsourced directly from renowned distillers in kannauj, taif, and arabia\b/gi, 'a considered selection from fragrance suppliers and perfume houses')
+    .replace(/\bfast, tracked, and reliable\b/gi, 'delivery options vary by location')
     .replace(/\b100%\s*natural\b/gi, 'carefully selected')
     .replace(/\balcohol[-\s]?free\b/gi, 'carefully formulated')
     .replace(/\bchemical[-\s]?free\b/gi, 'carefully formulated')

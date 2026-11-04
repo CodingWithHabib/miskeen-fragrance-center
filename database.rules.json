@@ -1,0 +1,25 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "presence": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": false
+    },
+    "stock": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "stats": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": false
+    },
+    "orderLog": {
+      ".read": "auth != null && auth.token.admin == true",
+      "$orderId": {
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() == auth.uid",
+        ".validate": "newData.hasChildren(['uid', 'product', 'timestamp']) && newData.child('uid').isString() && newData.child('product').isString()"
+      }
+    }
+  }
+}

@@ -8,11 +8,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore, collection, doc, getDoc, getDocs,
-  addDoc, query, where, orderBy, serverTimestamp, limit
+  setDoc, query, where, orderBy, serverTimestamp, limit
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ─── Local config ─── */
 import { STORE, cleanPublicCopy } from './config.js';
+import { initializeCustomerAuth } from './modules/customer-auth.js?v=auth3';
+import { logOrder } from './modules/firebase.js';
 
 /* ════════════════════════════════════════════════════════════════
    FIREBASE SETUP
@@ -594,7 +596,11 @@ const PDP = {
   },
 
   /** Order current selection on WhatsApp */
-  orderWhatsApp() {
+  async orderWhatsApp() {
+    if (!window.firebaseCurrentUser) {
+      window.customerAuth?.require(() => PDP.orderWhatsApp());
+      return;
+    }
     const p    = state.product;
     if (!p) return;
 
@@ -607,6 +613,17 @@ const PDP = {
     const unit = parsePKR(size?.price || p.price || '0');
     const total = formatPKR(unit * state.qty);
     const wa    = (STORE.wa || '+923001234567').replace(/\D/g, '');
+    const orderResult = await logOrder({
+      product: p.name,
+      size: size?.ml || 'N/A',
+      quantity: state.qty,
+      total,
+      productId: p.id
+    });
+    if (!orderResult.success) {
+      toast(`Could not record order: ${orderResult.error}`, 'error');
+      return;
+    }
 
     // Pre-filled Arabic-style WhatsApp greeting (matching existing codebase style)
     const msg = [
@@ -629,13 +646,32 @@ const PDP = {
   },
 
   /** Send entire cart to WhatsApp */
-  checkoutWhatsApp() {
+  async checkoutWhatsApp() {
+    if (!window.firebaseCurrentUser) {
+      window.customerAuth?.require(() => PDP.checkoutWhatsApp());
+      return;
+    }
     if (!state.cart.length) return;
     const wa   = (STORE.wa || '+923001234567').replace(/\D/g, '');
     const lines = state.cart.map((item, i) =>
       `${i + 1}. *${item.name}* — ${item.size} × ${item.qty} = ${formatPKR(parsePKR(item.price) * item.qty)}`
     );
     const total = state.cart.reduce((s, i) => s + (parsePKR(i.price) * (i.qty || 1)), 0);
+    const orderResult = await logOrder({
+      product: 'Cart order',
+      items: state.cart.map(item => ({
+        product: item.name,
+        size: item.size,
+        quantity: item.qty || 1,
+        total: formatPKR(parsePKR(item.price) * (item.qty || 1))
+      })),
+      quantity: state.cart.reduce((s, item) => s + (item.qty || 1), 0),
+      total: formatPKR(total)
+    });
+    if (!orderResult.success) {
+      toast(`Could not record order: ${orderResult.error}`, 'error');
+      return;
+    }
     const msg = [
       `السلام عليكم`,
       ``,
@@ -682,6 +718,10 @@ const PDP = {
   /** Validate and submit a new review */
   async submitReview() {
     const btn = document.getElementById('btn-submit-review');
+    if (!window.firebaseCurrentUser) {
+      window.customerAuth?.require(() => document.getElementById('rv-name')?.focus());
+      return;
+    }
     
     // Prevent double submissions
     if (btn.disabled) return;
@@ -729,10 +769,13 @@ const PDP = {
     btn.textContent = 'SUBMITTING…';
 
     try {
-      await addDoc(collection(db, 'reviews'), {
+      const reviewId = `${window.firebaseCurrentUser.uid}_${state.productId}`;
+      await setDoc(doc(db, 'reviews', reviewId), {
         productId:   state.productId,
         product:     state.product?.name || '',
         name:        sanitize(name),
+        uid:         window.firebaseCurrentUser.uid,
+        authorName:  window.firebaseCurrentUser.displayName || window.firebaseCurrentUser.email?.split('@')[0] || 'Customer',
         city:        sanitize(city),
         text:        sanitize(text),
         rating:      rating,
@@ -769,6 +812,8 @@ window.PDP = PDP;
 ════════════════════════════════════════════════════════════════ */
 
 async function init() {
+  await initializeCustomerAuth();
+
   // 1. Extract & validate product ID from URL
   state.productId = getProductIdFromURL();
   if (!state.productId) {

@@ -3,7 +3,7 @@
 ════════════════════════════════════════════════════════════════ */
 
 import { VALID, SANITIZE, esc, generateStars, formatRelativeTime, formatCurrency, parseCurrency } from './utils.js';
-import { getProducts, getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder } from './firebase.js';
+import { getProducts, getSettings, saveSettings, addProduct, updateProduct, deleteProduct, addReview, updateReview, deleteReview, updateStock, logOrder, getCurrentUser } from './firebase.js';
 import { compressImage, validateImageFile, uploadToCloudinary } from './cloudinary.js';
 import { hasDuplicateProduct } from './product-guard.js';
 import { cleanPublicCopy } from '../config.js';
@@ -396,7 +396,16 @@ async function submitProductReview(reviewData) {
     }
 
     // Sanitize review data
-    const sanitizedData = sanitizeReviewData(reviewData);
+    const user = getCurrentUser();
+    if (!user) {
+      return { success: false, error: 'Please sign in before submitting a review.' };
+    }
+
+    const sanitizedData = {
+      ...sanitizeReviewData(reviewData),
+      uid: user.uid,
+      authorName: user.displayName || user.email?.split('@')[0] || 'Customer'
+    };
 
     // Save to database
     const result = await addReview(sanitizedData);

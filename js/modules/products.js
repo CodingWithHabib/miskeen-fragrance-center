@@ -277,6 +277,11 @@ function calculateTotal(productId) {
 
 async function orderOnWhatsApp(productId) {
   try {
+    if (!window.firebaseCurrentUser) {
+      window.customerAuth?.require(() => orderOnWhatsApp(productId));
+      return;
+    }
+
     const product = products.find(p => p.id === productId);
     if (!product) { showToast('Product not found', 'error'); return; }
 
@@ -287,7 +292,15 @@ async function orderOnWhatsApp(productId) {
     if (!size) { showToast('Please select a size', 'warn'); return; }
 
     const total    = formatCurrency(parseCurrency(size.price) * qty);
-    const orderData = { product: product.name, size: size.ml, quantity: qty, total, timestamp: new Date().toISOString() };
+    const orderData = {
+      product: product.name,
+      size: size.ml,
+      quantity: qty,
+      total,
+      uid: window.firebaseCurrentUser.uid,
+      customerName: window.firebaseCurrentUser.displayName || window.firebaseCurrentUser.email?.split('@')[0] || 'Customer',
+      timestamp: new Date().toISOString()
+    };
 
     processWhatsAppOrder(orderData).catch(err => console.warn('Failed to log order:', err));
 
