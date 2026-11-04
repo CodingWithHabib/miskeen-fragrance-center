@@ -125,6 +125,11 @@ window.app = {
 
   // Contact form — build WhatsApp message from form fields and open WA
   sendContactWA: () => {
+    if (!window.firebaseCurrentUser) {
+      window.customerAuth?.require(() => window.app.sendContactWA());
+      return;
+    }
+
     const name    = (document.getElementById('cf-name')?.value || '').trim();
     const phone   = (document.getElementById('cf-phone')?.value || '').trim();
     const city    = (document.getElementById('cf-city')?.value || '').trim();
@@ -387,8 +392,32 @@ function updateUIFromSettings() {
   if (cHours)     cHours.textContent     = STORE.hr === 'Mon–Sun 12am–12pm'
     ? 'Mon–Sat 9am–9pm · Sun 11am–6pm'
     : (STORE.hr || 'Mon–Sat 9am–9pm · Sun 11am–6pm');
-  if (cPhoneLink) cPhoneLink.href        = `tel:${STORE.ph || '+923001234567'}`;
-  if (cEmailLink) cEmailLink.href        = `mailto:${STORE.em || 'info@miskeenfragrance.com'}`;
+  if (cPhoneLink) {
+    const phoneUrl = `tel:${STORE.ph || '+923001234567'}`;
+    cPhoneLink.href = phoneUrl;
+    cPhoneLink.onclick = (event) => {
+      event.preventDefault();
+      const callPhone = () => { window.location.href = phoneUrl; };
+      if (!window.firebaseCurrentUser) {
+        window.customerAuth?.require(callPhone);
+        return;
+      }
+      callPhone();
+    };
+  }
+  if (cEmailLink) {
+    const emailUrl = `mailto:${STORE.em || 'info@miskeenfragrance.com'}`;
+    cEmailLink.href = emailUrl;
+    cEmailLink.onclick = (event) => {
+      event.preventDefault();
+      const openEmail = () => { window.location.href = emailUrl; };
+      if (!window.firebaseCurrentUser) {
+        window.customerAuth?.require(openEmail);
+        return;
+      }
+      openEmail();
+    };
+  }
 
   // Page title
   if (STORE.title) document.title = STORE.title;
@@ -402,7 +431,17 @@ function updateWALinks() {
 
   ['wa-sticky-link','hdr-wa-btn','hero-wa-btn','mob-wa-btn','ft-wa-link','contact-wa-link'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.href = waUrl;
+    if (!el) return;
+    el.href = waUrl;
+    el.onclick = (event) => {
+      event.preventDefault();
+      const openWhatsApp = () => window.open(waUrl, '_blank', 'noopener,noreferrer');
+      if (!window.firebaseCurrentUser) {
+        window.customerAuth?.require(openWhatsApp);
+        return;
+      }
+      openWhatsApp();
+    };
   });
 
   const cWaNum = document.getElementById('contact-wa-num');
