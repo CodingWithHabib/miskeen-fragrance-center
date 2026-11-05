@@ -4,13 +4,15 @@ import {
   signUpUser,
   resetUserPassword,
   signOutUser,
-  onAuthChanged
+  onAuthChanged,
+  listenCustomerOrders
 } from './firebase.js';
 import { showToast } from '../config.js';
 
 let initialized = false;
 let pendingAction = null;
 let unsubscribe = null;
+let unsubscribeOrders = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -91,6 +93,40 @@ function updateCustomerUI(user) {
   document.querySelectorAll('[data-customer-name]').forEach(element => {
     element.textContent = user?.displayName || user?.email?.split('@')[0] || 'Account';
   });
+  const ordersPanel = $('customer-orders');
+  if (!ordersPanel) return;
+  ordersPanel.hidden = !user;
+  if (unsubscribeOrders) {
+    unsubscribeOrders();
+    unsubscribeOrders = null;
+  }
+  if (!user) return;
+  ordersPanel.innerHTML = '<p class="customer-orders-loading">Loading your orders…</p>';
+  unsubscribeOrders = listenCustomerOrders(user.uid, orders => {
+    const entries = Object.entries(orders).sort(([, a], [, b]) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+    if (!entries.length) {
+      ordersPanel.innerHTML = '<h3>My Orders</h3><p class="customer-orders-empty">No orders yet.</p>';
+      return;
+    }
+    ordersPanel.innerHTML = `<h3>My Orders</h3>${entries.map(([, order]) => `
+      <article class="customer-order-card">
+        <div><strong>${escapeOrderText(order.product || 'Order')}</strong><span>${escapeOrderText(order.status || 'Submitted')}</span></div>
+        <p>${escapeOrderText(order.size || '')} · Qty ${Number(order.quantity) || 1} · ${escapeOrderText(order.total || '—')}</p>
+        <small>${formatOrderDate(order.timestamp)}</small>
+      </article>
+    `).join('')}`;
+  });
+}
+
+function escapeOrderText(value) {
+  const element = document.createElement('span');
+  element.textContent = String(value);
+  return element.innerHTML;
+}
+
+function formatOrderDate(value) {
+  const date = new Date(Number(value));
+  return Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleString();
 }
 
 async function handleSubmit(event) {

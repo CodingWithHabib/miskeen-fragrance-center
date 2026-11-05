@@ -16,9 +16,12 @@
     },
     "orderLog": {
       ".read": "auth != null && auth.token.admin == true",
-      "$orderId": {
-        ".write": "auth != null && !data.exists() && newData.child('uid').val() == auth.uid",
-        ".validate": "newData.hasChildren(['uid', 'product', 'timestamp']) && newData.child('uid').isString() && newData.child('product').isString()"
+      "$uid": {
+        ".read": "auth != null && (auth.token.admin == true || auth.uid == $uid)",
+        "$orderId": {
+          ".write": "auth != null && !data.exists() && auth.uid == $uid && newData.child('uid').val() == auth.uid",
+          ".validate": "newData.hasChildren(['uid', 'product', 'timestamp']) && newData.child('uid').isString() && newData.child('product').isString()"
+        }
       }
     }
   }

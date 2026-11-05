@@ -87,7 +87,11 @@ function renderView() {
 function renderDashboard() {
   const pending = state.reviews.filter(review => !review.approved).length;
   const lowStock = state.products.filter(product => Number(state.stock[product.id]?.quantity ?? product.stock ?? 0) <= 5).length;
-  const totalOrders = Object.keys(state.orders).length;
+  const totalOrders = Object.values(state.orders).reduce((total, customerOrders) => {
+    if (!customerOrders || typeof customerOrders !== 'object') return total + 1;
+    if (customerOrders.uid && customerOrders.product) return total + 1;
+    return total + Object.keys(customerOrders).length;
+  }, 0);
   return `
     <div class="page-heading"><div><h1>Good to see you</h1><p>A clear view of your fragrance business at a glance.</p></div></div>
     <div class="stats-grid">

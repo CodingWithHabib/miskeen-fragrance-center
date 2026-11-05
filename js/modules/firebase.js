@@ -427,6 +427,16 @@ function listenOrderLog(callback) {
   });
 }
 
+function listenCustomerOrders(uid, callback) {
+  if (!uid) return () => {};
+  const ordersRef = rtRef(rtdb, `orderLog/${uid}`);
+  return onValue(ordersRef, (snapshot) => {
+    if (callback) callback(snapshot.val() || {});
+  }, (error) => {
+    console.error('Error listening to customer orders:', error);
+  });
+}
+
 async function updateStock(productId, newStock) {
   try {
     const stockRef = rtRef(rtdb, `stock/${productId}`);
@@ -444,7 +454,7 @@ async function logOrder(orderData) {
       return { success: false, error: 'You must be signed in to log an order.' };
     }
     // Log the order entry
-    const ordersRef  = rtRef(rtdb, 'orderLog');
+    const ordersRef  = rtRef(rtdb, `orderLog/${currentUser.uid}`);
     const newOrderRef = rtPush(ordersRef);
     await rtSet(newOrderRef, { ...orderData, uid: currentUser.uid, timestamp: rtTimestamp() });
 
@@ -603,7 +613,7 @@ export { signUpUser, resetUserPassword, getCurrentUser, getCurrentUserClaims, on
   getProducts, addProduct, updateProduct, deleteProduct, listenProducts,
   getReviews, addReview, updateReview, deleteReview, listenReviews,
   getCategories, addCategory, updateCategory, deleteCategory, listenCategories,
-  initPresence, listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog,
+  initPresence, listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, listenCustomerOrders,
   updateStock, logOrder, incrementViewCount,
   seedIfEmpty, seedDefaultProducts, seedDefaultReviews, seedDefaultCategories,
   // NOTE: currentUser/products/reviews are module-internal; access via callbacks or window.firebase* globals
