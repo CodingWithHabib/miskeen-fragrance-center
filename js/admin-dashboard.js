@@ -3,7 +3,7 @@ import {
   getProducts, addProduct, updateProduct, deleteProduct,
   getCategories, addCategory, updateCategory, deleteCategory,
   getReviews, updateReview, deleteReview, getSettings, saveSettings,
-  listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, updateStock
+  listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, updateStock, updateOrderStatus
 } from './modules/firebase.js';
 import {
   updateCloudinaryConfig, compressImage, validateImageFile, uploadToCloudinary
@@ -63,7 +63,7 @@ function setView(view) {
   document.querySelectorAll('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.view === view));
   const titles = {
     dashboard: ['Overview', 'Dashboard'], products: ['Catalog', 'Products'], categories: ['Catalog', 'Categories'],
-    reviews: ['Moderation', 'Reviews'], stock: ['Inventory', 'Stock management'], settings: ['Configuration', 'Settings'],
+    reviews: ['Moderation', 'Reviews'], orders: ['Sales', 'Orders'], stock: ['Inventory', 'Stock management'], settings: ['Configuration', 'Settings'],
     content: ['Storefront', 'Homepage content'], contact: ['Storefront', 'Contact details']
   };
   const [kicker, title] = titles[view];
@@ -79,7 +79,7 @@ function closeSidebar() {
 }
 
 function renderView() {
-  const renderers = { dashboard: renderDashboard, products: renderProducts, categories: renderCategories, reviews: renderReviews, stock: renderStock, settings: renderSettings, content: renderContent, contact: renderContact };
+  const renderers = { dashboard: renderDashboard, products: renderProducts, categories: renderCategories, reviews: renderReviews, orders: renderOrders, stock: renderStock, settings: renderSettings, content: renderContent, contact: renderContact };
   viewRoot.innerHTML = renderers[state.view]();
   bindViewEvents();
 }
@@ -181,6 +181,31 @@ function renderReviews() {
     <div class="table-wrap"><table><thead><tr><th>Customer</th><th>Product</th><th>Rating</th><th>Review</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="reviews-body">${reviewRows(state.reviews)}</tbody></table></div>`;
 }
 
+function getOrderEntries() {
+  return Object.entries(state.orders).flatMap(([uid, customerOrders]) => {
+    if (customerOrders?.uid && customerOrders?.product) {
+      return [{ uid, orderId: uid, order: customerOrders }];
+    }
+    return Object.entries(customerOrders || {}).map(([orderId, order]) => ({ uid, orderId, order }));
+  }).filter(entry => entry.order && typeof entry.order === 'object');
+}
+
+function renderOrders() {
+  const entries = getOrderEntries().sort((a, b) => Number(b.order.timestamp || 0) - Number(a.order.timestamp || 0));
+  const statuses = ['Submitted', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'];
+  return `<div class="page-heading"><div><h1>Orders</h1><p>Review WhatsApp order requests and update their status.</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Customer</th><th>Product</th><th>Quantity</th><th>Total</th><th>Date</th><th>Status</th></tr></thead><tbody>
+      ${entries.length ? entries.map(({ uid, orderId, order }) => `<tr>
+        <td>${esc(order.customerName || uid)}</td>
+        <td>${esc(order.product || 'Cart order')}</td>
+        <td>${esc(order.quantity || '—')}</td>
+        <td>${esc(order.total || '—')}</td>
+        <td>${formatDate(order.timestamp)}</td>
+        <td><select class="order-status-select" data-order-status data-order-uid="${esc(uid)}" data-order-id="${esc(orderId)}">${statuses.map(status => `<option value="${status}" ${status === (order.status || 'Submitted') ? 'selected' : ''}>${status}</option>`).join('')}</select></td>
+      </tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">No orders found.</div></td></tr>'}
+    </tbody></table></div>`;
+}
+
 function reviewRows(reviews) {
   if (!reviews.length) return '<tr><td colspan="7"><div class="empty-state">No reviews found.</div></td></tr>';
   return reviews.map(review => `<tr><td>${esc(review.name || 'Anonymous')}</td><td>${esc(review.product || '—')}</td><td>${'★'.repeat(Math.max(0, Math.min(5, Number(review.rating) || 0)))}</td><td>${esc(review.text || '')}</td><td>${formatDate(review.createdAt)}</td><td>${review.approved ? '<span class="badge success">Approved</span>' : '<span class="badge warning">Pending</span>'}</td><td><div class="table-actions">${!review.approved ? `<button class="small-button" data-approve-review="${esc(review.id)}">Approve</button>` : ''}<button class="small-button delete" data-delete-review="${esc(review.id)}">Delete</button></div></td></tr>`).join('');
@@ -257,6 +282,15 @@ function bindViewEvents() {
   document.querySelectorAll('[data-approve-review]').forEach(button => button.addEventListener('click', async () => { const result = await updateReview(button.dataset.approveReview, { approved: true }); if (!result.success) return toast(result.error, 'error'); toast('Review approved.'); await loadData(); }));
   document.querySelectorAll('[data-delete-review]').forEach(button => button.addEventListener('click', async () => { if (!await confirmAction('Delete review?', 'This permanently removes the review from Firebase.')) return; const result = await deleteReview(button.dataset.deleteReview); if (!result.success) return toast(result.error, 'error'); toast('Review deleted.'); await loadData(); }));
   document.querySelectorAll('.stock-form').forEach(form => form.addEventListener('submit', async event => { event.preventDefault(); const input = $('input', form); const quantity = Number(input.value); if (!Number.isInteger(quantity) || quantity < 0) return toast('Stock must be a non-negative whole number.', 'error'); const result = await updateStock(form.dataset.stockId, quantity); if (!result.success) return toast(result.error, 'error'); toast('Stock updated.'); await loadData(); }));
+  document.querySelectorAll('[data-order-status]').forEach(select => select.addEventListener('change', async event => {
+    const control = event.currentTarget;
+    const result = await updateOrderStatus(control.dataset.orderUid, control.dataset.orderId, control.value);
+    if (!result.success) {
+      toast(result.error, 'error');
+      return;
+    }
+    toast('Order status updated.');
+  }));
   ['settings', 'content', 'contact'].forEach(kind => $(`#${kind}-form`)?.addEventListener('submit', async event => { event.preventDefault(); const data = valuesFromForm(event.currentTarget); const button = $('button[type="submit"]', event.currentTarget); setLoading(button, true); const result = await saveSettings(data); setLoading(button, false); if (!result.success) return toast(result.error, 'error'); state.settings = { ...state.settings, ...data }; Object.assign(STORE, data); updateCloudinaryConfig(); toast('Changes saved.'); }));
   document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => setView(button.dataset.go)));
 }

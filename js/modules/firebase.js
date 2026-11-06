@@ -437,6 +437,20 @@ function listenCustomerOrders(uid, callback) {
   });
 }
 
+async function updateOrderStatus(uid, orderId, status) {
+  try {
+    await rtUpdate(rtRef(rtdb, `orderLog/${uid}/${orderId}`), {
+      status,
+      statusUpdatedAt: rtTimestamp(),
+      statusUpdatedBy: currentUser?.uid || null
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 async function updateStock(productId, newStock) {
   try {
     const stockRef = rtRef(rtdb, `stock/${productId}`);
@@ -613,7 +627,7 @@ export { signUpUser, resetUserPassword, getCurrentUser, getCurrentUserClaims, on
   getProducts, addProduct, updateProduct, deleteProduct, listenProducts,
   getReviews, addReview, updateReview, deleteReview, listenReviews,
   getCategories, addCategory, updateCategory, deleteCategory, listenCategories,
-  initPresence, listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, listenCustomerOrders,
+  initPresence, listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, listenCustomerOrders, updateOrderStatus,
   updateStock, logOrder, incrementViewCount,
   seedIfEmpty, seedDefaultProducts, seedDefaultReviews, seedDefaultCategories,
   // NOTE: currentUser/products/reviews are module-internal; access via callbacks or window.firebase* globals
