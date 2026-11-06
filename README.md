@@ -138,6 +138,8 @@ Click Save ✓
 
 ### Admin Features
 Open **admin.html** directly from the deployed site or local server. The administration panel uses a standalone responsive luxury dashboard and verifies the Firebase `admin: true` custom claim after sign-in.
+The admin page uses a named Firebase Auth instance with session persistence, so an admin
+and a customer can remain signed in independently in the same browser.
 
 Login with your Firebase credentials (email/password from setup step E)
 

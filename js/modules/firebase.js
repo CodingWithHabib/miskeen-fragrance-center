@@ -4,7 +4,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref as rtRef, set as rtSet, update as rtUpdate, onValue, serverTimestamp as rtTimestamp, increment, onDisconnect, push as rtPush } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from '../firebase-config.js';
 import { buildCategoryRecord, dedupeCategories, normalizeCategorySlug } from './category-utils.js';
@@ -33,10 +33,11 @@ const authReady = new Promise((resolve) => { authReadyResolve = resolve; });
 let prodsRef, revRef, settingsRef, categoriesRef;
 let firebaseInitialized = false;
 
-async function initializeFirebase() {
+async function initializeFirebase(options = {}) {
   if (firebaseInitialized) return;
   try {
-    app  = initializeApp(firebaseConfig);
+    const appName = options.appName || '[DEFAULT]';
+    app  = appName === '[DEFAULT]' ? initializeApp(firebaseConfig) : initializeApp(firebaseConfig, appName);
     db   = getFirestore(app);
     auth = getAuth(app);
     rtdb = getDatabase(app);
@@ -46,7 +47,7 @@ async function initializeFirebase() {
     settingsRef = doc(db, 'settings', 'main');
     categoriesRef = collection(db, 'categories');
 
-    await setPersistence(auth, browserLocalPersistence);
+    await setPersistence(auth, options.persistence || browserLocalPersistence);
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;

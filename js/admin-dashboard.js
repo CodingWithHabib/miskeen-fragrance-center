@@ -5,6 +5,7 @@ import {
   getReviews, updateReview, deleteReview, getSettings, saveSettings,
   listenVisitorCount, listenStock, listenRTDBStats, listenOrderLog, updateStock, updateOrderStatus
 } from './modules/firebase.js';
+import { browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   updateCloudinaryConfig, compressImage, validateImageFile, uploadToCloudinary
 } from './modules/cloudinary.js';
@@ -352,7 +353,7 @@ $('#admin-login-form').addEventListener('submit', async event => {
 });
 
 try {
-  await initializeFirebase();
+  await initializeFirebase({ appName: 'admin-instance', persistence: browserSessionPersistence });
   onAuthChanged(async user => {
     if (!user) { authView.classList.remove('hidden'); shell.classList.add('hidden'); deniedView.classList.add('hidden'); return; }
     try { await enterDashboard(user); } catch (error) { console.error('Admin authorization failed:', error); authView.classList.add('hidden'); shell.classList.add('hidden'); deniedView.classList.remove('hidden'); $('#access-denied-message').textContent = 'We could not verify administrator access. Please reload and try again.'; }
